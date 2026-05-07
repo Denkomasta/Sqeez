@@ -51,6 +51,7 @@ namespace Sqeez.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StudentDto>> CreateUser([FromBody] CreateStudentDto dto)
         {
             var result = await _userService.CreateUserAsync(dto);
@@ -71,6 +72,26 @@ namespace Sqeez.Api.Controllers
                 {
                     error = "Forbidden",
                     message = "You do not have permission to modify another student's profile."
+                });
+            }
+
+            if (role != "Admin" && dto.SchoolClassId.HasValue)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Forbidden",
+                    message = "You do not have permission to change school class assignment."
+                });
+            }
+
+            if (role != "Admin" &&
+                dto is PatchTeacherDto teacherDto &&
+                (teacherDto.Department != null || teacherDto.ManagedClassId.HasValue))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    error = "Forbidden",
+                    message = "You do not have permission to change teacher assignments."
                 });
             }
 

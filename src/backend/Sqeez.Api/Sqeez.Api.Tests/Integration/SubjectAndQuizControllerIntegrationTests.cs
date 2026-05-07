@@ -155,6 +155,11 @@ namespace Sqeez.Api.Tests.Integration
         [Fact]
         public async Task GetEnrollmentsForSubject_ForcesSubjectIdFilter()
         {
+            _factory.SubjectServiceMock
+                .Setup(service => service.GetSubjectByIdAsync(5))
+                .ReturnsAsync(ServiceResult<SubjectDto>.Ok(
+                    new SubjectDto(5, "Math", "MATH", null, DateTime.UtcNow, null, 42, "teacher", null, null, 0, 0)));
+
             _factory.EnrollmentServiceMock
                 .Setup(service => service.GetAllEnrollmentsAsync(It.Is<EnrollmentFilterDto>(filter =>
                     filter.SubjectId == 5 &&
@@ -182,8 +187,61 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task GetEnrollmentsForSubject_AsDifferentTeacher_ReturnsForbiddenBeforeCallingService()
+        {
+            _factory.SubjectServiceMock
+                .Setup(service => service.GetSubjectByIdAsync(5))
+                .ReturnsAsync(ServiceResult<SubjectDto>.Ok(
+                    new SubjectDto(5, "Math", "MATH", null, DateTime.UtcNow, null, 99, "other", null, null, 0, 0)));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.GetAsync("/api/subjects/5/enrollments");
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.EnrollmentServiceMock.Verify(
+                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentsForSubject_AsStudent_ForcesStudentIdToAuthenticatedUser()
+        {
+            _factory.EnrollmentServiceMock
+                .Setup(service => service.GetAllEnrollmentsAsync(It.Is<EnrollmentFilterDto>(filter =>
+                    filter.SubjectId == 5 &&
+                    filter.StudentId == 7)))
+                .ReturnsAsync(ServiceResult<PagedResponse<EnrollmentDto>>.Ok(
+                    new PagedResponse<EnrollmentDto>
+                    {
+                        Data = Array.Empty<EnrollmentDto>(),
+                        PageNumber = 1,
+                        PageSize = 10,
+                        TotalCount = 0
+                    }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.GetAsync("/api/subjects/5/enrollments?StudentId=99");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.EnrollmentServiceMock.Verify(
+                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                Times.Once);
+        }
+
+        [Fact]
         public async Task UnenrollStudents_AsTeacher_CallsEnrollmentServiceWithRouteSubjectId()
         {
+            _factory.SubjectServiceMock
+                .Setup(service => service.GetSubjectByIdAsync(5))
+                .ReturnsAsync(ServiceResult<SubjectDto>.Ok(
+                    new SubjectDto(5, "Math", "MATH", null, DateTime.UtcNow, null, 42, "teacher", null, null, 0, 0)));
+
             _factory.EnrollmentServiceMock
                 .Setup(service => service.UnenrollStudentsFromSubjectAsync(
                     5,
@@ -259,6 +317,11 @@ namespace Sqeez.Api.Tests.Integration
         [Fact]
         public async Task UnenrollStudents_WhenServiceReturnsNotFound_MapsNotFound()
         {
+            _factory.SubjectServiceMock
+                .Setup(service => service.GetSubjectByIdAsync(5))
+                .ReturnsAsync(ServiceResult<SubjectDto>.Ok(
+                    new SubjectDto(5, "Math", "MATH", null, DateTime.UtcNow, null, 42, "teacher", null, null, 0, 0)));
+
             _factory.EnrollmentServiceMock
                 .Setup(service => service.UnenrollStudentsFromSubjectAsync(5, It.IsAny<RemoveStudentsDto>()))
                 .ReturnsAsync(ServiceResult<bool>.Failure("Subject not found.", ServiceError.NotFound));

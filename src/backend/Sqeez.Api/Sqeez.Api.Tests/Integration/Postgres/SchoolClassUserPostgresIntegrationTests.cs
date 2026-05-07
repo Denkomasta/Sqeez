@@ -122,7 +122,8 @@ namespace Sqeez.Api.Tests.Integration.Postgres
         public async Task CreateUser_WithTeacherDiscriminator_PersistsTeacherSubtype()
         {
             await _fixture.ResetDatabaseAsync();
-            var client = _fixture.Factory.CreateClient();
+            var seed = await SeedUsersAsync();
+            var client = PostgresTestHelpers.CreateAuthenticatedClient(_fixture, seed.Admin);
             var username = PostgresTestHelpers.UniqueValue("created-teacher", 20);
             var email = $"{PostgresTestHelpers.UniqueValue("created-teacher", 24)}@sqeez.test";
 
@@ -145,6 +146,7 @@ namespace Sqeez.Api.Tests.Integration.Postgres
 
             Assert.Equal(UserRole.Teacher, teacher.Role);
             Assert.Equal("Mathematics", teacher.Department);
+            Assert.NotEqual("StrongPassword123!", teacher.PasswordHash);
         }
 
         [DockerAvailableFact]

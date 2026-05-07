@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Sqeez.Api.Constants;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -173,6 +174,26 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task SubmitAnswerAsync_WithOptionFromDifferentQuestion_ReturnsValidationFailed()
+        {
+            await using var context = await GetSeededContextAsync();
+
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Created };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var dto = new SubmitQuestionResponseDto(QuizQuestionId: 3, ResponseTimeMs: 5000, null, new List<long> { 1 });
+
+            var result = await service.SubmitAnswerAsync(1, 1, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Empty(context.QuizQuestionResponses);
+        }
+
+        [Fact]
         public async Task SubmitAnswerAsync_StrictMultipleChoice_PerfectMatch_AwardsFullPoints()
         {
             await using var context = await GetSeededContextAsync();
@@ -330,6 +351,88 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task GetAttemptDetailsAsync_AsOwningTeacher_ReturnsDetails()
+        {
+            await using var context = await GetSeededContextAsync();
+            var subject = await context.Subjects.FirstAsync();
+            subject.TeacherId = 99;
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Completed };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var result = await service.GetAttemptDetailsAsync(attempt.Id, 99, "Teacher");
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal(attempt.Id, result.Data!.Id);
+        }
+
+        [Fact]
+        public async Task GetAttemptDetailsAsync_AsDifferentTeacher_ReturnsForbidden()
+        {
+            await using var context = await GetSeededContextAsync();
+            var subject = await context.Subjects.FirstAsync();
+            subject.TeacherId = 99;
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Completed };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var result = await service.GetAttemptDetailsAsync(attempt.Id, 42, "Teacher");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task GetAttemptDetailsAsync_AsAdmin_ReturnsDetails()
+        {
+            await using var context = await GetSeededContextAsync();
+            var attempt = new QuizAttempt { Id = 1, QuizId = 1, EnrollmentId = 1, Status = AttemptStatus.Completed };
+            context.QuizAttempts.Add(attempt);
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var result = await service.GetAttemptDetailsAsync(attempt.Id, 123, "Admin");
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal(attempt.Id, result.Data!.Id);
+        }
+
+        [Fact]
+        public async Task GetAttemptsForQuizAsync_ClampsInvalidPagingValues()
+        {
+            await using var context = await GetSeededContextAsync();
+            var subject = await context.Subjects.FirstAsync();
+            subject.TeacherId = 99;
+
+            for (int i = 1; i <= ValidationConstants.MaxPageSize + 5; i++)
+            {
+                context.QuizAttempts.Add(new QuizAttempt
+                {
+                    QuizId = 1,
+                    EnrollmentId = 1,
+                    Status = AttemptStatus.Completed,
+                    StartTime = DateTime.UtcNow.AddMinutes(-i)
+                });
+            }
+
+            await context.SaveChangesAsync();
+
+            var service = new QuizAttemptService(context, _mockLogger.Object, _mockBadgeService.Object);
+
+            var result = await service.GetAttemptsForQuizAsync(1, 99, pageNumber: -5, pageSize: 10_000);
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal(1, result.Data!.PageNumber);
+            Assert.Equal(ValidationConstants.MaxPageSize, result.Data.PageSize);
+            Assert.Equal(ValidationConstants.MaxPageSize, result.Data.Data.Count());
         }
 
         [Fact]

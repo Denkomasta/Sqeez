@@ -84,6 +84,20 @@ namespace Sqeez.Api.Controllers
         [HttpGet("{subjectId}/enrollments")]
         public async Task<ActionResult<PagedResponse<EnrollmentDto>>> GetEnrollmentsForSubject(long subjectId, [FromQuery] EnrollmentFilterDto filter)
         {
+            var role = GetUserRoleFromClaims();
+            if (role == "Teacher")
+            {
+                var accessResult = await EnsureTeacherOwnsSubjectAsync(subjectId);
+                if (accessResult != null)
+                {
+                    return accessResult;
+                }
+            }
+            else if (role == "Student")
+            {
+                filter.StudentId = CurrentUserId;
+            }
+
             // Force the filter to only look at this specific subject
             filter.SubjectId = subjectId;
             var result = await _enrollmentService.GetAllEnrollmentsAsync(filter);
@@ -120,6 +134,15 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{subjectId}/enrollments")]
         public async Task<ActionResult<bool>> UnenrollStudents(long subjectId, [FromBody] RemoveStudentsDto dto)
         {
+            if (!IsCurrentUserAdmin)
+            {
+                var accessResult = await EnsureTeacherOwnsSubjectAsync(subjectId);
+                if (accessResult != null)
+                {
+                    return accessResult;
+                }
+            }
+
             var result = await _enrollmentService.UnenrollStudentsFromSubjectAsync(subjectId, dto);
             return HandleServiceResult(result);
         }
@@ -147,6 +170,17 @@ namespace Sqeez.Api.Controllers
             var safeDto = dto with { SubjectId = subjectId };
             var result = await _quizService.CreateQuizAsync(safeDto, CurrentUserId);
             return HandleServiceResult(result);
+        }
+
+        private async Task<ActionResult?> EnsureTeacherOwnsSubjectAsync(long subjectId)
+        {
+            var subjectResult = await _subjectService.GetSubjectByIdAsync(subjectId);
+            if (!subjectResult.Success || subjectResult.Data == null)
+            {
+                return HandleServiceResult(subjectResult);
+            }
+
+            return subjectResult.Data.TeacherId == CurrentUserId ? null : Forbid();
         }
     }
 }

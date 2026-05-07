@@ -58,8 +58,8 @@ namespace Sqeez.Api.Services.Interfaces
         /// <param name="currentUserId">The requesting user id.</param>
         /// <param name="currentUserRole">The requesting role.</param>
         /// <returns>
-        /// Attempt details. Students can view only their own attempts; teachers and admins can view any attempt.
-        /// Returns not found or forbidden when access is not allowed.
+        /// Attempt details. Students can view only their own attempts, teachers only attempts for quizzes in
+        /// their subjects, and admins can view any attempt. Returns not found or forbidden when access is not allowed.
         /// </returns>
         Task<ServiceResult<QuizAttemptDetailDto>> GetAttemptDetailsAsync(long attemptId, long currentUserId, string currentUserRole);
 
@@ -69,7 +69,7 @@ namespace Sqeez.Api.Services.Interfaces
         /// <param name="quizId">The quiz id.</param>
         /// <param name="teacherId">The requesting user id; quiz owners receive all attempts, students receive only their own.</param>
         /// <param name="pageNumber">One-based page number.</param>
-        /// <param name="pageSize">Number of attempts per page.</param>
+        /// <param name="pageSize">Number of attempts per page; clamped to the configured maximum page size.</param>
         /// <returns>A paged attempt list, or not found when the quiz does not exist.</returns>
         Task<ServiceResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuizAsync(long quizId, long teacherId, int pageNumber = 1, int pageSize = 20);
 

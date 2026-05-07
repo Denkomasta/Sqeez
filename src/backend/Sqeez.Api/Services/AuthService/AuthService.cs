@@ -203,13 +203,11 @@ namespace Sqeez.Api.Services.AuthService
 
         public async Task<ServiceResult<bool>> ResendVerificationEmailAsync(ResendVerificationDto dto)
         {
-            var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            var email = dto.Email.Trim().ToLower();
+            var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user == null)
-                return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
-
-            if (user.IsEmailVerified)
-                return ServiceResult<bool>.Failure("This email is already verified.", ServiceError.BadRequest);
+            if (user == null || user.IsEmailVerified)
+                return ServiceResult<bool>.Ok(true);
 
             string verificationToken;
 

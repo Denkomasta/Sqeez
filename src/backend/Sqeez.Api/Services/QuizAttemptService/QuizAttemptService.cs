@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sqeez.Api.Constants;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -107,6 +108,19 @@ namespace Sqeez.Api.Services
                 return ServiceResult<QuestionAnsweredDto>.Failure("You have already submitted an answer for this question and cannot change it.", ServiceError.Conflict);
             }
 
+            var selectedOptions = new List<QuizOption>();
+            if (dto.SelectedOptionIds != null && dto.SelectedOptionIds.Any())
+            {
+                var selectedOptionIds = dto.SelectedOptionIds.Distinct().ToList();
+                selectedOptions = question.Options.Where(o => selectedOptionIds.Contains(o.Id)).ToList();
+                if (selectedOptions.Count != selectedOptionIds.Count)
+                {
+                    return ServiceResult<QuestionAnsweredDto>.Failure(
+                        "One or more selected options do not belong to this question.",
+                        ServiceError.ValidationFailed);
+                }
+            }
+
             response = new QuizQuestionResponse
             {
                 QuizAttemptId = attemptId,
@@ -116,10 +130,9 @@ namespace Sqeez.Api.Services
             };
             _context.QuizQuestionResponses.Add(response);
 
-            if (dto.SelectedOptionIds != null && dto.SelectedOptionIds.Any())
+            if (selectedOptions.Any())
             {
-                var validOptions = question.Options.Where(o => dto.SelectedOptionIds.Contains(o.Id)).ToList();
-                foreach (var opt in validOptions)
+                foreach (var opt in selectedOptions)
                 {
                     response.Options.Add(opt);
                 }
@@ -322,17 +335,23 @@ namespace Sqeez.Api.Services
         {
             var attempt = await _context.QuizAttempts
                 .Include(a => a.Enrollment)
+                .Include(a => a.Quiz)
+                    .ThenInclude(q => q.Subject)
                 .Include(a => a.Responses)
                     .ThenInclude(r => r.Options)
                 .FirstOrDefaultAsync(a => a.Id == attemptId);
 
             if (attempt == null) return ServiceResult<QuizAttemptDetailDto>.Failure("Attempt not found.", ServiceError.NotFound);
 
-            // Students can only see their own. Teachers/Admins can see any.
-            if (currentUserRole == "Student" && attempt.Enrollment.StudentId != currentUserId)
+            bool canView = currentUserRole switch
             {
-                return ServiceResult<QuizAttemptDetailDto>.Failure("You can only view your own attempts.", ServiceError.Forbidden);
-            }
+                "Admin" => true,
+                "Teacher" => attempt.Quiz.Subject.TeacherId == currentUserId,
+                _ => attempt.Enrollment.StudentId == currentUserId
+            };
+
+            if (!canView)
+                return ServiceResult<QuizAttemptDetailDto>.Failure("You do not have permission to view this attempt.", ServiceError.Forbidden);
 
             var responseDtos = attempt.Responses.Select(r => new QuestionResponseDto(
                 r.Id, r.QuizQuestionId, r.ResponseTimeMs, r.FreeTextAnswer, r.IsLiked, r.Score,
@@ -346,6 +365,9 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuizAsync(long quizId, long userId, int pageNumber = 1, int pageSize = 20)
         {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, ValidationConstants.MaxPageSize);
+
             var quiz = await _context.Quizzes
                 .Include(q => q.Subject)
                 .FirstOrDefaultAsync(q => q.Id == quizId);

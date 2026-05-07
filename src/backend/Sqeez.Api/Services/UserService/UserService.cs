@@ -5,6 +5,7 @@ using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Import;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
+using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services.UserService
 {
@@ -265,8 +266,15 @@ namespace Sqeez.Api.Services.UserService
 
         public async Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto)
         {
-            if (await _context.Students.AnyAsync(u => u.Email == dto.Email.Trim().ToLower()))
+            var email = dto.Email.Trim().ToLower();
+            var username = dto.Username.Trim();
+            var usernameLower = username.ToLower();
+
+            if (await _context.Students.AnyAsync(u => u.Email == email))
                 return ServiceResult<StudentDto>.Failure("Email already in use.", ServiceError.Conflict);
+
+            if (await _context.Students.AnyAsync(u => u.Username.ToLower() == usernameLower))
+                return ServiceResult<StudentDto>.Failure("Username is already taken.", ServiceError.Conflict);
 
             if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
             {
@@ -295,9 +303,9 @@ namespace Sqeez.Api.Services.UserService
 
             newUser.FirstName = dto.FirstName;
             newUser.LastName = dto.LastName;
-            newUser.Username = dto.Username.Trim();
-            newUser.Email = dto.Email.Trim().ToLower();
-            newUser.PasswordHash = dto.Password;
+            newUser.Username = username;
+            newUser.Email = email;
+            newUser.PasswordHash = BC.HashPassword(dto.Password.Trim(), BC.GenerateSalt(12));
             newUser.LastSeen = DateTime.UtcNow;
             newUser.SchoolClassId = dto.SchoolClassId == 0 ? null : dto.SchoolClassId;
 
@@ -458,7 +466,7 @@ namespace Sqeez.Api.Services.UserService
 
             if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
             {
-                _logger.LogInformation("Deleting old avatar for user {UserId}: {Url}", userId, user.AvatarUrl);
+                _logger.LogInformation("Deleting old avatar for user {UserId}.", userId);
                 await _fileStorageService.DeleteFileAsync(user.AvatarUrl);
             }
 
