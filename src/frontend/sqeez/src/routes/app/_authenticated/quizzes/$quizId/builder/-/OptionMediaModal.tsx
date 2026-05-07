@@ -17,6 +17,7 @@ import { useSystemConfig } from '@/hooks/useSystemConfig'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
 import { cn } from '@/lib/utils'
+import { getSafeImageSrc } from '@/lib/imageHelpers'
 
 interface OptionMediaModalProps {
   isOpen: boolean
@@ -113,10 +114,14 @@ export function OptionMediaModal({
   const renderLocalPreview = () => {
     if (!selectedFile || !previewUrl) return null
 
+    const safePreviewUrl = getSafeImageSrc(previewUrl)
+
     if (selectedFile.type.startsWith('image/')) {
+      if (!safePreviewUrl) return null
+
       return (
         <img
-          src={previewUrl}
+          src={safePreviewUrl}
           alt="Local Preview"
           className="max-h-48 w-full rounded-xl object-contain"
         />
