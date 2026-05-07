@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input'
 import { TextArea } from '@/components/ui/TextArea'
 import { Button } from '@/components/ui/Button'
 import type { BadgeFormValues } from '@/schemas/badgeSchema'
+import { getSafeImageSrc } from '@/lib/imageHelpers'
 
 interface BadgeBasicInfoFieldsProps {
   fileInputRef: React.RefObject<HTMLInputElement | null>
@@ -27,6 +28,7 @@ export function BadgeBasicInfoFields({
     register,
     formState: { errors },
   } = useFormContext<BadgeFormValues>()
+  const safePreviewUrl = getSafeImageSrc(previewUrl)
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,11 +40,11 @@ export function BadgeBasicInfoFields({
           ref={fileInputRef}
           onChange={onFileChange}
         />
-        {previewUrl ? (
+        {safePreviewUrl ? (
           <div className="relative">
             <div className="flex size-32 items-center justify-center rounded-xl border border-border bg-muted/30 p-2 shadow-sm">
               <img
-                src={previewUrl}
+                src={safePreviewUrl}
                 alt="Preview"
                 className="h-full w-full object-contain"
               />
