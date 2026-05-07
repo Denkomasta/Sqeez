@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines application system configuration retrieval and update operations.
+    /// </summary>
     public interface ISystemConfigService
     {
         /// <summary>

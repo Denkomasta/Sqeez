@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Media asset metadata returned by media endpoints.
+    /// </summary>
     public record MediaAssetDto(
         long Id,
         string LocationUrl,
@@ -13,6 +16,9 @@ namespace Sqeez.Api.DTOs
         long OwnerId,
         string? OwnerUsername);
 
+    /// <summary>
+    /// Media asset search filters.
+    /// </summary>
     public class MediaAssetFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -22,6 +28,9 @@ namespace Sqeez.Api.DTOs
         public long? OwnerId { get; set; }
     }
 
+    /// <summary>
+    /// Request for creating media asset metadata.
+    /// </summary>
     public record CreateMediaAssetDto
     {
         public CreateMediaAssetDto() { }
@@ -45,6 +54,9 @@ namespace Sqeez.Api.DTOs
         public string? Description { get; init; }
     }
 
+    /// <summary>
+    /// Request for partially updating media asset metadata.
+    /// </summary>
     public record PatchMediaAssetDto
     {
         public PatchMediaAssetDto() { }
@@ -66,6 +78,9 @@ namespace Sqeez.Api.DTOs
         public string? Description { get; init; }
     }
 
+    /// <summary>
+    /// Multipart upload request for storing a media file and creating its metadata.
+    /// </summary>
     public class UploadMediaAssetDto
     {
         [Required]
@@ -76,5 +91,8 @@ namespace Sqeez.Api.DTOs
         public string? Description { get; set; }
     }
 
+    /// <summary>
+    /// Internal download metadata used to resolve and stream stored files.
+    /// </summary>
     public record MediaDownloadDto(string LocationUrl, string MimeType);
 }

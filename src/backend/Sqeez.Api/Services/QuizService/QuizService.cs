@@ -8,6 +8,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements quiz search, retrieval, creation, patch, delete, and schedule validation.
+    /// </summary>
     public class QuizService : BaseService<QuizService>, IQuizService
     {
         public QuizService(SqeezDbContext context, ILogger<QuizService> logger) : base(context, logger) { }

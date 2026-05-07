@@ -9,6 +9,9 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services.UserService
 {
+    /// <summary>
+    /// Implements polymorphic user search, profile retrieval, account management, and avatar updates.
+    /// </summary>
     public class UserService : BaseService<UserService>, IUserService
     {
         private readonly IFileStorageService _fileStorageService;

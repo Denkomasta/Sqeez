@@ -12,6 +12,9 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Imports master CSV files and creates related classes, subjects, students, and enrollments.
+    /// </summary>
     public class CsvImportService : BaseService<CsvImportService>, ICsvImportService
     {
         private readonly ISchoolClassService _classService;

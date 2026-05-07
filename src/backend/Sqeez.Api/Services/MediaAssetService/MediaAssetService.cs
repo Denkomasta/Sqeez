@@ -8,6 +8,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements media asset metadata management, access checks, and coordinated file cleanup.
+    /// </summary>
     public class MediaAssetService : BaseService<MediaAssetService>, IMediaAssetService
     {
         private readonly IFileStorageService _fileStorageService;

@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Handles quiz attempt lifecycle operations, answer submission, grading, and attempt cleanup.
+    /// </summary>
     [Route("api/quiz-attempts")]
     public class QuizAttemptsController : ApiBaseController
     {
@@ -88,7 +91,8 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/quiz-attempts/{id}
-        /// Gets the full details of an attempt. (Students see their own; Teachers/Admins see any).
+        /// Gets full attempt details. Students see their own attempts, subject teachers see attempts for their quizzes,
+        /// and admins can see any attempt.
         /// </summary>
         [Authorize]
         [HttpGet("{id}")]

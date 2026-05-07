@@ -6,6 +6,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Manages media asset metadata, file uploads, and protected file downloads.
+    /// </summary>
     [Authorize]
     [Route("api/media-assets")]
     public class MediaAssetsController : ApiBaseController
@@ -26,6 +29,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/media-assets
+        /// Gets a paged list of media asset metadata.
         /// </summary>
         [HttpGet]
         public async Task<ActionResult<PagedResponse<MediaAssetDto>>> GetAll([FromQuery] MediaAssetFilterDto filter)
@@ -36,6 +40,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/media-assets/{id}
+        /// Gets media asset metadata by id.
         /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<MediaAssetDto>> GetById(long id)
@@ -46,7 +51,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// POST /api/media-assets
-        /// Saves metadata for a new media asset (without a file upload).
+        /// Saves metadata for a new media asset without uploading a file. The owner id is taken from the authenticated user.
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost]
@@ -71,6 +76,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// PATCH /api/media-assets/{id}
+        /// Updates media asset metadata. Admins can patch any asset; teachers can patch only their own assets.
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{id}")]
@@ -167,7 +173,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// DELETE /api/media-assets/{id}
-        /// Deletes the database metadata AND the physical file from the server.
+        /// Deletes the database metadata and physical file. Admins can delete any asset; teachers can delete only their own assets.
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{id}")]
@@ -199,7 +205,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/media-assets/{id}/file
-        /// Streams a secure file back to authorized users.
+        /// Streams a stored file after checking the asset's privacy and requester access.
         /// </summary>
         [Authorize]
         [HttpGet("{id}/file")]

@@ -9,6 +9,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements school class management and student/teacher assignment validation.
+    /// </summary>
     public class SchoolClassService : BaseService<SchoolClassService>, ISchoolClassService
     {
         public SchoolClassService(SqeezDbContext context, ILogger<SchoolClassService> logger) : base(context, logger)

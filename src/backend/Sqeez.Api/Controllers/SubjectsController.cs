@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Manages subjects and their enrollment and quiz subresources.
+    /// </summary>
     [Authorize]
     [Route("api/subjects")]
     public class SubjectsController : ApiBaseController
@@ -26,6 +29,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/subjects
+        /// Gets a paged list of subjects.
         /// </summary>
         [HttpGet]
         public async Task<ActionResult<PagedResponse<SubjectDto>>> GetAllSubjects([FromQuery] SubjectFilterDto filter)
@@ -36,6 +40,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/subjects/5
+        /// Gets one subject by id.
         /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<SubjectDto>> GetSubjectById(long id)
@@ -46,6 +51,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// POST /api/subjects
+        /// Creates a subject. Admin-only.
         /// </summary>
         [Authorize(Roles = "Admin")] // Only staff can create subjects
         [HttpPost]
@@ -57,6 +63,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// PATCH /api/subjects/5
+        /// Updates subject metadata and assignments. Admin-only.
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
@@ -80,6 +87,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/subjects/5/enrollments
+        /// Lists enrollments for the subject with student and teacher visibility restrictions.
         /// </summary>
         [HttpGet("{subjectId}/enrollments")]
         public async Task<ActionResult<PagedResponse<EnrollmentDto>>> GetEnrollmentsForSubject(long subjectId, [FromQuery] EnrollmentFilterDto filter)
@@ -106,6 +114,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// POST /api/subjects/5/enrollments
+        /// Enrolls students in the subject. Admins can enroll anyone; students can enroll only themselves.
         /// </summary>
         [Authorize]
         [HttpPost("{subjectId}/enrollments")]
@@ -129,6 +138,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// DELETE /api/subjects/5/enrollments
+        /// Removes students from the subject. Admins can remove anyone; teachers can remove from their own subjects.
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{subjectId}/enrollments")]
@@ -149,6 +159,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/subjects/5/quizzes
+        /// Lists quizzes attached to the subject.
         /// </summary>
         [HttpGet("{subjectId}/quizzes")]
         public async Task<ActionResult<PagedResponse<QuizDto>>> GetQuizzesForSubject(long subjectId, [FromQuery] QuizFilterDto filter)

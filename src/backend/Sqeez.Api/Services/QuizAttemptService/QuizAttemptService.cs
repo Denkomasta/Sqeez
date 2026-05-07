@@ -8,6 +8,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements quiz attempt lifecycle, response submission, scoring, grading, and reward processing.
+    /// </summary>
     public class QuizAttemptService : BaseService<QuizAttemptService>, IQuizAttemptService
     {
         private readonly IBadgeService _badgeService;

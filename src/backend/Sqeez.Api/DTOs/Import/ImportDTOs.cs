@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.Models.Import
 {
+    /// <summary>
+    /// One parsed row from the master CSV import file.
+    /// </summary>
     public class MasterImportDto
     {
         [StringLength(ValidationConstants.TitleMaxLength)]
@@ -31,6 +34,9 @@ namespace Sqeez.Api.Models.Import
         public string StudentPassword { get; set; } = string.Empty;
     }
 
+    /// <summary>
+    /// CsvHelper mapping between master CSV column names and import DTO fields.
+    /// </summary>
     public sealed class MasterImportMap : ClassMap<MasterImportDto>
     {
         public MasterImportMap()
@@ -48,6 +54,9 @@ namespace Sqeez.Api.Models.Import
         }
     }
 
+    /// <summary>
+    /// Import summary with number of imported records and row-level errors.
+    /// </summary>
     public class ImportResultDto
     {
         public int RecordsImported { get; set; }
@@ -55,6 +64,9 @@ namespace Sqeez.Api.Models.Import
         public bool HasRowErrors => Errors.Any();
     }
 
+    /// <summary>
+    /// Bulk operation result that separates created records, existing records, and skipped-row messages.
+    /// </summary>
     public class BulkOperationResult<T>
     {
         public List<T> Created { get; set; } = new();

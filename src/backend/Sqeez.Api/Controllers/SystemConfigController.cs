@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Exposes runtime system configuration used by the application and administrators.
+    /// </summary>
     [Route("api/system-config")]
     public class SystemConfigController : ApiBaseController
     {
@@ -15,6 +18,9 @@ namespace Sqeez.Api.Controllers
             _configService = configService;
         }
 
+        /// <summary>
+        /// Gets the current system configuration.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<SystemConfigDto>> GetConfig()
         {
@@ -22,6 +28,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Updates mutable system configuration values. Admin-only.
+        /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPatch]
         public async Task<ActionResult<SystemConfigDto>> UpdateConfig([FromBody] UpdateSystemConfigDto dto)

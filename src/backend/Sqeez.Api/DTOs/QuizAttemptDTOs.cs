@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Quiz attempt summary returned when an attempt is started, completed, or listed.
+    /// </summary>
     public record QuizAttemptDto(
         long Id,
         long QuizId,
@@ -19,6 +22,9 @@ namespace Sqeez.Api.DTOs
         long? StudentId = null
     );
 
+    /// <summary>
+    /// Stored answer response returned in attempt details.
+    /// </summary>
     public record QuestionResponseDto(
         long Id,
         long QuizQuestionId,
@@ -29,6 +35,9 @@ namespace Sqeez.Api.DTOs
         List<long> SelectedOptionIds
     );
 
+    /// <summary>
+    /// Answer-submission response with correctness hints and next-question navigation.
+    /// </summary>
     public record QuestionAnsweredDto(
         long Id,
         long QuizQuestionId,
@@ -42,6 +51,9 @@ namespace Sqeez.Api.DTOs
         long? NextQuestionId = null
     );
 
+    /// <summary>
+    /// Full quiz attempt view including all submitted responses.
+    /// </summary>
     public record QuizAttemptDetailDto(
         long Id,
         long QuizId,
@@ -54,11 +66,17 @@ namespace Sqeez.Api.DTOs
         List<QuestionResponseDto> Responses
     );
 
+    /// <summary>
+    /// Request for starting a quiz attempt for a student's enrollment.
+    /// </summary>
     public record StartQuizAttemptDto(
         long QuizId,
         long EnrollmentId
     );
 
+    /// <summary>
+    /// Request for submitting a response to one quiz question.
+    /// </summary>
     public record SubmitQuestionResponseDto
     {
         public SubmitQuestionResponseDto() { }
@@ -83,6 +101,9 @@ namespace Sqeez.Api.DTOs
         public List<long> SelectedOptionIds { get; init; } = new();
     }
 
+    /// <summary>
+    /// Teacher/admin request for manually grading a free-text response.
+    /// </summary>
     public record GradeQuestionResponseDto
     {
         public GradeQuestionResponseDto() { }

@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines media asset metadata, access-control, and file cleanup operations.
+    /// </summary>
     public interface IMediaAssetService
     {
         /// <summary>

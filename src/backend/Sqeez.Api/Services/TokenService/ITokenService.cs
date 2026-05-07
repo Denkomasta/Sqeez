@@ -3,6 +3,9 @@ using Sqeez.Api.Models.Users;
 
 namespace Sqeez.Api.Services.TokenService
 {
+    /// <summary>
+    /// Defines JWT access token and opaque refresh token creation operations.
+    /// </summary>
     public interface ITokenService
     {
         /// <summary>

@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Current application configuration exposed to the frontend and administrators.
+    /// </summary>
     public record SystemConfigDto(
         string SchoolName,
         string LogoUrl,
@@ -16,6 +19,9 @@ namespace Sqeez.Api.DTOs
         int MaxActiveSessionsPerUser
     );
 
+    /// <summary>
+    /// Request for partially updating mutable system configuration values.
+    /// </summary>
     public record UpdateSystemConfigDto
     {
         public UpdateSystemConfigDto() { }

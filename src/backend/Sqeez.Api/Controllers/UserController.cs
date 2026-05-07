@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Exposes user search, profile details, administrative user management, and avatar upload endpoints.
+    /// </summary>
     [Route("api/users")]
     [ApiController]
     public class UserController : ApiBaseController
@@ -16,6 +19,9 @@ namespace Sqeez.Api.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Gets a paged list of users using the supplied filters. Any authenticated user may search users.
+        /// </summary>
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<PagedResponse<StudentDto>>> GetAllUsers([FromQuery] UserFilterDto filter)
@@ -27,6 +33,9 @@ namespace Sqeez.Api.Controllers
             return Ok(result.Data);
         }
 
+        /// <summary>
+        /// Gets a lightweight user profile. Any authenticated user may read the profile.
+        /// </summary>
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<StudentDto>> GetUserById(long id)
@@ -38,6 +47,9 @@ namespace Sqeez.Api.Controllers
             return Ok(result.Data);
         }
 
+        /// <summary>
+        /// Gets a detailed user profile with class, enrollment, and badge data. Any authenticated user may read it.
+        /// </summary>
         [HttpGet("{id}/details")]
         [Authorize]
         public async Task<ActionResult<DetailedUserDto>> GetDetailedUserById(long id)
@@ -50,6 +62,9 @@ namespace Sqeez.Api.Controllers
             return Ok(result.Data);
         }
 
+        /// <summary>
+        /// Creates a student, teacher, or admin account. Admin-only.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StudentDto>> CreateUser([FromBody] CreateStudentDto dto)
@@ -61,6 +76,9 @@ namespace Sqeez.Api.Controllers
             return CreatedAtAction(nameof(GetUserById), new { id = result.Data!.Id }, result.Data);
         }
 
+        /// <summary>
+        /// Updates a user profile. Users can update their own basic fields; admins can update assignments and role data.
+        /// </summary>
         [HttpPatch("{id}")]
         [Authorize]
         public async Task<ActionResult<StudentDto>> PatchUser(long id, [FromBody] PatchStudentDto dto)
@@ -102,6 +120,9 @@ namespace Sqeez.Api.Controllers
             return Ok(result.Data);
         }
 
+        /// <summary>
+        /// Archives a user. Users can archive themselves; admins can archive any user.
+        /// </summary>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> ArchiveUser(long id)
@@ -123,6 +144,9 @@ namespace Sqeez.Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Uploads and replaces the current user's avatar image.
+        /// </summary>
         [Authorize]
         [HttpPost("me/avatar")]
         public async Task<ActionResult<AvatarUploadResponseDto>> UploadAvatar(IFormFile file)

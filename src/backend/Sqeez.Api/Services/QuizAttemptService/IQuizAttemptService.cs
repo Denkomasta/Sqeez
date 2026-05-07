@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines quiz attempt lifecycle, response submission, grading, and attempt cleanup operations.
+    /// </summary>
     public interface IQuizAttemptService
     {
         /// <summary>

@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines badge management, rule evaluation, and badge award operations.
+    /// </summary>
     public interface IBadgeService
     {
         /// <summary>

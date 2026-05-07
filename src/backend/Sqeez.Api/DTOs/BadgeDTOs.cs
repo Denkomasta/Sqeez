@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Persisted rule that determines when a badge can be awarded.
+    /// </summary>
     public record BadgeRuleDto(
         long Id,
         BadgeMetric Metric,
@@ -13,6 +16,9 @@ namespace Sqeez.Api.DTOs
         decimal TargetValue
     );
 
+    /// <summary>
+    /// Request for creating one badge rule.
+    /// </summary>
     public record CreateBadgeRuleDto
     {
         public CreateBadgeRuleDto() { }
@@ -31,6 +37,9 @@ namespace Sqeez.Api.DTOs
         public decimal TargetValue { get; init; }
     }
 
+    /// <summary>
+    /// Request for updating an existing badge rule or creating a new rule when id is omitted.
+    /// </summary>
     public record UpdateBadgeRuleDto
     {
         public UpdateBadgeRuleDto() { }
@@ -52,6 +61,9 @@ namespace Sqeez.Api.DTOs
     }
 
     // Using classes here because model binding IFormFile with Lists in records can be tricky in ASP.NET
+    /// <summary>
+    /// Multipart request for creating a badge with optional icon and rules.
+    /// </summary>
     public class CreateBadgeDto
     {
         [StringLength(ValidationConstants.TitleMaxLength)]
@@ -68,6 +80,9 @@ namespace Sqeez.Api.DTOs
         public List<CreateBadgeRuleDto> Rules { get; set; } = new List<CreateBadgeRuleDto>();
     }
 
+    /// <summary>
+    /// Multipart request for patching badge metadata, icon, and rules.
+    /// </summary>
     public class UpdateBadgeDto
     {
         [StringLength(ValidationConstants.TitleMaxLength)]
@@ -84,6 +99,9 @@ namespace Sqeez.Api.DTOs
         public List<UpdateBadgeRuleDto>? Rules { get; set; }
     }
 
+    /// <summary>
+    /// Badge definition returned by badge endpoints.
+    /// </summary>
     public record BadgeDto(
         long Id,
         string Name,
@@ -93,6 +111,9 @@ namespace Sqeez.Api.DTOs
         List<BadgeRuleDto> Rules
     );
 
+    /// <summary>
+    /// Badge award view returned for a specific student.
+    /// </summary>
     public record StudentBadgeDto(
         long BadgeId,
         string Name,
@@ -102,6 +123,9 @@ namespace Sqeez.Api.DTOs
         DateTime EarnedAt
     );
 
+    /// <summary>
+    /// Compact badge award view embedded in user and quiz attempt responses.
+    /// </summary>
     public record StudentBadgeBasicDto
     {
         public long BadgeId { get; init; }
@@ -110,6 +134,9 @@ namespace Sqeez.Api.DTOs
         public DateTime EarnedAt { get; init; }
     }
 
+    /// <summary>
+    /// Computed values used when evaluating whether badge rules are satisfied.
+    /// </summary>
     public record BadgeEvaluationMetrics(
         decimal ScorePercentage,
         int TotalScore,
@@ -117,6 +144,9 @@ namespace Sqeez.Api.DTOs
         int TotalAttempts
     );
 
+    /// <summary>
+    /// Badge search filters.
+    /// </summary>
     public class BadgeFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]

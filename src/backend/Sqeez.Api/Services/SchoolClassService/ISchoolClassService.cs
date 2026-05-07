@@ -3,6 +3,9 @@ using Sqeez.Api.Models.Import;
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines school class search, management, and student assignment operations.
+    /// </summary>
     public interface ISchoolClassService
     {
         /// <summary>

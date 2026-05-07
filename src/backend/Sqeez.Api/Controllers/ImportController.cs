@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Provides administrative CSV import endpoints.
+    /// </summary>
     [Authorize]
     [Route("api/import")]
     public class ImportController : ApiBaseController
@@ -16,6 +19,9 @@ namespace Sqeez.Api.Controllers
             _csvImportService = csvImportService;
         }
 
+        /// <summary>
+        /// Imports the master CSV file and reports created or skipped records. Admin-only.
+        /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPost("master")]
         public async Task<ActionResult<ImportResultDto>> ImportMasterFile(IFormFile file)

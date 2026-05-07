@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines quiz option management operations.
+    /// </summary>
     public interface IQuizOptionService
     {
         /// <summary>
