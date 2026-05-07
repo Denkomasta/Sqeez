@@ -387,6 +387,44 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task ResendVerificationEmailAsync_WhenUserDoesNotExist_ReturnsSuccessWithoutSendingEmail()
+        {
+            var context = await GetInMemoryDbContext();
+            var mockEmailService = new Mock<IEmailService>();
+            var service = CreateService(context, null, null, mockEmailService);
+
+            var result = await service.ResendVerificationEmailAsync(new ResendVerificationDto("missing@sqeez.org"));
+
+            Assert.True(result.Success);
+            mockEmailService.Verify(
+                service => service.SendVerificationEmailAsync(It.IsAny<string>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task ResendVerificationEmailAsync_WhenUserIsAlreadyVerified_ReturnsSuccessWithoutSendingEmail()
+        {
+            var context = await GetInMemoryDbContext();
+            context.Students.Add(new Student
+            {
+                Username = "Verified",
+                Email = "verified@sqeez.org",
+                IsEmailVerified = true
+            });
+            await context.SaveChangesAsync();
+
+            var mockEmailService = new Mock<IEmailService>();
+            var service = CreateService(context, null, null, mockEmailService);
+
+            var result = await service.ResendVerificationEmailAsync(new ResendVerificationDto("verified@sqeez.org"));
+
+            Assert.True(result.Success);
+            mockEmailService.Verify(
+                service => service.SendVerificationEmailAsync(It.IsAny<string>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        [Fact]
         public async Task ForgotPasswordAsync_WhenUserExists_GeneratesTokenAndSendsEmail()
         {
             var context = await GetInMemoryDbContext();

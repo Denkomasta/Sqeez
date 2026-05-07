@@ -91,6 +91,8 @@ namespace Sqeez.Api.Tests.Integration
                     }));
 
             var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
 
             var response = await client.PostAsJsonAsync("/api/users", new
             {
@@ -107,6 +109,115 @@ namespace Sqeez.Api.Tests.Integration
             _factory.UserServiceMock.Verify(
                 service => service.CreateUserAsync(It.IsAny<CreateTeacherDto>()),
                 Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateUser_WithoutAdminRole_ReturnsUnauthorizedBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+
+            var response = await client.PostAsJsonAsync("/api/users", new
+            {
+                role = "student",
+                firstName = "Anna",
+                lastName = "Nova",
+                username = "anna",
+                email = "anna@sqeez.test",
+                password = "StrongPassword123!"
+            });
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.CreateUserAsync(It.IsAny<CreateStudentDto>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task GetUsers_AsStudent_ReturnsForbiddenBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.GetAsync("/api/users");
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task GetUserById_AsDifferentAuthenticatedStudent_CallsUserService()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.GetUserByIdAsync(8))
+                .ReturnsAsync(ServiceResult<StudentDto>.Ok(
+                    new StudentDto
+                    {
+                        Id = 8,
+                        Username = "other-student",
+                        Email = "other@sqeez.test",
+                        Role = UserRole.Student,
+                        LastSeen = DateTime.UtcNow
+                    }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.GetAsync("/api/users/8");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.GetUserByIdAsync(8),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task GetDetailedUserById_AsDifferentAuthenticatedStudent_CallsUserService()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.GetDetailedUserByIdAsync(8))
+                .ReturnsAsync(ServiceResult<DetailedUserDto>.Ok(
+                    new DetailedUserDto
+                    {
+                        Id = 8,
+                        Username = "other-student",
+                        Email = "other@sqeez.test",
+                        Role = UserRole.Student,
+                        LastSeen = DateTime.UtcNow
+                    }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.GetAsync("/api/users/8/details");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.GetDetailedUserByIdAsync(8),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchUser_AsSelfChangingSchoolClass_ReturnsForbiddenBeforeCallingService()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.PatchAsJsonAsync("/api/users/7", new
+            {
+                role = "student",
+                schoolClassId = 12
+            });
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.PatchUserAsync(It.IsAny<long>(), It.IsAny<PatchStudentDto>()),
+                Times.Never);
         }
 
         [Fact]

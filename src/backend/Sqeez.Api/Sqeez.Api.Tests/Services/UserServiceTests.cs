@@ -10,6 +10,7 @@ using Sqeez.Api.Models.Gamification;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services.UserService;
+using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Tests.Services
 {
@@ -82,7 +83,7 @@ namespace Sqeez.Api.Tests.Services
             {
                 Username = "NewAdmin",
                 Email = "new@sqeez.org",
-                Password = "pwd",
+                Password = "StrongPassword123!",
                 Department = "IT",
                 PhoneNumber = "+1234567890"
             };
@@ -97,6 +98,8 @@ namespace Sqeez.Api.Tests.Services
             var savedAdmin = Assert.IsType<Admin>(savedUser);
             Assert.Equal("+1234567890", savedAdmin.PhoneNumber);
             Assert.Equal(UserRole.Admin, savedAdmin.Role);
+            Assert.NotEqual("StrongPassword123!", savedAdmin.PasswordHash);
+            Assert.True(BC.Verify("StrongPassword123!", savedAdmin.PasswordHash));
         }
 
         [Fact]
@@ -113,6 +116,28 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.NotNull(result.ErrorMessage);
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task CreateUserAsync_WhenUsernameAlreadyExistsIgnoringCase_ReturnsConflict()
+        {
+            var context = await GetInMemoryDbContext();
+            context.Students.Add(new Student { Username = "ExistingUser", Email = "first@sqeez.org", Role = UserRole.Student });
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var createDto = new CreateStudentDto
+            {
+                Username = "existinguser",
+                Email = "second@sqeez.org",
+                Password = "StrongPassword123!"
+            };
+
+            var result = await service.CreateUserAsync(createDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.Contains("Username", result.ErrorMessage);
         }
 
         // ==========================================

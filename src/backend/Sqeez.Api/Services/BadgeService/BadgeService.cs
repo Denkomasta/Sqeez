@@ -156,14 +156,14 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<PagedResponse<BadgeDto>>> GetAllBadgesAsync(BadgeFilterDto filter)
         {
-            var query = _context.Badges.AsQueryable();
+            var query = _context.Badges.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var searchTerm = filter.SearchTerm.ToLower();
                 query = query.Where(b =>
                     b.Name.ToLower().Contains(searchTerm) ||
-                    b.Description.ToLower().Contains(searchTerm));
+                    (b.Description != null && b.Description.ToLower().Contains(searchTerm)));
             }
 
             if (filter.StudentId.HasValue && filter.isEarned.HasValue)

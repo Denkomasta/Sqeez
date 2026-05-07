@@ -175,7 +175,7 @@ namespace Sqeez.Api.Services
             var fullRootPath = Path.GetFullPath(rootPath);
             var fullPhysicalPath = Path.GetFullPath(physicalPath);
 
-            if (!fullPhysicalPath.StartsWith(fullRootPath))
+            if (!IsPathUnderRoot(fullPhysicalPath, fullRootPath))
             {
                 return Task.FromResult(ServiceResult<string>.Failure("Access denied.", ServiceError.Forbidden));
             }
@@ -216,7 +216,7 @@ namespace Sqeez.Api.Services
                 var fullRootPath = Path.GetFullPath(rootPath);
                 var fullPhysicalPath = Path.GetFullPath(physicalPath);
 
-                if (!fullPhysicalPath.StartsWith(fullRootPath))
+                if (!IsPathUnderRoot(fullPhysicalPath, fullRootPath))
                 {
                     _logger.LogWarning("Path traversal attempt detected during file deletion.");
                     return Task.FromResult(ServiceResult<bool>.Failure("Access denied.", ServiceError.Forbidden));
@@ -234,6 +234,15 @@ namespace Sqeez.Api.Services
                 _logger.LogError(ex, "Error deleting physical file.");
                 return Task.FromResult(ServiceResult<bool>.Failure("An unexpected error occurred while deleting the file.", ServiceError.InternalError));
             }
+        }
+
+        private static bool IsPathUnderRoot(string fullPath, string fullRootPath)
+        {
+            var normalizedRoot = Path.TrimEndingDirectorySeparator(fullRootPath) + Path.DirectorySeparatorChar;
+            var normalizedPath = Path.TrimEndingDirectorySeparator(fullPath);
+
+            return normalizedPath.Equals(Path.TrimEndingDirectorySeparator(fullRootPath), StringComparison.OrdinalIgnoreCase) ||
+                   normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

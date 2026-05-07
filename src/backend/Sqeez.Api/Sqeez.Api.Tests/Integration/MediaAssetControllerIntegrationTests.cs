@@ -88,6 +88,34 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task CreateMediaAsset_IgnoresSpoofedOwnerIdAndUsesAuthenticatedUser()
+        {
+            _factory.MediaAssetServiceMock
+                .Setup(service => service.CreateMediaAssetAsync(It.Is<CreateMediaAssetDto>(dto =>
+                    dto.OwnerId == 42 &&
+                    dto.LocationUrl == "/media/file.png")))
+                .ReturnsAsync(ServiceResult<MediaAssetDto>.Ok(
+                    new MediaAssetDto(5, "/media/file.png", MediaType.Image, false, null, 42, "teacher")));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.PostAsJsonAsync("/api/media-assets", new
+            {
+                locationUrl = "/media/file.png",
+                mimeType = "Image",
+                isPrivate = false,
+                ownerId = 99
+            });
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.CreateMediaAssetAsync(It.Is<CreateMediaAssetDto>(dto => dto.OwnerId == 99)),
+                Times.Never);
+        }
+
+        [Fact]
         public async Task UploadFile_UsesStoredFileExtensionForMediaTypeInsteadOfClientContentType()
         {
             _factory.FileStorageServiceMock
@@ -163,6 +191,29 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             _factory.MediaAssetServiceMock.Verify(service => service.DeleteMediaAssetAndFileAsync(It.IsAny<long>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task PatchMediaAsset_AsNonOwnerTeacher_ReturnsForbiddenBeforePatch()
+        {
+            _factory.MediaAssetServiceMock
+                .Setup(service => service.GetMediaAssetByIdAsync(5))
+                .ReturnsAsync(ServiceResult<MediaAssetDto>.Ok(
+                    new MediaAssetDto(5, "/secure/media/file.png", MediaType.Image, true, null, 99, "owner")));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.PatchAsJsonAsync("/api/media-assets/5", new
+            {
+                description = "patched"
+            });
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.PatchMediaAssetAsync(It.IsAny<long>(), It.IsAny<PatchMediaAssetDto>()),
+                Times.Never);
         }
     }
 }

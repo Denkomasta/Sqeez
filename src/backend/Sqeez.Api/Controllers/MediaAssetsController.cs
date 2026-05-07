@@ -52,7 +52,20 @@ namespace Sqeez.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<MediaAssetDto>> Create([FromBody] CreateMediaAssetDto dto)
         {
-            var result = await _mediaAssetService.CreateMediaAssetAsync(dto);
+            var userIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(userIdStr, out long ownerId))
+            {
+                return Unauthorized();
+            }
+
+            var safeDto = new CreateMediaAssetDto(
+                dto.LocationUrl,
+                dto.MimeType,
+                dto.IsPrivate,
+                ownerId,
+                dto.Description);
+
+            var result = await _mediaAssetService.CreateMediaAssetAsync(safeDto);
             return HandleServiceResult(result);
         }
 
@@ -63,6 +76,25 @@ namespace Sqeez.Api.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<MediaAssetDto>> Patch(long id, [FromBody] PatchMediaAssetDto dto)
         {
+            var assetResult = await _mediaAssetService.GetMediaAssetByIdAsync(id);
+            if (!assetResult.Success || assetResult.Data == null)
+            {
+                return HandleServiceResult(assetResult);
+            }
+
+            var userIdStr = GetUserIdFromClaims();
+            bool isAdmin = User.IsInRole("Admin");
+
+            if (!long.TryParse(userIdStr, out long currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!isAdmin && assetResult.Data.OwnerId != currentUserId)
+            {
+                return Forbid();
+            }
+
             var result = await _mediaAssetService.PatchMediaAssetAsync(id, dto);
             return HandleServiceResult(result);
         }
