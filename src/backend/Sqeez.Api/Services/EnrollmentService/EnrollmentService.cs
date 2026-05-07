@@ -7,6 +7,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements subject enrollment search, enrollment mutation, grading, and cleanup.
+    /// </summary>
     public class EnrollmentService : BaseService<EnrollmentService>, IEnrollmentService
     {
         public EnrollmentService(SqeezDbContext context, ILogger<EnrollmentService> logger)

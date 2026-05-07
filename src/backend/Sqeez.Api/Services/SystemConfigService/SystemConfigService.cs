@@ -6,6 +6,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Reads and updates mutable application system configuration.
+    /// </summary>
     public class SystemConfigService : BaseService<SystemConfigService>, ISystemConfigService
     {
         // uses RAM as there exists only one instance of System Config

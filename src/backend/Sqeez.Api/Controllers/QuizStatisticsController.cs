@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Provides quiz-level and question-level statistics for teachers and admins.
+    /// </summary>
     [Route("api/quizzes/{quizId}/statistics")]
     public class QuizStatisticsController : ApiBaseController
     {

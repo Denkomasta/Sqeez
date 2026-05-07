@@ -8,6 +8,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements quiz option management and ownership checks.
+    /// </summary>
     public class QuizOptionService : BaseService<QuizOptionService>, IQuizOptionService
     {
         private readonly IMediaAssetService _mediaAssetService;

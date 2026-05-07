@@ -9,6 +9,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services.SubjectService
 {
+    /// <summary>
+    /// Implements subject search, management, schedule validation, and assignment cleanup.
+    /// </summary>
     public class SubjectService : BaseService<SubjectService>, ISubjectService
     {
         public SubjectService(SqeezDbContext context, ILogger<SubjectService> logger)

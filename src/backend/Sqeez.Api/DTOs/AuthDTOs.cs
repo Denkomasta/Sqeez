@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Login request containing credentials and session persistence preference.
+    /// </summary>
     public record LoginDTO
     {
         public LoginDTO() { }
@@ -25,6 +28,9 @@ namespace Sqeez.Api.DTOs
         public bool RememberMe { get; init; } = false;
     }
 
+    /// <summary>
+    /// Lightweight authenticated user profile returned by auth endpoints.
+    /// </summary>
     public record UserDTO(
         long Id,
         string Username,
@@ -34,6 +40,9 @@ namespace Sqeez.Api.DTOs
         string? AvatarUrl
     );
 
+    /// <summary>
+    /// Public registration request for a new unverified account.
+    /// </summary>
     public record RegisterDTO
     {
         public RegisterDTO() { }
@@ -71,6 +80,9 @@ namespace Sqeez.Api.DTOs
         public bool RememberMe { get; init; } = false;
     }
 
+    /// <summary>
+    /// Administrative request for changing a user's role and role-specific metadata.
+    /// </summary>
     public record UpdateRoleDTO
     {
         public UpdateRoleDTO() { }
@@ -98,11 +110,17 @@ namespace Sqeez.Api.DTOs
         public string? PhoneNumber { get; init; }
     }
 
+    /// <summary>
+    /// Pair of access and refresh tokens produced by authentication flows.
+    /// </summary>
     public record AuthResponseDto(
         string AccessToken,
         string RefreshToken
     );
 
+    /// <summary>
+    /// Refresh-token rotation request.
+    /// </summary>
     public record RefreshTokenDto
     {
         public RefreshTokenDto() { }
@@ -116,6 +134,9 @@ namespace Sqeez.Api.DTOs
         public string RefreshToken { get; init; } = string.Empty;
     }
 
+    /// <summary>
+    /// Request for resending account verification email.
+    /// </summary>
     public record ResendVerificationDto
     {
         public ResendVerificationDto() { }
@@ -133,6 +154,9 @@ namespace Sqeez.Api.DTOs
         public bool RememberMe { get; init; } = false;
     }
 
+    /// <summary>
+    /// Request for starting the password-reset email flow.
+    /// </summary>
     public record ForgotPasswordDto
     {
         public ForgotPasswordDto() { }
@@ -147,6 +171,9 @@ namespace Sqeez.Api.DTOs
         public string Email { get; init; } = string.Empty;
     }
 
+    /// <summary>
+    /// Request for replacing a password using a reset token.
+    /// </summary>
     public record ResetPasswordDto
     {
         public ResetPasswordDto() { }

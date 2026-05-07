@@ -4,6 +4,9 @@ using Sqeez.Api.Models.Import;
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines subject search, management, and assignment operations.
+    /// </summary>
     public interface ISubjectService
     {
         /// <summary>

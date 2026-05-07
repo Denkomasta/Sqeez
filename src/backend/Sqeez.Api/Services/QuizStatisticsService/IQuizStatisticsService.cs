@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines quiz and question statistics retrieval operations.
+    /// </summary>
     public interface IQuizStatisticsService
     {
         /// <summary>

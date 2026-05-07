@@ -6,6 +6,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Calculates quiz summary and per-question statistics for teachers and admins.
+    /// </summary>
     public class QuizStatisticsService : BaseService<QuizStatisticsService>, IQuizStatisticsService
     {
         public QuizStatisticsService(SqeezDbContext context, ILogger<QuizStatisticsService> logger)

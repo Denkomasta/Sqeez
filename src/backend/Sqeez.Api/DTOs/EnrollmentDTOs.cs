@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Enrollment summary joining a student with a subject and optional mark.
+    /// </summary>
     public record EnrollmentDto(
         long Id,
         int? Mark,
@@ -16,6 +19,9 @@ namespace Sqeez.Api.DTOs
         int QuizAttemptsCount
         );
 
+    /// <summary>
+    /// Enrollment search filters.
+    /// </summary>
     public class EnrollmentFilterDto : PagedFilterDto
     {
         [Range(ValidationConstants.MinMark, ValidationConstants.MaxMark)]
@@ -28,6 +34,9 @@ namespace Sqeez.Api.DTOs
 
     // Create handled by Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto) in EnrollmentService
 
+    /// <summary>
+    /// Request for updating or clearing an enrollment mark.
+    /// </summary>
     public record PatchEnrollmentDto
     {
         public PatchEnrollmentDto() { }
@@ -43,6 +52,9 @@ namespace Sqeez.Api.DTOs
         public bool? RemoveMark { get; init; }
     }
 
+    /// <summary>
+    /// Compact enrollment view embedded in detailed user profiles.
+    /// </summary>
     public record EnrollmentBasicDto
     {
         public long Id { get; init; }
@@ -53,6 +65,9 @@ namespace Sqeez.Api.DTOs
         public DateTime? ArchivedAt { get; init; }
     }
 
+    /// <summary>
+    /// Result of a bulk enrollment operation, split by newly enrolled and already enrolled student ids.
+    /// </summary>
     public class BulkEnrollmentResultDto
     {
         public List<long> NewlyEnrolledIds { get; set; } = new();

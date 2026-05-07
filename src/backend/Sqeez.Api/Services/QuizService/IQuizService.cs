@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines quiz search, retrieval, creation, patch, and delete operations.
+    /// </summary>
     public interface IQuizService
     {
         /// <summary>

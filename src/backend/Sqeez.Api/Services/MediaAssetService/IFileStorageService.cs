@@ -3,6 +3,9 @@ using Sqeez.Api.DTOs;
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines physical file storage operations for uploaded assets.
+    /// </summary>
     public interface IFileStorageService
     {
         /// <summary>

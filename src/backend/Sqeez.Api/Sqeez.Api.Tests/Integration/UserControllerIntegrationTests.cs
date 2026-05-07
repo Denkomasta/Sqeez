@@ -133,18 +133,40 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
-        public async Task GetUsers_AsStudent_ReturnsForbiddenBeforeCallingService()
+        public async Task GetUsers_AsStudent_CallsUserService()
         {
+            _factory.UserServiceMock
+                .Setup(service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter =>
+                    filter.SearchTerm == "student")))
+                .ReturnsAsync(ServiceResult<PagedResponse<StudentDto>>.Ok(
+                    new PagedResponse<StudentDto>
+                    {
+                        Data = new[]
+                        {
+                            new StudentDto
+                            {
+                                Id = 7,
+                                Username = "student",
+                                Email = "student@sqeez.test",
+                                Role = UserRole.Student,
+                                LastSeen = DateTime.UtcNow
+                            }
+                        },
+                        PageNumber = 1,
+                        PageSize = 10,
+                        TotalCount = 1
+                    }));
+
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
 
-            var response = await client.GetAsync("/api/users");
+            var response = await client.GetAsync("/api/users?SearchTerm=student");
 
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.UserServiceMock.Verify(
                 service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>()),
-                Times.Never);
+                Times.Once);
         }
 
         [Fact]

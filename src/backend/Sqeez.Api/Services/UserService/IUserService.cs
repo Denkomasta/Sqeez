@@ -4,6 +4,9 @@ using Sqeez.Api.Models.Users;
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines user search, profile retrieval, account management, and avatar operations.
+    /// </summary>
     public interface IUserService
     {
         /// <summary>
@@ -32,8 +35,8 @@ namespace Sqeez.Api.Services.Interfaces
         /// </summary>
         /// <param name="dto">User creation data.</param>
         /// <returns>
-        /// The created polymorphic user DTO. Returns conflict for duplicate email or not found when a provided
-        /// school class does not exist.
+        /// The created polymorphic user DTO. Returns conflict for duplicate email or username, or not found when a
+        /// provided school class does not exist.
         /// </returns>
         Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto);
 
@@ -50,7 +53,8 @@ namespace Sqeez.Api.Services.Interfaces
         /// <param name="id">The user id.</param>
         /// <param name="dto">Patch values. Class ids of 0 remove the relevant class assignment.</param>
         /// <returns>
-        /// The updated polymorphic user DTO. Returns not found when the user or provided class reference does not exist.
+        /// The updated polymorphic user DTO. Returns not found when the user or provided class reference does not exist,
+        /// validation failed when class/teacher ownership assignments conflict, or conflict for duplicate identity fields.
         /// </returns>
         Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto);
 

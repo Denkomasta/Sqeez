@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// School class summary returned by class endpoints.
+    /// </summary>
     public record SchoolClassDto(
         long Id,
         string Name,
@@ -13,6 +16,9 @@ namespace Sqeez.Api.DTOs
         int StudentCount,
         int SubjectCount);
 
+    /// <summary>
+    /// School class search filters.
+    /// </summary>
     public class SchoolClassFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -23,6 +29,9 @@ namespace Sqeez.Api.DTOs
         public long? TeacherId { get; set; }
     }
 
+    /// <summary>
+    /// Request for creating a school class with an optional managed teacher.
+    /// </summary>
     public record CreateSchoolClassDto
     {
         public CreateSchoolClassDto() { }
@@ -46,6 +55,9 @@ namespace Sqeez.Api.DTOs
         public long? TeacherId { get; init; }
     }
 
+    /// <summary>
+    /// Request for partially updating a school class and managed teacher.
+    /// </summary>
     public record PatchSchoolClassDto
     {
         public PatchSchoolClassDto() { }
@@ -69,6 +81,9 @@ namespace Sqeez.Api.DTOs
         public long? TeacherId { get; init; }
     }
 
+    /// <summary>
+    /// Request containing student ids to assign to a class or subject.
+    /// </summary>
     public record AssignStudentsDto
     {
         public AssignStudentsDto() { }
@@ -82,6 +97,9 @@ namespace Sqeez.Api.DTOs
         public List<long> StudentIds { get; init; } = new();
     }
 
+    /// <summary>
+    /// Request containing student ids to remove from a class or subject.
+    /// </summary>
     public record RemoveStudentsDto
     {
         public RemoveStudentsDto() { }
@@ -95,6 +113,9 @@ namespace Sqeez.Api.DTOs
         public List<long> StudentIds { get; init; } = new();
     }
 
+    /// <summary>
+    /// Detailed school class view with teacher, students, and subjects.
+    /// </summary>
     public record SchoolClassDetailDto
     {
         public long Id { get; init; }
@@ -107,6 +128,9 @@ namespace Sqeez.Api.DTOs
         public List<SubjectBasicDto> Subjects { get; init; } = new();
     }
 
+    /// <summary>
+    /// Compact school class view embedded in user profiles.
+    /// </summary>
     public record SchoolClassBasicDto
     {
         public long Id { get; init; }

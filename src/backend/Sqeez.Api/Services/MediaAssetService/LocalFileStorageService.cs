@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Stores uploaded files on the local filesystem and resolves safe download paths.
+    /// </summary>
     public class LocalFileStorageService : IFileStorageService
     {
         private readonly IWebHostEnvironment _env;

@@ -7,6 +7,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements quiz question management and role-aware detailed question retrieval.
+    /// </summary>
     public class QuizQuestionService : BaseService<QuizQuestionService>, IQuizQuestionService
     {
         private readonly IMediaAssetService _mediaAssetService;

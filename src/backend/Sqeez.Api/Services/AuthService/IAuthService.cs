@@ -2,6 +2,9 @@ using Sqeez.Api.DTOs;
 
 namespace Sqeez.Api.Services.AuthService
 {
+    /// <summary>
+    /// Defines account, session, verification, password-reset, and role-management operations.
+    /// </summary>
     public interface IAuthService
     {
         /// <summary>
@@ -26,12 +29,12 @@ namespace Sqeez.Api.Services.AuthService
         Task<ServiceResult<AuthResponseDto>> VerifyEmailAsync(string token, bool rememberMe);
 
         /// <summary>
-        /// Sends another verification email for an unverified account.
+        /// Sends another verification email for an unverified account without revealing whether the account exists.
         /// </summary>
         /// <param name="dto">Email address and remember-me preference to encode in the verification link.</param>
         /// <returns>
-        /// A successful result when the email is queued. Returns not found for an unknown user, bad request
-        /// when the email is already verified, or too many requests when the resend cooldown is active.
+        /// A successful result for missing accounts, already verified accounts, and queued emails. Returns too many
+        /// requests only when an unverified account is still inside the resend cooldown window.
         /// </returns>
         Task<ServiceResult<bool>> ResendVerificationEmailAsync(ResendVerificationDto dto);
 

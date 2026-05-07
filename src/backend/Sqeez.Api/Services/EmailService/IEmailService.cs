@@ -1,5 +1,8 @@
 ﻿namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines outbound application email operations.
+    /// </summary>
     public interface IEmailService
     {
         /// <summary>

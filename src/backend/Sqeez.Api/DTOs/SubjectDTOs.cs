@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Subject summary returned by subject endpoints.
+    /// </summary>
     public record SubjectDto(
         long Id,
         string Name,
@@ -19,6 +22,9 @@ namespace Sqeez.Api.DTOs
         int QuizCount           // Quizzes are added in Quiz service
         );
 
+    /// <summary>
+    /// Subject search filters, including teacher, class, student, and UTC start-date filters.
+    /// </summary>
     public class SubjectFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -38,6 +44,9 @@ namespace Sqeez.Api.DTOs
         public bool IsDescending { get; set; } = false;
     }
 
+    /// <summary>
+    /// Request for creating a subject with optional UTC dates and assignments.
+    /// </summary>
     public record CreateSubjectDto
     {
         public CreateSubjectDto() { }
@@ -69,6 +78,9 @@ namespace Sqeez.Api.DTOs
         public long? SchoolClassId { get; init; }
     }
 
+    /// <summary>
+    /// Request for partially updating a subject and its optional assignments.
+    /// </summary>
     public record PatchSubjectDto
     {
         public PatchSubjectDto() { }
@@ -100,6 +112,9 @@ namespace Sqeez.Api.DTOs
         public long? SchoolClassId { get; init; } // Pass 0 to remove the class
     }
 
+    /// <summary>
+    /// Compact subject view embedded in class and user detail responses.
+    /// </summary>
     public record SubjectBasicDto
     {
         public long Id { get; init; }

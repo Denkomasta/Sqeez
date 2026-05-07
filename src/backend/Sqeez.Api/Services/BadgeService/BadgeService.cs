@@ -7,6 +7,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services
 {
+    /// <summary>
+    /// Implements badge CRUD, icon storage, rule evaluation, and student badge awards.
+    /// </summary>
     public class BadgeService : BaseService<BadgeService>, IBadgeService
     {
         private readonly IFileStorageService _fileStorageService;

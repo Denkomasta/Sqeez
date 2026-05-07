@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines subject enrollment search, enrollment mutation, grading, and cleanup operations.
+    /// </summary>
     public interface IEnrollmentService
     {
         /// <summary>

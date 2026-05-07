@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Base user DTO returned for student-shaped profiles and polymorphic user lists.
+    /// </summary>
     [JsonDerivedType(typeof(StudentDto), typeDiscriminator: "student")]
     [JsonDerivedType(typeof(TeacherDto), typeDiscriminator: "teacher")]
     [JsonDerivedType(typeof(AdminDto), typeDiscriminator: "admin")]
@@ -22,17 +25,26 @@ namespace Sqeez.Api.DTOs
         public long? SchoolClassId { get; init; }
     }
 
+    /// <summary>
+    /// Teacher profile DTO with teaching department and managed class assignment.
+    /// </summary>
     public record TeacherDto : StudentDto
     {
         public string? Department { get; init; }
         public long? ManagedClassId { get; init; }
     }
 
+    /// <summary>
+    /// Admin profile DTO with administrative contact details.
+    /// </summary>
     public record AdminDto : TeacherDto
     {
         public string PhoneNumber { get; init; } = string.Empty;
     }
 
+    /// <summary>
+    /// Polymorphic user creation DTO; the role discriminator selects student, teacher, or admin fields.
+    /// </summary>
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "role")]
     [JsonDerivedType(typeof(CreateStudentDto), typeDiscriminator: "student")]
     [JsonDerivedType(typeof(CreateTeacherDto), typeDiscriminator: "teacher")]
@@ -58,6 +70,9 @@ namespace Sqeez.Api.DTOs
         public long? SchoolClassId { get; init; }
     }
 
+    /// <summary>
+    /// Teacher creation DTO with optional department and managed class assignment.
+    /// </summary>
     public record CreateTeacherDto : CreateStudentDto
     {
         [StringLength(ValidationConstants.DepartmentMaxLength)]
@@ -66,6 +81,9 @@ namespace Sqeez.Api.DTOs
         public long? ManagedClassId { get; init; }
     }
 
+    /// <summary>
+    /// Admin creation DTO with optional phone number.
+    /// </summary>
     public record CreateAdminDto : CreateTeacherDto
     {
         [StringLength(ValidationConstants.PhoneNumberMaxLength)]
@@ -74,6 +92,9 @@ namespace Sqeez.Api.DTOs
         public string? PhoneNumber { get; init; }
     }
 
+    /// <summary>
+    /// Polymorphic user patch DTO; the role discriminator selects which role-specific fields may be supplied.
+    /// </summary>
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "role")]
     [JsonDerivedType(typeof(PatchStudentDto), typeDiscriminator: "student")]
     [JsonDerivedType(typeof(PatchTeacherDto), typeDiscriminator: "teacher")]
@@ -89,6 +110,9 @@ namespace Sqeez.Api.DTOs
         public string? AvatarUrl { get; init; }
     }
 
+    /// <summary>
+    /// Teacher patch DTO for department and managed class assignment updates.
+    /// </summary>
     public record PatchTeacherDto : PatchStudentDto
     {
         [StringLength(ValidationConstants.DepartmentMaxLength)]
@@ -97,6 +121,9 @@ namespace Sqeez.Api.DTOs
         public long? ManagedClassId { get; init; }
     }
 
+    /// <summary>
+    /// Admin patch DTO for phone-number updates.
+    /// </summary>
     public record PatchAdminDto : PatchTeacherDto
     {
         [StringLength(ValidationConstants.PhoneNumberMaxLength)]
@@ -105,6 +132,9 @@ namespace Sqeez.Api.DTOs
         public string? PhoneNumber { get; init; }
     }
 
+    /// <summary>
+    /// Sort fields supported by user search.
+    /// </summary>
     public enum UserSortField
     {
         Username,
@@ -112,6 +142,9 @@ namespace Sqeez.Api.DTOs
         LastSeen
     }
 
+    /// <summary>
+    /// User search, role, assignment, and sorting filters.
+    /// </summary>
     public class UserFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -133,8 +166,14 @@ namespace Sqeez.Api.DTOs
         public bool? HasAssignedClass { get; init; }
     }
 
+    /// <summary>
+    /// Response returned after a successful avatar upload.
+    /// </summary>
     public record AvatarUploadResponseDto(string Message, string AvatarUrl);
 
+    /// <summary>
+    /// Compact student profile used inside class detail responses.
+    /// </summary>
     public record ClassmateDto
     {
         public long Id { get; init; }
@@ -145,6 +184,9 @@ namespace Sqeez.Api.DTOs
         public string? AvatarUrl { get; init; }
     }
 
+    /// <summary>
+    /// Compact teacher profile used inside class detail responses.
+    /// </summary>
     public record TeacherBasicDto
     {
         public long Id { get; init; }
@@ -154,6 +196,9 @@ namespace Sqeez.Api.DTOs
         public string? AvatarUrl { get; init; }
     }
 
+    /// <summary>
+    /// Expanded user profile including class, badges, and enrollment history.
+    /// </summary>
     public record DetailedUserDto : AdminDto
     {
         public SchoolClassBasicDto? SchoolClassDetails { get; init; }

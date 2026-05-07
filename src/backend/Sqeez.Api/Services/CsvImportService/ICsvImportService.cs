@@ -3,6 +3,9 @@ using Sqeez.Api.Models.Import;
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines CSV import operations for administrative bulk data loading.
+    /// </summary>
     public interface ICsvImportService
     {
         /// <summary>

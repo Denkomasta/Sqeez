@@ -2,6 +2,9 @@
 
 namespace Sqeez.Api.Services.Interfaces
 {
+    /// <summary>
+    /// Defines quiz question management and student-safe question detail retrieval.
+    /// </summary>
     public interface IQuizQuestionService
     {
         /// <summary>

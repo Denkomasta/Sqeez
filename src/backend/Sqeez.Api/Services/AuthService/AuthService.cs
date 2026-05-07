@@ -9,6 +9,9 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Services.AuthService
 {
+    /// <summary>
+    /// Implements account registration, authentication sessions, email verification, password reset, and role changes.
+    /// </summary>
     public class AuthService : BaseService<AuthService>, IAuthService
     {
         private readonly ITokenService _tokenService;

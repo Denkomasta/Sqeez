@@ -5,6 +5,9 @@ using Sqeez.Api.Services.AuthService;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Handles account registration, email verification, login sessions, password reset, and role elevation.
+    /// </summary>
     [Route("api/auth")]
     [ApiController]
     public class AuthController : ApiBaseController
@@ -58,6 +61,9 @@ namespace Sqeez.Api.Controllers
             Response.Cookies.Delete("sqeez_refresh_token", cookieOptions);
         }
 
+        /// <summary>
+        /// Registers a new public account and sends an email verification link.
+        /// </summary>
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterDTO registerDto)
         {
@@ -68,6 +74,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Registration successful. Please check your email to verify your account." });
         }
 
+        /// <summary>
+        /// Verifies a pending email token, activates the account, and starts an authenticated session.
+        /// </summary>
         [HttpPost("verify-email")]
         public async Task<ActionResult> VerifyEmail([FromQuery] string token, [FromQuery] bool rememberMe = false)
         {
@@ -83,6 +92,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Email verified successfully. You are now logged in." });
         }
 
+        /// <summary>
+        /// Resends a verification link without revealing whether the email belongs to an account.
+        /// </summary>
         [HttpPost("resend-verification")]
         public async Task<ActionResult> ResendVerificationEmail([FromBody] ResendVerificationDto dto)
         {
@@ -94,6 +106,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "If an account with that email exists and is unverified, a new link has been sent." });
         }
 
+        /// <summary>
+        /// Starts the password-reset flow without revealing whether the email belongs to an account.
+        /// </summary>
         [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
@@ -105,6 +120,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "If an account with that email exists, a password reset link has been sent." });
         }
 
+        /// <summary>
+        /// Completes the password-reset flow using a valid reset token.
+        /// </summary>
         [HttpPost("reset-password")]
         public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
@@ -116,6 +134,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Your password has been successfully reset." });
         }
 
+        /// <summary>
+        /// Authenticates a verified account and stores access and refresh tokens in HTTP-only cookies.
+        /// </summary>
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDTO loginDto)
         {
@@ -128,6 +149,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Login successful" });
         }
 
+        /// <summary>
+        /// Rotates the refresh-token session and issues a fresh cookie pair.
+        /// </summary>
         [HttpPost("refresh")]
         public async Task<ActionResult> Refresh()
         {
@@ -151,6 +175,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Session refreshed successfully." });
         }
 
+        /// <summary>
+        /// Revokes the current refresh-token session and clears authentication cookies.
+        /// </summary>
         [Authorize]
         [HttpPost("logout")]
         public async Task<ActionResult> Logout()
@@ -174,6 +201,9 @@ namespace Sqeez.Api.Controllers
             return Ok(new { message = "Logged out successfully" });
         }
 
+        /// <summary>
+        /// Returns the currently authenticated user's lightweight profile.
+        /// </summary>
         [Authorize]
         [HttpGet("me")]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
@@ -191,6 +221,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult<UserDTO>(result);
         }
 
+        /// <summary>
+        /// Updates a user's role and role-specific metadata. Admin-only.
+        /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPatch("elevate")]
         public async Task<ActionResult> ElevateUser(UpdateRoleDTO dto)

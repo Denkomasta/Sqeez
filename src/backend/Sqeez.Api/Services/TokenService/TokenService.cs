@@ -8,6 +8,9 @@ using System.Text;
 
 namespace Sqeez.Api.Services.TokenService
 {
+    /// <summary>
+    /// Creates signed JWT access tokens and random refresh tokens.
+    /// </summary>
     public class TokenService : ITokenService
     {
         private readonly SymmetricSecurityKey _key;

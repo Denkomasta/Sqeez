@@ -8,6 +8,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Services.EmailService
 {
+    /// <summary>
+    /// Sends application emails for verification and password-reset flows.
+    /// </summary>
     public class EmailService : IEmailService
     {
         private readonly SmtpSettings _smtpSettings;

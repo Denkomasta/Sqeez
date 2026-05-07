@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Manages quizzes and nested quiz questions/options.
+    /// </summary>
     [Authorize]
     [Route("api/quizzes")]
     public class QuizzesController : ApiBaseController
@@ -25,6 +28,9 @@ namespace Sqeez.Api.Controllers
 
         #region --- 1. QUIZZES ---
 
+        /// <summary>
+        /// Gets a paged quiz list using the supplied filters.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<PagedResponse<QuizDto>>> GetQuizzesForSubject([FromQuery] QuizFilterDto filter)
         {
@@ -32,6 +38,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Gets one quiz by id, optionally including student-specific attempt context.
+        /// </summary>
         [HttpGet("{quizId}")]
         public async Task<ActionResult<QuizDto>> GetQuiz(long quizId, [FromQuery] GetQuizDto dto)
         {
@@ -39,6 +48,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Updates quiz metadata. Admins can update any quiz; teachers can update quizzes for their subjects.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{quizId}")]
         public async Task<ActionResult<QuizDto>> PatchQuiz(long quizId, [FromBody] PatchQuizDto dto)
@@ -47,6 +59,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Deletes a quiz. Admins can delete any quiz; teachers can delete quizzes for their subjects.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{quizId}")]
         public async Task<ActionResult<bool>> DeleteQuiz(long quizId)
@@ -59,6 +74,9 @@ namespace Sqeez.Api.Controllers
 
         #region --- 2. QUIZ QUESTIONS ---
 
+        /// <summary>
+        /// Gets questions for a quiz visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions")]
         public async Task<ActionResult<PagedResponse<QuizQuestionDto>>> GetQuestions(long quizId, [FromQuery] QuizQuestionFilterDto filter)
@@ -68,6 +86,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Gets one quiz question visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions/{questionId}")]
         public async Task<ActionResult<QuizQuestionDto>> GetQuestion(long quizId, long questionId)
@@ -76,6 +97,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Creates a question in the route quiz. The route quiz id is authoritative.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("{quizId}/questions")]
         public async Task<ActionResult<QuizQuestionDto>> CreateQuestion(long quizId, [FromBody] CreateQuizQuestionDto dto)
@@ -85,6 +109,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Updates a quiz question visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{quizId}/questions/{questionId}")]
         public async Task<ActionResult<QuizQuestionDto>> PatchQuestion(long quizId, long questionId, [FromBody] PatchQuizQuestionDto dto)
@@ -93,6 +120,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Deletes a quiz question visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{quizId}/questions/{questionId}")]
         public async Task<ActionResult<bool>> DeleteQuestion(long quizId, long questionId)
@@ -101,6 +131,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Gets a detailed quiz question for quiz taking or quiz management, according to requester role.
+        /// </summary>
         [Authorize]
         [HttpGet("{quizId}/questions/{questionId}/detailed")]
         public async Task<ActionResult<DetailedQuizQuestionDto>> GetDetailedQuestion(long quizId, long questionId)
@@ -113,6 +146,9 @@ namespace Sqeez.Api.Controllers
 
         #region --- 3. QUIZ OPTIONS ---
 
+        /// <summary>
+        /// Gets answer options for a question visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions/{questionId}/options")]
         public async Task<ActionResult<PagedResponse<QuizOptionDto>>> GetOptions(long quizId, long questionId, [FromQuery] QuizOptionFilterDto filter)
@@ -122,6 +158,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Gets one answer option visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{quizId}/questions/{questionId}/options/{optionId}")]
         public async Task<ActionResult<QuizOptionDto>> GetOption(long quizId, long questionId, long optionId)
@@ -130,6 +169,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Creates an answer option in the route question. The route question id is authoritative.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("{quizId}/questions/{questionId}/options")]
         public async Task<ActionResult<QuizOptionDto>> CreateOption(long quizId, long questionId, [FromBody] CreateQuizOptionDto dto)
@@ -139,6 +181,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Updates an answer option visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{quizId}/questions/{questionId}/options/{optionId}")]
         public async Task<ActionResult<QuizOptionDto>> PatchOption(long quizId, long questionId, long optionId, [FromBody] PatchQuizOptionDto dto)
@@ -147,6 +192,9 @@ namespace Sqeez.Api.Controllers
             return HandleServiceResult(result);
         }
 
+        /// <summary>
+        /// Deletes an answer option visible to the admin or subject teacher.
+        /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{quizId}/questions/{questionId}/options/{optionId}")]
         public async Task<ActionResult<bool>> DeleteOption(long quizId, long questionId, long optionId)

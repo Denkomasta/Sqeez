@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sqeez.Api.DTOs
 {
+    /// <summary>
+    /// Quiz metadata summary returned by quiz endpoints.
+    /// </summary>
     public record QuizDto(
         long Id,
         string Title,
@@ -16,6 +19,9 @@ namespace Sqeez.Api.DTOs
         int QuizQuestions,
         int QuizAttempts);
 
+    /// <summary>
+    /// Quiz search filters, including subject, student, teacher, and UTC date filters.
+    /// </summary>
     public class QuizFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -30,8 +36,14 @@ namespace Sqeez.Api.DTOs
         public long? TeacherId { get; set; }
     }
 
+    /// <summary>
+    /// Optional query context for loading quiz data for a specific student.
+    /// </summary>
     public record GetQuizDto(long? studentId);
 
+    /// <summary>
+    /// Request for creating a quiz with optional UTC publish and closing dates.
+    /// </summary>
     public record CreateQuizDto
     {
         public CreateQuizDto() { }
@@ -61,6 +73,9 @@ namespace Sqeez.Api.DTOs
         public DateTime? ClosingDate { get; init; }
     }
 
+    /// <summary>
+    /// Request for partially updating quiz metadata and schedule values.
+    /// </summary>
     public record PatchQuizDto
     {
         public PatchQuizDto() { }
@@ -90,6 +105,9 @@ namespace Sqeez.Api.DTOs
         public DateTime? ClosingDate { get; init; }
     }
 
+    /// <summary>
+    /// Quiz question summary returned by management endpoints.
+    /// </summary>
     public record QuizQuestionDto(
         long Id,
         string Title,
@@ -102,6 +120,9 @@ namespace Sqeez.Api.DTOs
         int QuizOptions,
         int CalculatedPenalty);
 
+    /// <summary>
+    /// Quiz question search filters.
+    /// </summary>
     public class QuizQuestionFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -113,6 +134,9 @@ namespace Sqeez.Api.DTOs
         public long? MediaAssetId { get; set; }
     }
 
+    /// <summary>
+    /// Request for creating a quiz question.
+    /// </summary>
     public record CreateQuizQuestionDto
     {
         public CreateQuizQuestionDto() { }
@@ -142,6 +166,9 @@ namespace Sqeez.Api.DTOs
         public bool IsStrictMultipleChoice { get; init; } = false;
     }
 
+    /// <summary>
+    /// Request for partially updating a quiz question.
+    /// </summary>
     public record PatchQuizQuestionDto
     {
         public PatchQuizQuestionDto() { }
@@ -169,6 +196,9 @@ namespace Sqeez.Api.DTOs
         public bool? IsStrictMultipleChoice { get; init; }
     }
 
+    /// <summary>
+    /// Question detail used for quiz taking and management views.
+    /// </summary>
     public record DetailedQuizQuestionDto(
         long Id,
         string Title,
@@ -182,6 +212,9 @@ namespace Sqeez.Api.DTOs
         List<StudentQuizOptionDto> Options
     );
 
+    /// <summary>
+    /// Quiz option summary returned by management endpoints.
+    /// </summary>
     public record QuizOptionDto(
         long Id,
         string? Text,
@@ -191,6 +224,9 @@ namespace Sqeez.Api.DTOs
         long? MediaAssetId,
         int Responses);
 
+    /// <summary>
+    /// Quiz option search filters.
+    /// </summary>
     public class QuizOptionFilterDto : PagedFilterDto
     {
         [StringLength(ValidationConstants.SearchTermMaxLength)]
@@ -201,6 +237,9 @@ namespace Sqeez.Api.DTOs
         public long? MediaAssetId { get; set; }
     }
 
+    /// <summary>
+    /// Request for creating a quiz option.
+    /// </summary>
     public record CreateQuizOptionDto
     {
         public CreateQuizOptionDto() { }
@@ -223,6 +262,9 @@ namespace Sqeez.Api.DTOs
         public long? MediaAssetId { get; init; }
     }
 
+    /// <summary>
+    /// Request for partially updating a quiz option.
+    /// </summary>
     public record PatchQuizOptionDto
     {
         public PatchQuizOptionDto() { }
@@ -242,6 +284,9 @@ namespace Sqeez.Api.DTOs
         public long? MediaAssetId { get; init; }
     }
 
+    /// <summary>
+    /// Student-safe quiz option DTO that hides correctness.
+    /// </summary>
     public record StudentQuizOptionDto(
         long Id,
         string? Text,

@@ -5,6 +5,9 @@ using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
 {
+    /// <summary>
+    /// Provides enrollment search, grade updates, and enrollment removal with role-based visibility rules.
+    /// </summary>
     [Route("api/enrollments")]
     public class EnrollmentsController : ApiBaseController
     {
@@ -19,7 +22,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/enrollments
-        /// Global search for enrollments (useful for Admins or global gradebooks)
+        /// Searches enrollments. Students are limited to their own enrollments; teachers must filter by an owned subject.
         /// </summary>
         [HttpGet]
         [Authorize]
@@ -50,6 +53,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/enrollments/452
+        /// Gets a single enrollment when the requester is the student, the subject teacher, or an admin.
         /// </summary>
         [HttpGet("{id}")]
         [Authorize]
@@ -81,7 +85,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// PATCH /api/enrollments/452
-        /// Used by teachers to grade a student (update the Mark)
+        /// Used by admins or subject teachers to grade a student by updating the mark.
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpPatch("{id}")]
@@ -93,7 +97,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// DELETE /api/enrollments/452
-        /// Used by Admins to delete a specific enrollment record directly
+        /// Deletes a specific enrollment. Admins can delete any enrollment; students can delete only their own.
         /// </summary>
         [Authorize]
         [HttpDelete("{id}")]
