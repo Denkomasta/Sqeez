@@ -12,11 +12,16 @@ namespace Sqeez.Api.Controllers
     {
         private readonly IMediaAssetService _mediaAssetService;
         private readonly IFileStorageService _fileStorageService;
+        private readonly ILogger<MediaAssetsController> _logger;
 
-        public MediaAssetsController(IMediaAssetService mediaAssetService, IFileStorageService fileStorageService)
+        public MediaAssetsController(
+            IMediaAssetService mediaAssetService,
+            IFileStorageService fileStorageService,
+            ILogger<MediaAssetsController> logger)
         {
             _mediaAssetService = mediaAssetService;
             _fileStorageService = fileStorageService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -82,12 +87,6 @@ namespace Sqeez.Api.Controllers
 
             try
             {
-                var mimeTypeStr = dto.File.ContentType.ToLower();
-                MediaType mediaType = MediaType.Document;
-                if (mimeTypeStr.StartsWith("image/")) mediaType = MediaType.Image;
-                else if (mimeTypeStr.StartsWith("video/")) mediaType = MediaType.Video;
-                else if (mimeTypeStr.StartsWith("audio/")) mediaType = MediaType.Audio;
-
                 var response = await _fileStorageService.UploadFileAsync(dto.File, "media", false);
 
                 if (!response.Success)
@@ -96,6 +95,7 @@ namespace Sqeez.Api.Controllers
                 }
 
                 string fileUrl = response.Data!;
+                var mediaType = GetMediaTypeFromStoredFileUrl(fileUrl);
 
                 var createDto = new CreateMediaAssetDto(
                     LocationUrl: fileUrl,
@@ -117,8 +117,20 @@ namespace Sqeez.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred during file upload: {ex.Message}");
+                _logger.LogError(ex, "An unexpected error occurred during media upload for user {OwnerId}.", ownerId);
+                return StatusCode(500, "An unexpected error occurred during file upload.");
             }
+        }
+
+        private static MediaType GetMediaTypeFromStoredFileUrl(string fileUrl)
+        {
+            return Path.GetExtension(fileUrl).ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" or ".png" or ".gif" => MediaType.Image,
+                ".mp4" => MediaType.Video,
+                ".mp3" => MediaType.Audio,
+                _ => MediaType.Document
+            };
         }
 
         /// <summary>

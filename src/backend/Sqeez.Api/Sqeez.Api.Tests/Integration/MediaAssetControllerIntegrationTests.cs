@@ -88,6 +88,38 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task UploadFile_UsesStoredFileExtensionForMediaTypeInsteadOfClientContentType()
+        {
+            _factory.FileStorageServiceMock
+                .Setup(service => service.UploadFileAsync(It.IsAny<IFormFile>(), "media", false))
+                .ReturnsAsync(ServiceResult<string>.Ok("/secure/media/upload.pdf"));
+
+            _factory.MediaAssetServiceMock
+                .Setup(service => service.CreateMediaAssetAsync(It.Is<CreateMediaAssetDto>(dto =>
+                    dto.LocationUrl == "/secure/media/upload.pdf" &&
+                    dto.MimeType == MediaType.Document &&
+                    dto.OwnerId == 42)))
+                .ReturnsAsync(ServiceResult<MediaAssetDto>.Ok(
+                    new MediaAssetDto(9, "/secure/media/upload.pdf", MediaType.Document, false, null, 42, "teacher")));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            using var content = new MultipartFormDataContent();
+            var fileContent = new ByteArrayContent(new byte[] { 1, 2, 3 });
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+            content.Add(fileContent, "file", "spoofed.png");
+
+            var response = await client.PostAsync("/api/media-assets/upload", content);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.CreateMediaAssetAsync(It.IsAny<CreateMediaAssetDto>()),
+                Times.Once);
+        }
+
+        [Fact]
         public async Task UploadFile_WhenDatabaseCreateFails_DeletesUploadedFile()
         {
             _factory.FileStorageServiceMock

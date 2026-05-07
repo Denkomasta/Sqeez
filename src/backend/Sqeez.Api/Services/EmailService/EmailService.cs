@@ -79,11 +79,11 @@ namespace Sqeez.Api.Services.EmailService
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
 
-                _logger.LogInformation("Successfully sent email to {Email}", toEmail);
+                _logger.LogInformation("Successfully sent email.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {Email}", toEmail);
+                _logger.LogError(ex, "Failed to send email.");
             }
         }
     }

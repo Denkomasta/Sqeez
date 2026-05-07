@@ -97,7 +97,7 @@ namespace Sqeez.Api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to read file signature for {FileName}", file.FileName);
+                _logger.LogWarning(ex, "Failed to read uploaded file signature.");
             }
 
             if (!isSignatureValid)
@@ -183,7 +183,7 @@ namespace Sqeez.Api.Services
             if (!File.Exists(fullPhysicalPath))
             {
                 return Task.FromResult(ServiceResult<string>.Failure(
-                    $"Missing file. Looking in: {fullPhysicalPath}",
+                    "Stored file was not found.",
                     ServiceError.NotFound));
             }
 
@@ -218,7 +218,7 @@ namespace Sqeez.Api.Services
 
                 if (!fullPhysicalPath.StartsWith(fullRootPath))
                 {
-                    _logger.LogWarning("Path traversal attempt detected during deletion for path: {FileUrl}", fileUrl);
+                    _logger.LogWarning("Path traversal attempt detected during file deletion.");
                     return Task.FromResult(ServiceResult<bool>.Failure("Access denied.", ServiceError.Forbidden));
                 }
 
@@ -231,7 +231,7 @@ namespace Sqeez.Api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting physical file at {FileUrl}", fileUrl);
+                _logger.LogError(ex, "Error deleting physical file.");
                 return Task.FromResult(ServiceResult<bool>.Failure("An unexpected error occurred while deleting the file.", ServiceError.InternalError));
             }
         }
