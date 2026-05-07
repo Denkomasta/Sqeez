@@ -158,7 +158,7 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<SchoolClassDto>> CreateClassAsync(CreateSchoolClassDto dto)
         {
-            _logger.LogInformation("Attempting to create a new school class: {Name} - {Section}", dto.Name, dto.Section);
+            _logger.LogInformation("Attempting to create a new school class.");
 
             Teacher? teacher = null;
 
@@ -167,7 +167,7 @@ namespace Sqeez.Api.Services
                 teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == dto.TeacherId.Value);
                 if (teacher == null)
                 {
-                    _logger.LogWarning("Failed to create class {Name}: Invalid TeacherId {TeacherId}", dto.Name, dto.TeacherId);
+                    _logger.LogWarning("Failed to create school class: invalid TeacherId {TeacherId}", dto.TeacherId);
                     return ServiceResult<SchoolClassDto>.Failure("Provided Teacher ID does not exist or belongs to a non-teacher user.", ServiceError.ValidationFailed);
                 }
             }
@@ -201,7 +201,7 @@ namespace Sqeez.Api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating school class {Name}", dto.Name);
+                _logger.LogError(ex, "Error creating school class.");
                 return ServiceResult<SchoolClassDto>.Failure("Internal error occurred while creating class.", ServiceError.InternalError);
             }
         }

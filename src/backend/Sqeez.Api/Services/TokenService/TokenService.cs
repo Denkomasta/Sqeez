@@ -44,9 +44,9 @@ namespace Sqeez.Api.Services.TokenService
                 var result = tokenHandler.WriteToken(token);
                 return ServiceResult<string>.Ok(result);
             }
-            catch (Exception ex)
+            catch
             {
-                return ServiceResult<string>.Failure(ex.Message, Enums.ServiceError.InternalError);
+                return ServiceResult<string>.Failure("Failed to create authentication token.", Enums.ServiceError.InternalError);
             }
         }
 

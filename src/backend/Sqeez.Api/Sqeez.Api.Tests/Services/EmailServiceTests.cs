@@ -37,7 +37,9 @@ namespace Sqeez.Api.Tests.Services
                 x => x.Log(
                     LogLevel.Error,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("Failed to send email to")),
+                    It.Is<It.IsAnyType>((v, t) =>
+                        v!.ToString()!.Contains("Failed to send email.") &&
+                        !v.ToString()!.Contains("test@example.com")),
                     It.IsAny<Exception>(),
                     It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)),
                 Times.Once);
@@ -62,7 +64,9 @@ namespace Sqeez.Api.Tests.Services
                 x => x.Log(
                     LogLevel.Error,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v!.ToString()!.Contains("Failed to send email to")),
+                    It.Is<It.IsAnyType>((v, t) =>
+                        v!.ToString()!.Contains("Failed to send email.") &&
+                        !v.ToString()!.Contains("test@example.com")),
                     It.IsAny<Exception>(),
                     It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)),
                 Times.Once);

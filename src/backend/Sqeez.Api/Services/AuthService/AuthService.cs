@@ -97,7 +97,7 @@ namespace Sqeez.Api.Services.AuthService
 
         public async Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDTO dto)
         {
-            _logger.LogInformation("Attempting to login user: {Email}", dto.Email);
+            _logger.LogInformation("Attempting user login.");
             var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == dto.Email.Trim().ToLower());
 
             if (user == null) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.NotFound);
@@ -117,7 +117,7 @@ namespace Sqeez.Api.Services.AuthService
 
         public async Task<ServiceResult<bool>> RegisterAsync(RegisterDTO dto)
         {
-            _logger.LogInformation("Attempting to register user: {Email}", dto.Email);
+            _logger.LogInformation("Attempting user registration.");
 
             var config = await _configService.GetConfigAsync();
             if (!config.Data!.AllowPublicRegistration)
@@ -397,14 +397,14 @@ namespace Sqeez.Api.Services.AuthService
             // 1. Prevent role modifications to the Super User account (Already Handled)
             if (user.Email == _superUserEmail)
             {
-                _logger.LogWarning("Attempted modification of Super User: {Email} by {Email}", _superUserEmail, performingAdmin.Email);
+                _logger.LogWarning("Admin {AdminId} attempted to modify the super user account.", performingAdmin.Id);
                 return ServiceResult<bool>.Failure("Forbidden operation.", ServiceError.Forbidden);
             }
 
             // 2. Only Super User can assign Admin role, and no one can create another Admin
             if (newRole == UserRole.Admin && !isSuperUser)
             {
-                _logger.LogWarning("Admin {Email} tried to create another Admin.", performingAdmin.Email);
+                _logger.LogWarning("Admin {AdminId} attempted to assign another admin role.", performingAdmin.Id);
                 return ServiceResult<bool>.Failure("Forbidden operation.", ServiceError.Forbidden);
             }
 
