@@ -134,7 +134,7 @@ function QuizDetailsPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
           <Card className="border-none shadow-md">
-            <CardHeader className="bg-muted/30 pb-4">
+            <CardHeader className="border-b border-border bg-muted/50 pb-4">
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Info className="size-5 text-primary" />
                 {t('quiz.instructions')}
@@ -152,10 +152,10 @@ function QuizDetailsPage() {
           </Card>
 
           {subject && (
-            <Card className="overflow-hidden border-primary/10 bg-primary/5 shadow-sm">
+            <Card className="overflow-hidden border-border bg-card shadow-sm">
               <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <BookOpen className="size-4" />
                     {t('subject.relatedSubject')}
                   </div>
@@ -188,7 +188,7 @@ function QuizDetailsPage() {
         <div className="lg:col-span-1">
           <div className="sticky top-6 space-y-6">
             <Card className="border-2 shadow-lg">
-              <CardHeader className="bg-muted/20 pb-4">
+              <CardHeader className="border-b border-border bg-muted/50 pb-4">
                 <CardTitle className="text-lg">
                   {t('quiz.quizDetails')}
                 </CardTitle>
@@ -238,7 +238,7 @@ function QuizDetailsPage() {
                 </div>
               </CardContent>
 
-              <CardFooter className="bg-muted/10 pt-4">
+              <CardFooter className="border-t border-border bg-muted/40 pt-4">
                 {maxRetriesReached ? (
                   <Button className="w-full" size="lg" asChild>
                     <Link

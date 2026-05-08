@@ -49,7 +49,7 @@ export function AdminImportPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Info className="h-5 w-5 text-blue-500" />
+                <Info className="h-5 w-5 text-info" />
                 {t('admin.import.howItWorks')}
               </CardTitle>
               <CardDescription>{t('admin.import.description')}</CardDescription>

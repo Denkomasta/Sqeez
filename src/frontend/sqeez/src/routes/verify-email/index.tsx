@@ -67,7 +67,7 @@ function VerifyEmailPage() {
         </CardDescription>
 
         {isAuthenticated && (
-          <div className="mx-auto mt-6 rounded-md bg-slate-100 p-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <div className="mx-auto mt-6 rounded-md bg-muted p-3 text-sm text-muted-foreground">
             {t('verifyEmail.alreadyLoggedInMsg')}
           </div>
         )}
@@ -127,7 +127,7 @@ function VerifyEmailPage() {
         </CardDescription>
 
         {isAuthenticated && (
-          <div className="mx-auto mt-6 rounded-md bg-slate-100 p-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <div className="mx-auto mt-6 rounded-md bg-muted p-3 text-sm text-muted-foreground">
             {t('verifyEmail.alreadyLoggedInMsg')}
           </div>
         )}
@@ -153,13 +153,13 @@ function VerifyEmailPage() {
   if (verifyMutation.isSuccess) {
     return (
       <VerificationLayout>
-        <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-green-500" />
+        <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-success" />
         <CardTitle>{t('verifyEmail.successTitle')}</CardTitle>
         <CardDescription className="mt-2">
           {t('verifyEmail.successDesc')}
         </CardDescription>
         <CardFooter className="mt-6 flex justify-center p-0">
-          <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </CardFooter>
       </VerificationLayout>
     )
@@ -171,7 +171,7 @@ function VerifyEmailPage() {
 function VerificationLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md border-slate-300 text-center shadow-lg">
+      <Card className="w-full max-w-md text-center shadow-lg">
         <CardHeader>{children}</CardHeader>
       </Card>
     </div>

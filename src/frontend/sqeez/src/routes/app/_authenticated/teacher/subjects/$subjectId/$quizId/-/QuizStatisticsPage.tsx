@@ -106,7 +106,7 @@ export function QuizStatisticsPage({
             {t('quiz.backToQuizzes')}
           </Link>
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-nav-purple/10 text-nav-purple">
               <FileSignature className="h-6 w-6" />
             </div>
             <span>{quizData?.title}</span>
@@ -174,10 +174,10 @@ export function QuizStatisticsPage({
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t('quiz.averageScore')}
               </CardTitle>
-              <Target className="h-4 w-4 text-blue-500" />
+              <Target className="h-4 w-4 text-info" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-3xl font-bold text-info">
                 {averageScore.toFixed(1)}
               </div>
             </CardContent>
@@ -188,10 +188,10 @@ export function QuizStatisticsPage({
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t('quiz.highLowScore')}
               </CardTitle>
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
+              <TrendingUp className="h-4 w-4 text-success" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-emerald-600">
+              <div className="text-3xl font-bold text-success">
                 {highestScore}{' '}
                 <span className="text-xl font-medium text-muted-foreground/50">
                   /
@@ -206,10 +206,10 @@ export function QuizStatisticsPage({
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {t('quiz.avgCompletionTime')}
               </CardTitle>
-              <Clock className="h-4 w-4 text-orange-500" />
+              <Clock className="h-4 w-4 text-warning" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-orange-600">
+              <div className="text-3xl font-bold text-warning">
                 {avgTimeMinutes.toFixed(1)}{' '}
                 <span className="text-sm font-normal">min</span>
               </div>

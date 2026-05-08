@@ -62,8 +62,8 @@ export function AdminBadgesPage() {
           </div>
           <div className="flex flex-col">
             <span className="font-semibold text-foreground">{badge.name}</span>
-            <span className="flex items-center gap-1 text-xs font-medium text-yellow-600 dark:text-yellow-500">
-              <Star className="h-3 w-3 fill-yellow-500" /> +{badge.xpBonus} XP
+            <span className="flex items-center gap-1 text-xs font-medium text-warning">
+              <Star className="h-3 w-3 fill-warning" /> +{badge.xpBonus} XP
             </span>
           </div>
         </div>

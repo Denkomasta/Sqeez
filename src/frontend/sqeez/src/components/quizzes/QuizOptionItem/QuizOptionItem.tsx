@@ -16,14 +16,14 @@ interface QuizOptionItemProps {
 }
 
 const FUN_COLORS = [
-  'bg-rose-500 border-rose-700 text-white hover:bg-rose-400',
-  'bg-blue-500 border-blue-700 text-white hover:bg-blue-400',
-  'bg-emerald-500 border-emerald-700 text-white hover:bg-emerald-400',
-  'bg-amber-400 border-amber-600 text-slate-900 hover:bg-amber-300',
-  'bg-violet-500 border-violet-700 text-white hover:bg-violet-400',
-  'bg-fuchsia-500 border-fuchsia-700 text-white hover:bg-fuchsia-400',
-  'bg-teal-500 border-teal-700 text-white hover:bg-teal-400',
-  'bg-orange-500 border-orange-700 text-white hover:bg-orange-400',
+  'bg-quiz-opt-1 border-black/20 dark:border-white/20 text-quiz-opt-1-fg hover:brightness-110',
+  'bg-quiz-opt-2 border-black/20 dark:border-white/20 text-quiz-opt-2-fg hover:brightness-110',
+  'bg-quiz-opt-3 border-black/20 dark:border-white/20 text-quiz-opt-3-fg hover:brightness-110',
+  'bg-quiz-opt-4 border-black/20 dark:border-white/20 text-quiz-opt-4-fg hover:brightness-110',
+  'bg-quiz-opt-5 border-black/20 dark:border-white/20 text-quiz-opt-5-fg hover:brightness-110',
+  'bg-quiz-opt-6 border-black/20 dark:border-white/20 text-quiz-opt-6-fg hover:brightness-110',
+  'bg-quiz-opt-7 border-black/20 dark:border-white/20 text-quiz-opt-7-fg hover:brightness-110',
+  'bg-quiz-opt-8 border-black/20 dark:border-white/20 text-quiz-opt-8-fg hover:brightness-110',
 ]
 
 export function QuizOptionItem({

@@ -35,7 +35,7 @@ export function AdminSubjectsTable({
       header: t('admin.subjects.subjectDetails'),
       cell: (subject) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-500">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-nav-cyan/10 text-nav-cyan">
             <BookCopy className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
@@ -86,7 +86,7 @@ export function AdminSubjectsTable({
               to="/app/profile/$userId"
               params={{ userId: subject.teacherId.toString() }}
             >
-              <Badge className="w-fit bg-blue-600 hover:bg-blue-700">
+              <Badge className="w-fit bg-info text-info-foreground hover:bg-info/90">
                 <User className="mr-1 h-3 w-3" /> {subject.teacherName}
               </Badge>
             </Link>
@@ -103,7 +103,7 @@ export function AdminSubjectsTable({
             >
               <Badge
                 variant="outline"
-                className="w-fit border-indigo-500/30 text-indigo-500"
+                className="w-fit border-nav-purple/30 text-nav-purple"
               >
                 <School className="mr-1 h-3 w-3" /> {subject.schoolClassName}
               </Badge>

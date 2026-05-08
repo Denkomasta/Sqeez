@@ -41,15 +41,15 @@ export function QuestionRecapScreen({
   let bannerText = ''
 
   if (isFreeText) {
-    bannerStyle = 'border-blue-700 bg-blue-500 text-white'
+    bannerStyle = 'border-info/80 bg-info text-info-foreground'
     BannerIcon = Hourglass
     bannerText = t('quiz.pendingGrading')
   } else if (isFullyCorrect) {
-    bannerStyle = 'border-emerald-700 bg-emerald-500 text-white'
+    bannerStyle = 'border-success/80 bg-success text-success-foreground'
     BannerIcon = Check
     bannerText = t('quiz.correctAnswer')
   } else {
-    bannerStyle = 'border-rose-700 bg-rose-500 text-white'
+    bannerStyle = 'border-destructive/80 bg-destructive text-destructive-foreground'
     BannerIcon = X
     bannerText = t('quiz.incorrectAnswer')
   }
@@ -92,7 +92,7 @@ export function QuestionRecapScreen({
         <CardContent className="p-0">
           {isFreeText ? (
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-6 rounded-3xl border-4 border-blue-500/20 bg-card p-6 shadow-sm md:flex-row">
+              <div className="flex flex-col gap-6 rounded-3xl border-4 border-info/20 bg-card p-6 shadow-sm md:flex-row">
                 <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border-4 border-muted/30 bg-muted/10 p-6 text-center">
                   <span className="shrink-0 text-sm font-bold tracking-widest text-muted-foreground uppercase">
                     {t('quiz.yourAnswer')}
@@ -104,8 +104,8 @@ export function QuestionRecapScreen({
                   </div>
                 </div>
 
-                <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border-4 border-blue-700 bg-blue-500 p-6 text-center text-white">
-                  <span className="shrink-0 text-sm font-bold tracking-widest text-blue-100 uppercase">
+                <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border-4 border-info/80 bg-info p-6 text-center text-info-foreground">
+                  <span className="shrink-0 text-sm font-bold tracking-widest text-info-foreground/80 uppercase">
                     {t('quiz.expectedAnswer')}
                   </span>
                   <div className="max-h-48 flex-1 overflow-y-auto pr-2">
@@ -131,19 +131,19 @@ export function QuestionRecapScreen({
 
                 if (isSelected && isCorrect) {
                   blockStyle =
-                    'bg-emerald-500 border-emerald-700 text-white border-b-4 translate-y-1 brightness-95'
-                  Icon = <Check className="size-6 stroke-4 text-white" />
+                    'bg-success border-success/80 text-success-foreground border-b-4 translate-y-1 brightness-95'
+                  Icon = <Check className="size-6 stroke-4 text-success-foreground" />
                 } else if (isSelected && !isCorrect) {
                   blockStyle =
-                    'bg-rose-500 border-rose-700 text-white border-b-4 translate-y-1 brightness-95'
-                  Icon = <X className="size-6 stroke-4 text-white" />
+                    'bg-destructive border-destructive/80 text-destructive-foreground border-b-4 translate-y-1 brightness-95'
+                  Icon = <X className="size-6 stroke-4 text-destructive-foreground" />
                 } else if (!isSelected && isCorrect) {
                   blockStyle =
-                    'bg-emerald-100 border-emerald-500 text-emerald-900 border-b-8 opacity-90'
-                  Icon = <Check className="size-6 stroke-4 text-emerald-700" />
+                    'bg-success/20 border-success text-success border-b-8 opacity-90'
+                  Icon = <Check className="size-6 stroke-4 text-success" />
                 } else {
                   blockStyle =
-                    'bg-muted/30 border-muted text-muted-foreground border-b-4 opacity-50 grayscale'
+                    'bg-card border-border text-foreground/80 border-b-4 opacity-80'
                 }
 
                 return (

@@ -51,11 +51,11 @@ export function BadgeDetailsModal({
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full bg-yellow-500/10 px-3 py-1 text-sm font-bold text-yellow-600 dark:text-yellow-500">
-            <Star className="h-4 w-4 fill-yellow-500" />+{badge.xpBonus} XP
+          <div className="flex items-center gap-1.5 rounded-full bg-warning/10 px-3 py-1 text-sm font-bold text-warning">
+            <Star className="h-4 w-4 fill-warning" />+{badge.xpBonus} XP
           </div>
           {isEarned ? (
-            <span className="text-sm font-medium text-green-600 dark:text-green-400">
+            <span className="text-sm font-medium text-success">
               {t('badges.earnedOn')}{' '}
               {earnedDate ? new Date(earnedDate).toLocaleDateString() : ''}
             </span>

@@ -49,8 +49,7 @@ export function SubjectOverviewPage({
             <ArrowLeft className="h-4 w-4" />
             {t('subject.backToSubjects')}
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-nav-cyan/10 text-nav-cyan">
               <BookCopy className="h-6 w-6" />
             </div>
             <span className="text-3xl font-bold tracking-tight">
@@ -131,7 +130,7 @@ export function SubjectOverviewPage({
                 <Card className="h-full ring-primary transition-all hover:border-primary hover:shadow-md focus-visible:ring-2">
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 transition-transform group-hover:scale-110">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-nav-blue/10 text-nav-blue transition-transform group-hover:scale-110">
                         <Users className="h-5 w-5" />
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
@@ -159,7 +158,7 @@ export function SubjectOverviewPage({
                 <Card className="h-full ring-primary transition-all hover:border-primary hover:shadow-md focus-visible:ring-2">
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 text-purple-500 transition-transform group-hover:scale-110">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-nav-purple/10 text-nav-purple transition-transform group-hover:scale-110">
                         <FileSignature className="h-5 w-5" />
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />

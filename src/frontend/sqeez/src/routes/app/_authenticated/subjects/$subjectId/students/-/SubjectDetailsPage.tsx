@@ -141,7 +141,7 @@ export function SubjectDetailsPage({
               {t('subject.backToSubjects')}
             </Link>
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-nav-cyan/10 text-nav-cyan">
                 <BookCopy className="h-6 w-6" />
               </div>
               <span>{subjectData?.name}</span>

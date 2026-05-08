@@ -70,8 +70,8 @@ export function RegisterForm() {
   if (isSuccess) {
     return (
       <div className="flex w-full max-w-md animate-in flex-col items-center gap-6 text-center duration-500 zoom-in-95 fade-in">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
-          <Mail className="h-10 w-10 text-green-500" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-success/10">
+          <Mail className="h-10 w-10 text-success" />
         </div>
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">

@@ -75,7 +75,7 @@ export function ScrollableSelectList({
                   className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-primary bg-primary' : 'border-input'}`}
                 >
                   {isSelected && (
-                    <div className="h-1.5 w-1.5 rounded-full bg-white" />
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />
                   )}
                 </div>
               </button>
