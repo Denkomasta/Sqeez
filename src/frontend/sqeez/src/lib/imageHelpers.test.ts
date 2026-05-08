@@ -5,6 +5,7 @@ import {
   getImageUrl,
   getSafeImageSrc,
   isAllowedImageUploadFile,
+  isSafeLocalPreviewSrc,
   revokeSafeLocalPreviewSrc,
 } from './imageHelpers'
 
@@ -87,10 +88,15 @@ describe('local preview helpers', () => {
     const previewUrl = createSafeLocalPreviewSrc(file)
 
     expect(previewUrl).toBe('blob:http://localhost/image-id')
+    expect(isSafeLocalPreviewSrc(previewUrl)).toBe(true)
+    expect(isSafeLocalPreviewSrc('blob:http://localhost/unknown-id')).toBe(
+      false,
+    )
     expect(createObjectURL).toHaveBeenCalledWith(file)
 
     revokeSafeLocalPreviewSrc(previewUrl)
 
+    expect(isSafeLocalPreviewSrc(previewUrl)).toBe(false)
     expect(revokeObjectURL).toHaveBeenCalledWith(previewUrl)
   })
 })

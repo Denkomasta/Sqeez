@@ -19,6 +19,7 @@ import { handleQuizMutationError } from '@/lib/quizHelpers'
 import { cn } from '@/lib/utils'
 import {
   createSafeLocalPreviewSrc,
+  isSafeLocalPreviewSrc,
   revokeSafeLocalPreviewSrc,
   type SafeLocalPreviewSrc,
 } from '@/lib/imageHelpers'
@@ -114,12 +115,16 @@ export function OptionMediaModal({
   }
 
   const renderLocalPreview = () => {
-    if (!selectedFile || !previewUrl) return null
+    const safePreviewUrl = isSafeLocalPreviewSrc(previewUrl)
+      ? previewUrl
+      : undefined
+
+    if (!selectedFile || !safePreviewUrl) return null
 
     if (selectedFile.type.startsWith('image/')) {
       return (
         <img
-          src={previewUrl}
+          src={safePreviewUrl}
           alt="Local Preview"
           className="max-h-48 w-full rounded-xl object-contain"
         />

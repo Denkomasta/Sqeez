@@ -65,12 +65,25 @@ export type SafeLocalPreviewSrc = string & {
   readonly [safeLocalPreviewSrcBrand]: true
 }
 
+const safeLocalPreviewSrcRegistry = new Set<SafeLocalPreviewSrc>()
+
+export function isSafeLocalPreviewSrc(
+  src?: string | null,
+): src is SafeLocalPreviewSrc {
+  return safeLocalPreviewSrcRegistry.has(src as SafeLocalPreviewSrc)
+}
+
 export function createSafeLocalPreviewSrc(file: File): SafeLocalPreviewSrc {
-  return URL.createObjectURL(file) as SafeLocalPreviewSrc
+  const src = URL.createObjectURL(file) as SafeLocalPreviewSrc
+  safeLocalPreviewSrcRegistry.add(src)
+  return src
 }
 
 export function revokeSafeLocalPreviewSrc(
   src?: SafeLocalPreviewSrc | null,
 ): void {
-  if (src) URL.revokeObjectURL(src)
+  if (!src) return
+
+  safeLocalPreviewSrcRegistry.delete(src)
+  URL.revokeObjectURL(src)
 }

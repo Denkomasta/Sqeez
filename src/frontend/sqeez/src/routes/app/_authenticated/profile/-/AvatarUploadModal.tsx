@@ -9,6 +9,7 @@ import {
   allowedImageUploadAccept,
   createSafeLocalPreviewSrc,
   isAllowedImageUploadFile,
+  isSafeLocalPreviewSrc,
   revokeSafeLocalPreviewSrc,
   type SafeLocalPreviewSrc,
 } from '@/lib/imageHelpers'
@@ -37,6 +38,9 @@ export function AvatarUploadModal({
   const [previewUrl, setPreviewUrl] = useState<SafeLocalPreviewSrc | null>(null)
 
   const uploadAvatar = usePostApiUsersMeAvatar()
+  const safePreviewUrl = isSafeLocalPreviewSrc(previewUrl)
+    ? previewUrl
+    : undefined
 
   const handleClose = () => {
     setSelectedFile(null)
@@ -118,10 +122,10 @@ export function AvatarUploadModal({
           onChange={handleFileChange}
         />
 
-        {previewUrl ? (
+        {safePreviewUrl ? (
           <div className="relative">
             <img
-              src={previewUrl}
+              src={safePreviewUrl}
               alt="Avatar Preview"
               className="size-40 rounded-full border-4 border-primary/20 object-cover shadow-md"
             />
