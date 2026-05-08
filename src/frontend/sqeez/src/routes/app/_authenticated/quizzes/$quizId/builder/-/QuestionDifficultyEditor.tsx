@@ -120,9 +120,7 @@ export function QuestionDifficultyEditor({
           )}
         >
           <Scale className="h-3 w-3" />
-          <span className="text-success">
-            +{currentDifficulty}
-          </span>
+          <span className="text-success">+{currentDifficulty}</span>
           <span>/</span>
           <span className={hasPenalty ? '' : 'opacity-50'}>
             -{calculatedPenalty}
