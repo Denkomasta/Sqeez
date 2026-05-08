@@ -85,7 +85,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       try {
         actions.initResume(initialAttemptId)
 
-        const nextQuestionId = await queryClient.fetchQuery({
+        const nextQuestionProgress = await queryClient.fetchQuery({
           queryKey:
             getGetApiQuizAttemptsIdNextQuestionQueryKey(initialAttemptId),
           queryFn: () => getApiQuizAttemptsIdNextQuestion(initialAttemptId),
@@ -94,9 +94,21 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
 
         if (!isMounted) return
 
+        const nextQuestionId = nextQuestionProgress.nextQuestionId
+          ? Number(nextQuestionProgress.nextQuestionId)
+          : null
+        const answeredQuestionsCount = Number(
+          nextQuestionProgress.answeredQuestionsCount || 0,
+        )
+
         if (nextQuestionId) {
-          actions.startAttempt(initialAttemptId, Number(nextQuestionId))
+          actions.startAttempt(
+            initialAttemptId,
+            nextQuestionId,
+            answeredQuestionsCount,
+          )
         } else {
+          actions.setQuestionsAnswered(answeredQuestionsCount)
           const response = await completeMutation.mutateAsync({
             id: initialAttemptId,
           })

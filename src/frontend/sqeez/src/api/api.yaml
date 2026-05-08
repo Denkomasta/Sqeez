@@ -948,28 +948,13 @@ paths:
           content:
             text/plain:
               schema:
-                pattern: ^-?(?:0|[1-9]\d*)$
-                type:
-                  - "null"
-                  - integer
-                  - string
-                format: int64
+                $ref: "#/components/schemas/NextQuestionProgressDto"
             application/json:
               schema:
-                pattern: ^-?(?:0|[1-9]\d*)$
-                type:
-                  - "null"
-                  - integer
-                  - string
-                format: int64
+                $ref: "#/components/schemas/NextQuestionProgressDto"
             text/json:
               schema:
-                pattern: ^-?(?:0|[1-9]\d*)$
-                type:
-                  - "null"
-                  - integer
-                  - string
-                format: int64
+                $ref: "#/components/schemas/NextQuestionProgressDto"
   /api/quiz-attempts/{id}/complete:
     post:
       tags:
@@ -3851,6 +3836,25 @@ components:
         - Video
         - Audio
         - Document
+    NextQuestionProgressDto:
+      required:
+        - nextQuestionId
+        - answeredQuestionsCount
+      type: object
+      properties:
+        nextQuestionId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
+        answeredQuestionsCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
     OptionStatDto:
       type: object
       properties:

@@ -22,7 +22,12 @@ interface QuizState {
 
   actions: {
     initResume: (attemptId: number) => void
-    startAttempt: (attemptId: number, firstQuestionId: number | null) => void
+    startAttempt: (
+      attemptId: number,
+      firstQuestionId: number | null,
+      answeredQuestionsCount?: number,
+    ) => void
+    setQuestionsAnswered: (count: number) => void
     finishTransition: () => void
     setSelectedOptions: (ids: (number | string)[]) => void
     setFreeText: (text: string) => void
@@ -72,12 +77,15 @@ export const useQuizStore = create<QuizState>()(
           phase: 'resuming',
         }),
 
-      startAttempt: (attemptId, firstQuestionId) =>
+      startAttempt: (attemptId, firstQuestionId, answeredQuestionsCount = 0) =>
         set({
           attemptId,
           currentQuestionId: firstQuestionId,
+          questionsAnswered: answeredQuestionsCount,
           phase: firstQuestionId ? 'transition' : 'completed',
         }),
+
+      setQuestionsAnswered: (count) => set({ questionsAnswered: count }),
 
       finishTransition: () =>
         set({
