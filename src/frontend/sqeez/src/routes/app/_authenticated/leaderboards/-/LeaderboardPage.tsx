@@ -152,11 +152,11 @@ export function LeaderboardPage() {
   const getRankBadge = (globalRank: number) => {
     switch (globalRank) {
       case 1:
-        return <Trophy className="h-6 w-6 text-yellow-500 drop-shadow-sm" />
+        return <Trophy className="h-6 w-6 text-nav-yellow drop-shadow-sm" />
       case 2:
-        return <Medal className="h-6 w-6 text-slate-400 drop-shadow-sm" />
+        return <Medal className="h-6 w-6 text-muted-foreground drop-shadow-sm" />
       case 3:
-        return <Medal className="h-6 w-6 text-amber-700 drop-shadow-sm" />
+        return <Medal className="h-6 w-6 text-nav-orange drop-shadow-sm" />
       default:
         return (
           <span className="text-lg font-bold text-muted-foreground">
@@ -294,14 +294,14 @@ export function LeaderboardPage() {
           className={cn(
             'inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium shadow-sm transition-colors focus-visible:outline-none',
             isOnlineOnly
-              ? 'border-transparent bg-green-600 text-white hover:bg-green-700'
+              ? 'border-transparent bg-success text-success-foreground hover:bg-success/90'
               : 'border-input bg-background hover:bg-accent hover:text-accent-foreground',
           )}
         >
           <Wifi
             className={cn(
               'h-3.5 w-3.5',
-              isOnlineOnly ? 'text-white' : 'text-muted-foreground',
+              isOnlineOnly ? 'text-success-foreground' : 'text-muted-foreground',
             )}
           />
           {t('common.online')}

@@ -70,7 +70,7 @@ export function AttemptsTable({
           return (
             <Badge
               variant="outline"
-              className="border-yellow-500/50 bg-yellow-500/10 text-yellow-600"
+              className="border-warning/50 bg-warning/10 text-warning"
             >
               <Clock className="mr-1 h-3 w-3" />
               {t('grading.needsGrading')}
@@ -81,7 +81,7 @@ export function AttemptsTable({
           return (
             <Badge
               variant="outline"
-              className="border-green-500/50 bg-green-500/10 text-green-600"
+              className="border-success/50 bg-success/10 text-success"
             >
               <CheckCircle2 className="mr-1 h-3 w-3" />
               {t('attempts.completed')}
@@ -122,7 +122,7 @@ export function AttemptsTable({
               disabled={isViewDisabled}
               className={
                 showGradeButton
-                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                  ? 'bg-warning text-warning-foreground hover:bg-warning/90'
                   : ''
               }
             >

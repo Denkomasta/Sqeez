@@ -84,8 +84,8 @@ export function AttemptViewerPage({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
-              <Clock className="h-6 w-6 text-blue-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-info/10">
+              <Clock className="h-6 w-6 text-info" />
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
@@ -98,8 +98,8 @@ export function AttemptViewerPage({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
-              <GraduationCap className="h-6 w-6 text-green-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success/10">
+              <GraduationCap className="h-6 w-6 text-success" />
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">

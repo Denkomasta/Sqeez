@@ -248,7 +248,7 @@ export function ClassView({ targetClassId }: { targetClassId?: number }) {
                             variant="outline"
                             className="flex items-center gap-1"
                           >
-                            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                            <Star className="h-3 w-3 fill-warning text-warning" />
                             {t('class.level', { level })}
                           </Badge>
                         </div>

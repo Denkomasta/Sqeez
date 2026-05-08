@@ -37,7 +37,7 @@ export function BadgeUnlockNotification({
         <div
           key={badge.badgeId}
           style={{ animationDelay: `${index * 200}ms` }}
-          className="pointer-events-auto relative flex min-w-70 animate-in items-center gap-4 rounded-xl border border-yellow-500/40 bg-background/95 p-4 shadow-xl shadow-yellow-500/10 backdrop-blur-md duration-500 fill-mode-both zoom-in-95 fade-in slide-in-from-bottom-12"
+          className="pointer-events-auto relative flex min-w-70 animate-in items-center gap-4 rounded-xl border border-warning/40 bg-background/95 p-4 shadow-xl shadow-warning/10 backdrop-blur-md duration-500 fill-mode-both zoom-in-95 fade-in slide-in-from-bottom-12"
         >
           <button
             onClick={() => dismissBadge(badge.badgeId)}
@@ -46,7 +46,7 @@ export function BadgeUnlockNotification({
             <X className="h-3 w-3" />
           </button>
 
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-yellow-500/10 text-yellow-500 ring-1 ring-yellow-500/30">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-warning/10 text-warning ring-1 ring-warning/30">
             {badge.iconUrl ? (
               <img
                 src={getImageUrl(badge.iconUrl)}
@@ -59,7 +59,7 @@ export function BadgeUnlockNotification({
           </div>
 
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold tracking-wider text-yellow-600 uppercase dark:text-yellow-400">
+            <span className="text-[10px] font-bold tracking-wider text-warning uppercase">
               {achievementText}
             </span>
             <span className="mt-0.5 text-sm leading-tight font-bold text-foreground">

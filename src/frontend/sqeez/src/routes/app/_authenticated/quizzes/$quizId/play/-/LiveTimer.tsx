@@ -43,7 +43,7 @@ export function LiveTimer({ timeLimit, onTimeUp }: LiveTimerProps) {
       className={cn(
         'flex items-center gap-2 text-xl transition-colors',
         isUrgent
-          ? 'animate-pulse font-bold text-rose-500'
+          ? 'animate-pulse font-bold text-destructive'
           : 'font-semibold text-foreground/80',
       )}
     >

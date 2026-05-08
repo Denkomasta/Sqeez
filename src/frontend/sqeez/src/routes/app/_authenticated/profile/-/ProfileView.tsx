@@ -255,11 +255,11 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
             <div className="mt-2 flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <span className="relative flex h-3 w-3">
                 {status.isOnline && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"></span>
                 )}
                 <span
                   className={`relative inline-flex h-3 w-3 rounded-full ${
-                    status.isOnline ? 'bg-green-500' : 'bg-muted-foreground/40'
+                    status.isOnline ? 'bg-success' : 'bg-muted-foreground/40'
                   }`}
                 ></span>
               </span>
@@ -268,7 +268,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
 
             <div className="mt-6 flex w-full flex-col gap-3">
               <div className="flex items-center justify-center gap-2 rounded-full bg-secondary/80 px-4 py-2 text-sm font-semibold text-secondary-foreground shadow-sm">
-                <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                <Star className="h-4 w-4 fill-nav-yellow text-nav-yellow" />
                 {t('class.level', {
                   level: calculateLevel(profileData.currentXP),
                 })}

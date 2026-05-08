@@ -115,12 +115,12 @@ export function QuestionDifficultyEditor({
           className={cn(
             'flex items-center gap-1.5 rounded px-2 py-0.5 text-[10px] font-semibold transition-all hover:scale-105 active:scale-95',
             hasPenalty
-              ? 'border border-rose-200 bg-rose-100 text-rose-700 dark:border-rose-800 dark:bg-rose-900/40 dark:text-rose-300'
+              ? 'border border-destructive/30 bg-destructive/10 text-destructive'
               : 'border border-transparent bg-muted/50 text-muted-foreground hover:bg-muted',
           )}
         >
           <Scale className="h-3 w-3" />
-          <span className="text-emerald-600 dark:text-emerald-400">
+          <span className="text-success">
             +{currentDifficulty}
           </span>
           <span>/</span>

@@ -39,7 +39,7 @@ export function AdminUsersTable({
         )
       case 'Teacher':
         return (
-          <Badge className="bg-blue-600 hover:bg-blue-700">
+          <Badge className="bg-info text-info-foreground hover:bg-info/90">
             <BookOpen className="mr-1 h-3 w-3" /> {t('common.teacher')}
           </Badge>
         )

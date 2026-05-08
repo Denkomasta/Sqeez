@@ -19,7 +19,7 @@ function Landing() {
           <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl space-y-8">
               <div className="inline-flex items-center rounded-full border border-border bg-secondary/50 px-3 py-1 text-sm font-medium">
-                <Sparkles className="mr-2 h-4 w-4 text-yellow-500" />
+                <Sparkles className="mr-2 h-4 w-4 text-nav-yellow" />
                 <span>{t('landing.hero.pill')}</span>
               </div>
 
@@ -78,15 +78,15 @@ function Landing() {
               />
 
               <FeatureCard
-                icon={<Trophy className="h-7 w-7 text-yellow-500" />}
-                iconWrapperClassName="bg-yellow-500/10"
+                icon={<Trophy className="h-7 w-7 text-nav-yellow" />}
+                iconWrapperClassName="bg-nav-yellow/10"
                 title={t('landing.features.badges.title')}
                 description={t('landing.features.badges.desc')}
               />
 
               <FeatureCard
-                icon={<Target className="h-7 w-7 text-green-500" />}
-                iconWrapperClassName="bg-green-500/10"
+                icon={<Target className="h-7 w-7 text-success" />}
+                iconWrapperClassName="bg-success/10"
                 title={t('landing.features.progress.title')}
                 description={t('landing.features.progress.desc')}
               />

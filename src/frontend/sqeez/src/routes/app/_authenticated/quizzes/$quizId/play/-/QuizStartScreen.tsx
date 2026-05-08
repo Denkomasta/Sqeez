@@ -70,7 +70,7 @@ export function QuizStartScreen({
         </div>
 
         <div className="p-6 md:p-8">
-          <div className="mb-8 rounded-2xl border-4 border-b-8 border-amber-200 bg-amber-50 p-6 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+          <div className="mb-8 rounded-2xl border-4 border-b-8 border-warning/30 bg-warning/10 p-6 text-warning">
             <div className="flex items-center gap-4 text-left font-bold">
               <AlertTriangle className="size-8 shrink-0 md:size-10" />
               <p className="text-lg md:text-xl">{t('quiz.startWarning')}</p>
@@ -78,7 +78,7 @@ export function QuizStartScreen({
           </div>
 
           {error && (
-            <div className="mb-6 rounded-2xl border-4 border-rose-200 bg-rose-50 p-4 text-center text-lg font-bold text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">
+            <div className="mb-6 rounded-2xl border-4 border-destructive/30 bg-destructive/10 p-4 text-center text-lg font-bold text-destructive">
               {error}
             </div>
           )}
