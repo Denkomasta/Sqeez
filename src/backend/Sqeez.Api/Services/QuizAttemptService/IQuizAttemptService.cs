@@ -33,15 +33,15 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<QuestionAnsweredDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto);
 
         /// <summary>
-        /// Returns the next unanswered question id for a created or started attempt.
+        /// Returns the next unanswered question id and current answered-question count for a created or started attempt.
         /// </summary>
         /// <param name="attemptId">The attempt id.</param>
         /// <param name="studentId">The student who owns the attempt.</param>
         /// <returns>
-        /// The next question id, or null when no pending questions remain. Returns not found, forbidden, or
-        /// conflict when the attempt cannot continue.
+        /// The next question id, or null when no pending questions remain, plus the number of already answered
+        /// questions. Returns not found, forbidden, or conflict when the attempt cannot continue.
         /// </returns>
-        Task<ServiceResult<long?>> GetNextPendingQuestionIdAsync(long attemptId, long studentId);
+        Task<ServiceResult<NextQuestionProgressDto>> GetNextPendingQuestionIdAsync(long attemptId, long studentId);
 
         /// <summary>
         /// Finalizes an in-progress attempt and calculates score, XP, and badge rewards when possible.

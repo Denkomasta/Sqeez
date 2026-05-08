@@ -111,6 +111,31 @@ namespace Sqeez.Api.Tests.Integration.Postgres
         }
 
         [DockerAvailableFact]
+        public async Task GetNextQuestion_AfterAnswer_ReturnsNextQuestionIdAndAnsweredCount()
+        {
+            await _fixture.ResetDatabaseAsync();
+            var seed = await SeedQuizAsync();
+            var client = CreateAuthenticatedClient(seed.Student);
+            var attemptId = await StartAttemptAsync(client, seed);
+
+            var answerResponse = await client.PostAsJsonAsync($"/api/quiz-attempts/{attemptId}/answer", new
+            {
+                quizQuestionId = seed.FirstQuestionId,
+                responseTimeMs = 1234,
+                selectedOptionIds = new[] { seed.CorrectOptionId }
+            });
+            await AssertStatusCodeAsync(HttpStatusCode.OK, answerResponse);
+
+            var response = await client.GetAsync($"/api/quiz-attempts/{attemptId}/next-question");
+
+            await AssertStatusCodeAsync(HttpStatusCode.OK, response);
+            using var json = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+
+            Assert.Equal(seed.SecondQuestionId, json.RootElement.GetProperty("nextQuestionId").GetInt64());
+            Assert.Equal(1, json.RootElement.GetProperty("answeredQuestionsCount").GetInt32());
+        }
+
+        [DockerAvailableFact]
         public async Task CompleteAttempt_WithAutoGradedResponses_CompletesAttemptAndAwardsXpDelta()
         {
             await _fixture.ResetDatabaseAsync();
