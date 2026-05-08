@@ -29,7 +29,7 @@ export function DataTable<T>({
     <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-border bg-muted/50 text-muted-foreground">
+          <thead className="border-b border-border bg-muted text-foreground shadow-sm">
             <tr>
               {columns.map((col, index) => (
                 <th
@@ -66,7 +66,7 @@ export function DataTable<T>({
               data.map((item) => (
                 <tr
                   key={keyExtractor(item)}
-                  className="transition-colors hover:bg-muted/30"
+                  className="transition-colors hover:bg-muted/50"
                 >
                   {columns.map((col, index) => (
                     <td key={index} className={`p-4 ${col.className || ''}`}>

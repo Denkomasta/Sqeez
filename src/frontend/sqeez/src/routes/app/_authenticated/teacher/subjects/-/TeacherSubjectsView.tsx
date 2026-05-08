@@ -70,8 +70,8 @@ export function TeacherSubjectsView() {
           code={subject.code}
           url="/app/teacher/subjects/$subjectId"
           params={{ subjectId: subject.id.toString() }}
-          borderColorClass="border-l-blue-500/60"
-          badgeColorClass="bg-blue-500/10 text-blue-600"
+          borderColorClass="border-l-info/60"
+          badgeColorClass="bg-info/10 text-info"
           description={subject.description || t('common.noDescription')}
           topRightSlot={
             subject.schoolClassName ? (

@@ -130,7 +130,7 @@ export function StudentGradingModal({
             <div className="flex justify-between gap-3 border-t border-border pt-4">
               <Button
                 variant="destructive"
-                className="gap-2 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white"
+                className="gap-2 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                 onClick={() => setSelectedMark(null)}
                 disabled={patchMarkMutation.isPending || displayMark === null}
               >

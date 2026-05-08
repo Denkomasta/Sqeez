@@ -55,7 +55,7 @@ function QuizResultsSummaryPage() {
     switch (status) {
       case 'Completed':
         return (
-          <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+          <Badge variant="default" className="bg-success text-success-foreground hover:bg-success/90">
             {t('quiz.statusCompleted')}
           </Badge>
         )
@@ -63,7 +63,7 @@ function QuizResultsSummaryPage() {
         return (
           <Badge
             variant="secondary"
-            className="bg-amber-500 text-white hover:bg-amber-600"
+            className="bg-warning text-warning-foreground hover:bg-warning/90"
           >
             {t('quiz.statusInProgress')}
           </Badge>
@@ -189,7 +189,7 @@ function QuizResultsSummaryPage() {
 
                 <div className="flex flex-col gap-1 rounded-lg border bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Award className="h-4 w-4 text-amber-500" />
+                    <Award className="h-4 w-4 text-warning" />
                     {t('quiz.finalGrade')}
                   </div>
                   <span className="text-3xl font-bold tracking-tight text-foreground">
@@ -199,7 +199,7 @@ function QuizResultsSummaryPage() {
 
                 <div className="flex flex-col gap-1 rounded-lg border bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Clock className="h-4 w-4 text-blue-500" />
+                    <Clock className="h-4 w-4 text-info" />
                     {t('quiz.duration')}
                   </div>
                   <span className="text-3xl font-bold tracking-tight text-foreground">

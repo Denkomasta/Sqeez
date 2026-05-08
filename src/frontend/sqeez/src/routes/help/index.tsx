@@ -52,22 +52,22 @@ function Help() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               <FeatureCard
-                icon={<BookOpen className="h-7 w-7 text-blue-500" />}
-                iconWrapperClassName="bg-blue-500/10"
+                icon={<BookOpen className="h-7 w-7 text-info" />}
+                iconWrapperClassName="bg-info/10"
                 title={t('help.features.create.title')}
                 description={t('help.features.create.desc')}
               />
 
               <FeatureCard
-                icon={<Brain className="h-7 w-7 text-purple-500" />}
-                iconWrapperClassName="bg-purple-500/10"
+                icon={<Brain className="h-7 w-7 text-nav-purple" />}
+                iconWrapperClassName="bg-nav-purple/10"
                 title={t('help.features.engage.title')}
                 description={t('help.features.engage.desc')}
               />
 
               <FeatureCard
-                icon={<BarChart3 className="h-7 w-7 text-green-500" />}
-                iconWrapperClassName="bg-green-500/10"
+                icon={<BarChart3 className="h-7 w-7 text-success" />}
+                iconWrapperClassName="bg-success/10"
                 title={t('help.features.track.title')}
                 description={t('help.features.track.desc')}
               />

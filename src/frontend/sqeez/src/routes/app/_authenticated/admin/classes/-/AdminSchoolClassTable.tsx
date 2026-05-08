@@ -55,7 +55,7 @@ export function AdminSchoolClassTable({
           title={t('admin.classes.clickToEditTeacher')}
         >
           {cls.teacherId ? (
-            <Badge className="bg-blue-600 hover:bg-blue-700">
+            <Badge className="bg-info text-info-foreground hover:bg-info/90">
               {cls.teacherName}
             </Badge>
           ) : (

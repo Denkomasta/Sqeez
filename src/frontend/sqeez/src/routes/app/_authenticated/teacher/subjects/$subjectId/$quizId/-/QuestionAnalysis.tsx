@@ -86,8 +86,8 @@ export function QuestionAnalysis({
                 {question.isFreeText ? (
                   <div className="flex flex-col gap-5">
                     {expectedOption && (
-                      <div className="flex flex-col gap-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 p-3">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <div className="flex flex-col gap-1.5 rounded-md border border-success/20 bg-success/10 p-3">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-success">
                           <Lightbulb className="h-3.5 w-3.5" />
                           {t('quiz.expectedAnswer')}
                         </div>
@@ -137,7 +137,7 @@ export function QuestionAnalysis({
                           <div className="flex items-start justify-between gap-4 text-sm">
                             <div className="flex flex-1 items-start gap-2">
                               {option.isCorrect ? (
-                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                               ) : (
                                 <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/30" />
                               )}
@@ -165,7 +165,7 @@ export function QuestionAnalysis({
                             <div
                               className={`h-full rounded-full transition-all duration-1000 ease-out ${
                                 option.isCorrect
-                                  ? 'bg-emerald-500'
+                                  ? 'bg-success'
                                   : 'bg-primary/40'
                               }`}
                               style={{ width: `${percentage}%` }}

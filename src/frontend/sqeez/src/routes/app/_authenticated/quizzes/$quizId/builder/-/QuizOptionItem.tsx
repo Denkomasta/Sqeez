@@ -129,9 +129,9 @@ export function QuizOptionItem({
         className={cn(
           'group flex items-center gap-3 rounded-xl border p-2 transition-all',
           option.isCorrect && !isFreeTextMode
-            ? 'border-green-500/30 bg-green-500/5'
+            ? 'border-success/30 bg-success/5'
             : 'border-border bg-background',
-          isFreeTextMode && 'border-blue-500/20 bg-blue-500/5',
+          isFreeTextMode && 'border-info/20 bg-info/5',
           isLocked && 'pointer-events-none opacity-70 grayscale-[0.2]',
         )}
       >
@@ -143,7 +143,7 @@ export function QuizOptionItem({
             title={t('editor.markCorrect')}
           >
             {option.isCorrect ? (
-              <CheckCircle2 className="h-6 w-6 fill-green-500/20 text-green-500" />
+              <CheckCircle2 className="h-6 w-6 fill-success/20 text-success" />
             ) : (
               <Circle className="h-6 w-6 text-muted-foreground/30 hover:text-muted-foreground" />
             )}
@@ -179,7 +179,7 @@ export function QuizOptionItem({
               className={cn(
                 'h-8 w-8',
                 option.mediaAssetId
-                  ? 'bg-blue-500/10 text-blue-500'
+                  ? 'bg-info/10 text-info'
                   : 'text-muted-foreground',
               )}
               title={t('editor.manageOptionMedia')}

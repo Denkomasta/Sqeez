@@ -80,7 +80,7 @@ export function QuizAttemptsTable({
           return (
             <Badge
               variant="secondary"
-              className="gap-1.5 bg-orange-500/10 text-orange-600 shadow-none hover:bg-orange-500/20 dark:text-orange-400"
+              className="gap-1.5 bg-warning/10 text-warning shadow-none hover:bg-warning/20 dark:text-warning"
             >
               <AlertCircle className="h-3 w-3" />
               {t('quiz.pendingCorrection')}

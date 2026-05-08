@@ -41,22 +41,22 @@ export function QuizRecapScreen({
   const isPassing = scorePercentage >= 50
 
   const headerThemeClasses = isPendingCorrection
-    ? 'border-blue-700 bg-blue-500'
+    ? 'border-info/80 bg-info text-info-foreground'
     : isPassing
-      ? 'border-emerald-700 bg-emerald-500'
-      : 'border-rose-700 bg-rose-500'
+      ? 'border-success/80 bg-success text-success-foreground'
+      : 'border-destructive/80 bg-destructive text-destructive-foreground'
 
   const iconColorClass = isPendingCorrection
-    ? 'text-blue-500'
+    ? 'text-info'
     : isPassing
-      ? 'text-emerald-500'
-      : 'text-rose-500'
+      ? 'text-success'
+      : 'text-destructive'
 
   const scoreColorClass = isPendingCorrection
-    ? 'text-blue-500'
+    ? 'text-info'
     : isPassing
-      ? 'text-emerald-500'
-      : 'text-rose-500'
+      ? 'text-success'
+      : 'text-destructive'
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] w-full animate-in flex-col items-center justify-center p-4 duration-500 zoom-in-95 fade-in md:p-6 lg:p-8">
@@ -93,8 +93,8 @@ export function QuizRecapScreen({
 
         <div className="p-6 md:p-8">
           {isPendingCorrection && (
-            <div className="mb-8 flex items-start gap-3 rounded-2xl border-4 border-blue-200 bg-blue-50 p-4 text-blue-800 dark:border-blue-900/50 dark:bg-blue-900/20 dark:text-blue-300">
-              <Info className="mt-0.5 h-5 w-5 shrink-0" />
+            <div className="mb-8 flex items-start gap-3 rounded-2xl border-4 border-info/20 bg-info/10 p-4 text-foreground">
+              <Info className="mt-0.5 h-5 w-5 shrink-0 text-info" />
               <div className="flex flex-col">
                 <span className="font-bold">{t('quiz.partialScoreTitle')}</span>
                 <span className="text-sm font-medium opacity-90">

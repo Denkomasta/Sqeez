@@ -60,12 +60,12 @@ export function DebouncedTextArea({
 
       <div className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded border bg-background/80 px-2 py-1 text-[10px] font-bold tracking-tight uppercase shadow-sm backdrop-blur transition-opacity">
         {status === 'saving' && (
-          <span className="flex items-center gap-1 text-amber-500">
+          <span className="flex items-center gap-1 text-warning">
             <CloudUpload className="h-3 w-3 animate-bounce" /> {savingText}
           </span>
         )}
         {status === 'saved' && (
-          <span className="flex items-center gap-1 text-green-600">
+          <span className="flex items-center gap-1 text-success">
             <Check className="h-3 w-3" /> {savedText}
           </span>
         )}

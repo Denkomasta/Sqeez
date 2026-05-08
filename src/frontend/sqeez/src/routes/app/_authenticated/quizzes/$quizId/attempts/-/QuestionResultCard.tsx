@@ -109,9 +109,9 @@ export function QuestionResultCard({
     <Card
       className={`border-l-4 ${
         isNeedsGrading
-          ? 'border-l-yellow-500'
+          ? 'border-l-warning'
           : isPerfectScore
-            ? 'border-l-green-500'
+            ? 'border-l-success'
             : 'border-l-destructive'
       }`}
     >
@@ -121,17 +121,17 @@ export function QuestionResultCard({
         </CardTitle>
         <div className="flex shrink-0 items-center gap-1 text-sm font-medium">
           {studentResponse.isLiked && (
-            <Heart className="mr-2 h-4 w-4 fill-rose-500 text-rose-500" />
+            <Heart className="mr-2 h-4 w-4 fill-destructive text-destructive" />
           )}
 
           {isNeedsGrading ? (
-            <span className="flex items-center text-yellow-500">
+            <span className="flex items-center text-warning">
               <AlertCircle className="mr-1 h-4 w-4" />
               {t('grading.needsGrading')}
             </span>
           ) : (
             <span
-              className={isPerfectScore ? 'text-green-600' : 'text-destructive'}
+              className={isPerfectScore ? 'text-success' : 'text-destructive'}
             >
               {awardedScore} / {maxPoints} {t('common.points')}
             </span>
