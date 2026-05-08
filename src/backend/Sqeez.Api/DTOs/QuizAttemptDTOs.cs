@@ -36,6 +36,14 @@ namespace Sqeez.Api.DTOs
     );
 
     /// <summary>
+    /// Quiz attempt navigation state used to recover the next question and render progress.
+    /// </summary>
+    public record NextQuestionProgressDto(
+        long? NextQuestionId,
+        int AnsweredQuestionsCount
+    );
+
+    /// <summary>
     /// Answer-submission response with correctness hints and next-question navigation.
     /// </summary>
     public record QuestionAnsweredDto(

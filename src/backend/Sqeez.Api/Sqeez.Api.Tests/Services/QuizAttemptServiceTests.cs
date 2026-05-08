@@ -283,7 +283,8 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
 
             Assert.True(result.Success);
-            Assert.Equal(1, result.Data);
+            Assert.Equal(1, result.Data!.NextQuestionId);
+            Assert.Equal(0, result.Data.AnsweredQuestionsCount);
         }
 
         [Fact]
@@ -306,7 +307,8 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
 
             Assert.True(result.Success);
-            Assert.Equal(2, result.Data);
+            Assert.Equal(2, result.Data!.NextQuestionId);
+            Assert.Equal(1, result.Data.AnsweredQuestionsCount);
         }
 
         [Fact]
@@ -334,7 +336,8 @@ namespace Sqeez.Api.Tests.Services
             var result = await service.GetNextPendingQuestionIdAsync(attempt.Id, 1);
 
             Assert.True(result.Success);
-            Assert.Null(result.Data);
+            Assert.Null(result.Data!.NextQuestionId);
+            Assert.Equal(3, result.Data.AnsweredQuestionsCount);
         }
 
         [Fact]
