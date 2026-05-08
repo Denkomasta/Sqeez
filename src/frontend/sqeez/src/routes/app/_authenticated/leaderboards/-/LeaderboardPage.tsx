@@ -154,7 +154,9 @@ export function LeaderboardPage() {
       case 1:
         return <Trophy className="h-6 w-6 text-nav-yellow drop-shadow-sm" />
       case 2:
-        return <Medal className="h-6 w-6 text-muted-foreground drop-shadow-sm" />
+        return (
+          <Medal className="h-6 w-6 text-muted-foreground drop-shadow-sm" />
+        )
       case 3:
         return <Medal className="h-6 w-6 text-nav-orange drop-shadow-sm" />
       default:
@@ -301,7 +303,9 @@ export function LeaderboardPage() {
           <Wifi
             className={cn(
               'h-3.5 w-3.5',
-              isOnlineOnly ? 'text-success-foreground' : 'text-muted-foreground',
+              isOnlineOnly
+                ? 'text-success-foreground'
+                : 'text-muted-foreground',
             )}
           />
           {t('common.online')}
@@ -346,7 +350,6 @@ export function LeaderboardPage() {
       }
       renderItem={(student, index) => {
         const globalRank = (pageNumber - 1) * pageSize + index + 1
-        const isTopThree = globalRank <= 3
         const isMe = student.id === user?.id
 
         return (
@@ -355,10 +358,8 @@ export function LeaderboardPage() {
             className={cn(
               'flex items-center justify-between rounded-2xl border p-4 transition-all hover:shadow-md sm:px-6',
               isMe
-                ? 'border-primary bg-primary/10 shadow-sm ring-1 ring-primary/30'
-                : isTopThree
-                  ? 'border-primary/20 bg-primary/5 shadow-sm'
-                  : 'border-border bg-card',
+                ? 'border-primary bg-card shadow-sm ring-1 ring-primary/30'
+                : 'border-border bg-card',
             )}
           >
             <div className="flex items-center gap-4 sm:gap-6">
