@@ -326,13 +326,13 @@ namespace Sqeez.Api.Services
             bool isEnrolledStudent = question.Quiz.Subject.Enrollments.Any(e => e.StudentId == currentUserId && e.ArchivedAt == null);
             bool isAdmin = role == "Admin";
 
-            if (isTeacherOfSubject)
+            if (isAdmin || isTeacherOfSubject)
             {
                 // Access granted.
             }
             else if (isEnrolledStudent)
             {
-                // Access conditionally granted. Enforce the active attempt rule.
+                // Access conditionally granted. Active attempts are allowed for quiz taking.
                 bool hasActiveAttempt = await _context.QuizAttempts.AnyAsync(a =>
                     a.QuizId == quizId &&
                     a.Enrollment.StudentId == currentUserId &&
@@ -340,9 +340,13 @@ namespace Sqeez.Api.Services
 
                 if (!hasActiveAttempt)
                 {
-                    return ServiceResult<DetailedQuizQuestionDto>.Failure(
-                        "You cannot view quiz questions unless you have an active attempt in progress. Please start the quiz first.",
-                        ServiceError.Forbidden);
+                    bool isClosed = question.Quiz.ClosingDate.HasValue && DateTime.UtcNow > question.Quiz.ClosingDate.Value;
+                    if (!isClosed)
+                    {
+                        return ServiceResult<DetailedQuizQuestionDto>.Failure(
+                            "You cannot view quiz questions unless you have an active attempt in progress. Please start the quiz first.",
+                            ServiceError.Forbidden);
+                    }
                 }
             }
             else
