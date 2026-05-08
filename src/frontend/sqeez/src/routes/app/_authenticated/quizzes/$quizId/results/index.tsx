@@ -55,7 +55,10 @@ function QuizResultsSummaryPage() {
     switch (status) {
       case 'Completed':
         return (
-          <Badge variant="default" className="bg-success text-success-foreground hover:bg-success/90">
+          <Badge
+            variant="default"
+            className="bg-success text-success-foreground hover:bg-success/90"
+          >
             {t('quiz.statusCompleted')}
           </Badge>
         )

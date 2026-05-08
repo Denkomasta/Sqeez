@@ -127,7 +127,7 @@ export function QuestionMediaEditor({
                 onClick={() => setIsRemoveModalOpen(true)}
                 variant="ghost"
                 size="sm"
-                className="hover:text-destructive-foreground h-8 gap-2 text-destructive hover:bg-destructive"
+                className="h-8 gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                 title={t('editor.removeMedia')}
               >
                 <X className="size-4" />

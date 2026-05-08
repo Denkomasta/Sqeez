@@ -49,7 +49,8 @@ export function QuestionRecapScreen({
     BannerIcon = Check
     bannerText = t('quiz.correctAnswer')
   } else {
-    bannerStyle = 'border-destructive/80 bg-destructive text-destructive-foreground'
+    bannerStyle =
+      'border-destructive/80 bg-destructive text-destructive-foreground'
     BannerIcon = X
     bannerText = t('quiz.incorrectAnswer')
   }
@@ -132,11 +133,15 @@ export function QuestionRecapScreen({
                 if (isSelected && isCorrect) {
                   blockStyle =
                     'bg-success border-success/80 text-success-foreground border-b-4 translate-y-1 brightness-95'
-                  Icon = <Check className="size-6 stroke-4 text-success-foreground" />
+                  Icon = (
+                    <Check className="size-6 stroke-4 text-success-foreground" />
+                  )
                 } else if (isSelected && !isCorrect) {
                   blockStyle =
                     'bg-destructive border-destructive/80 text-destructive-foreground border-b-4 translate-y-1 brightness-95'
-                  Icon = <X className="size-6 stroke-4 text-destructive-foreground" />
+                  Icon = (
+                    <X className="size-6 stroke-4 text-destructive-foreground" />
+                  )
                 } else if (!isSelected && isCorrect) {
                   blockStyle =
                     'bg-success/20 border-success text-success border-b-8 opacity-90'
