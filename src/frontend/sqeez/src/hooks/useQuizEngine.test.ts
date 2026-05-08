@@ -178,7 +178,10 @@ describe('useQuizEngine', () => {
     mocks.answerMutation.mutateAsync.mockResolvedValue(answerResponse())
     mocks.completeMutation.isPending = false
     mocks.completeMutation.mutateAsync.mockResolvedValue(completeResponse())
-    mocks.queryClient.fetchQuery.mockResolvedValue(99)
+    mocks.queryClient.fetchQuery.mockResolvedValue({
+      nextQuestionId: 99,
+      answeredQuestionsCount: 0,
+    })
     mocks.queryClient.prefetchQuery.mockResolvedValue(undefined)
 
     useQuizStore.getState().actions.resetQuiz()
@@ -622,7 +625,10 @@ describe('useQuizEngine', () => {
   })
 
   it('strictly resumes an attempt with a next question', async () => {
-    mocks.queryClient.fetchQuery.mockResolvedValue(101)
+    mocks.queryClient.fetchQuery.mockResolvedValue({
+      nextQuestionId: 101,
+      answeredQuestionsCount: 2,
+    })
 
     renderHook(() => useQuizEngine('10', 456))
 
@@ -630,6 +636,7 @@ describe('useQuizEngine', () => {
       expect(useQuizStore.getState()).toMatchObject({
         attemptId: 456,
         currentQuestionId: 101,
+        questionsAnswered: 2,
         phase: 'transition',
       }),
     )
@@ -642,7 +649,10 @@ describe('useQuizEngine', () => {
   })
 
   it('strictly resumes and completes when there is no next question', async () => {
-    mocks.queryClient.fetchQuery.mockResolvedValue(null)
+    mocks.queryClient.fetchQuery.mockResolvedValue({
+      nextQuestionId: null,
+      answeredQuestionsCount: 3,
+    })
     mocks.completeMutation.mutateAsync.mockResolvedValue(
       completeResponse({ earnedBadges: [{ badgeId: 2, name: 'Done' }] }),
     )
@@ -652,6 +662,7 @@ describe('useQuizEngine', () => {
     await waitFor(() =>
       expect(useQuizStore.getState()).toMatchObject({
         phase: 'completed',
+        questionsAnswered: 3,
         earnedBadges: [{ badgeId: 2, name: 'Done' }],
       }),
     )

@@ -49,6 +49,7 @@ export function SubjectOverviewPage({
             <ArrowLeft className="h-4 w-4" />
             {t('subject.backToSubjects')}
           </Link>
+          <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-nav-cyan/10 text-nav-cyan">
               <BookCopy className="h-6 w-6" />
             </div>
