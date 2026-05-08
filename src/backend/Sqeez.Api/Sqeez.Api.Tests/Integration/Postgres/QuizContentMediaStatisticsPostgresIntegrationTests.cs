@@ -131,6 +131,32 @@ namespace Sqeez.Api.Tests.Integration.Postgres
         }
 
         [DockerAvailableFact]
+        public async Task GetDetailedQuestion_AsStudentAfterClosedQuiz_ReturnsStudentSafeOptions()
+        {
+            await _fixture.ResetDatabaseAsync();
+            var seed = await SeedQuizTreeAsync(enrollStudent: true);
+
+            using (var scope = _fixture.Factory.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<SqeezDbContext>();
+                var quiz = await dbContext.Quizzes.SingleAsync(quiz => quiz.Id == seed.Quiz.Id);
+                quiz.ClosingDate = DateTime.UtcNow.AddMinutes(-1);
+
+                await dbContext.SaveChangesAsync();
+            }
+
+            var client = PostgresTestHelpers.CreateAuthenticatedClient(_fixture, seed.Student!);
+
+            var response = await client.GetAsync($"/api/quizzes/{seed.Quiz.Id}/questions/{seed.Question.Id}/detailed");
+
+            await PostgresTestHelpers.AssertStatusCodeAsync(HttpStatusCode.OK, response);
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("Correct answer", body);
+            Assert.DoesNotContain("isCorrect", body, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [DockerAvailableFact]
         public async Task DeleteQuiz_WithAttempts_SoftClosesQuiz()
         {
             await _fixture.ResetDatabaseAsync();

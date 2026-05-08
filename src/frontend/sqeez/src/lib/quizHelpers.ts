@@ -10,6 +10,18 @@ export interface QuizDateInfo {
 }
 
 /**
+ * Checks if a quiz is currently closed.
+ */
+export function isQuizClosed(closingDate?: string | null): boolean {
+  if (!closingDate) return false
+
+  const now = Date.now()
+  const closingTime = parseUtcTime(closingDate)
+
+  return now > closingTime
+}
+
+/**
  * Checks if a quiz is currently active and available to be played.
  */
 export function isQuizActive(quiz?: QuizDateInfo | null): boolean {
@@ -22,14 +34,7 @@ export function isQuizActive(quiz?: QuizDateInfo | null): boolean {
     return false
   }
 
-  if (quiz.closingDate) {
-    const closingTime = parseUtcTime(quiz.closingDate)
-    if (now > closingTime) {
-      return false
-    }
-  }
-
-  return true
+  return !isQuizClosed(quiz.closingDate)
 }
 
 /**
