@@ -23,6 +23,7 @@ import type {
 import type {
   GetApiQuizAttemptsQuizQuizIdParams,
   GradeQuestionResponseDto,
+  NextQuestionProgressDto,
   PagedResponseOfQuizAttemptDto,
   QuestionAnsweredDto,
   QuestionResponseDto,
@@ -215,7 +216,7 @@ export const getApiQuizAttemptsIdNextQuestion = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<number | string | null>(
+  return customInstance<NextQuestionProgressDto>(
     { url: `/api/quiz-attempts/${id}/next-question`, method: 'GET', signal },
     options,
   )

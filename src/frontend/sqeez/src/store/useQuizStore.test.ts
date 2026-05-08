@@ -25,15 +25,23 @@ describe('useQuizStore', () => {
       attemptId: 42,
       currentQuestionId: 10,
       phase: 'transition',
+      questionsAnswered: 0,
     })
 
-    useQuizStore.getState().actions.startAttempt(43, null)
+    useQuizStore.getState().actions.startAttempt(43, null, 4)
 
     expect(useQuizStore.getState()).toMatchObject({
       attemptId: 43,
       currentQuestionId: null,
       phase: 'completed',
+      questionsAnswered: 4,
     })
+  })
+
+  it('stores backend answered question progress', () => {
+    useQuizStore.getState().actions.setQuestionsAnswered(3)
+
+    expect(useQuizStore.getState().questionsAnswered).toBe(3)
   })
 
   it('finishes transition and resets answer input', () => {
