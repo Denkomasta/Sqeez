@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/Input'
 import { TextArea } from '@/components/ui/TextArea'
 import { Button } from '@/components/ui/Button'
 import type { BadgeFormValues } from '@/schemas/badgeSchema'
-import { getSafeImageSrc } from '@/lib/imageHelpers'
+import { getSafeImageSrc, type SafeLocalPreviewSrc } from '@/lib/imageHelpers'
 
 interface BadgeBasicInfoFieldsProps {
   fileInputRef: React.RefObject<HTMLInputElement | null>
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  previewUrl: string | null
+  previewUrl?: string | null
+  localPreviewUrl?: SafeLocalPreviewSrc | null
   hasSelectedFile: boolean
   isEditMode?: boolean
 }
@@ -20,6 +21,7 @@ export function BadgeBasicInfoFields({
   fileInputRef,
   onFileChange,
   previewUrl,
+  localPreviewUrl,
   hasSelectedFile,
   isEditMode = false,
 }: BadgeBasicInfoFieldsProps) {
@@ -28,7 +30,7 @@ export function BadgeBasicInfoFields({
     register,
     formState: { errors },
   } = useFormContext<BadgeFormValues>()
-  const safePreviewUrl = getSafeImageSrc(previewUrl)
+  const safePreviewUrl = localPreviewUrl ?? getSafeImageSrc(previewUrl)
 
   return (
     <div className="flex flex-col gap-6">

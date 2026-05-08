@@ -18,7 +18,12 @@ import type {
   BadgeMetric,
   BadgeOperator,
 } from '@/api/generated/model'
-import { getImageUrl } from '@/lib/imageHelpers'
+import {
+  createSafeLocalPreviewSrc,
+  getImageUrl,
+  revokeSafeLocalPreviewSrc,
+  type SafeLocalPreviewSrc,
+} from '@/lib/imageHelpers'
 import { getBadgeSchema } from '@/schemas/badgeSchema'
 import { BadgeRulesBuilder } from './BadgeRulesBuilder'
 import { BadgeBasicInfoFields } from './BadgeBasicInfoFields'
@@ -41,11 +46,11 @@ export function EditBadgeModal({
   const schema = getBadgeSchema(t)
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null)
+  const [localPreviewUrl, setLocalPreviewUrl] =
+    useState<SafeLocalPreviewSrc | null>(null)
   const { config } = useSystemConfig()
 
-  const displayUrl =
-    localPreviewUrl || (badge?.iconUrl ? getImageUrl(badge.iconUrl) : null)
+  const badgeIconUrl = badge?.iconUrl ? getImageUrl(badge.iconUrl) : null
 
   type EditBadgeFormValues = z.infer<typeof schema>
 
@@ -93,12 +98,10 @@ export function EditBadgeModal({
         return
       }
 
-      if (localPreviewUrl) {
-        URL.revokeObjectURL(localPreviewUrl)
-      }
+      revokeSafeLocalPreviewSrc(localPreviewUrl)
 
       setSelectedFile(file)
-      setLocalPreviewUrl(URL.createObjectURL(file))
+      setLocalPreviewUrl(createSafeLocalPreviewSrc(file))
     }
   }
 
@@ -106,10 +109,8 @@ export function EditBadgeModal({
     reset()
     setSelectedFile(null)
 
-    if (localPreviewUrl) {
-      URL.revokeObjectURL(localPreviewUrl)
-      setLocalPreviewUrl(null)
-    }
+    revokeSafeLocalPreviewSrc(localPreviewUrl)
+    setLocalPreviewUrl(null)
 
     onClose()
   }
@@ -186,7 +187,8 @@ export function EditBadgeModal({
           <BadgeBasicInfoFields
             fileInputRef={fileInputRef}
             onFileChange={handleFileChange}
-            previewUrl={displayUrl ?? null}
+            previewUrl={badgeIconUrl}
+            localPreviewUrl={localPreviewUrl}
             hasSelectedFile={!!selectedFile}
             isEditMode={true}
           />

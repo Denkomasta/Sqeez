@@ -15,6 +15,11 @@ import { BadgeRulesBuilder } from './BadgeRulesBuilder'
 import { getBadgeSchema } from '@/schemas/badgeSchema'
 import { BadgeBasicInfoFields } from './BadgeBasicInfoFields'
 import { useSystemConfig } from '@/hooks/useSystemConfig'
+import {
+  createSafeLocalPreviewSrc,
+  revokeSafeLocalPreviewSrc,
+  type SafeLocalPreviewSrc,
+} from '@/lib/imageHelpers'
 
 interface CreateBadgeModalProps {
   isOpen: boolean
@@ -28,7 +33,7 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
   const schema = getBadgeSchema(t)
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<SafeLocalPreviewSrc | null>(null)
   const { config } = useSystemConfig()
 
   type CreateBadgeFormValues = z.infer<typeof schema>
@@ -67,17 +72,15 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
         return
       }
       setSelectedFile(file)
-      setPreviewUrl(URL.createObjectURL(file))
+      setPreviewUrl(createSafeLocalPreviewSrc(file))
     }
   }
 
   const handleModalClose = () => {
     reset()
     setSelectedFile(null)
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      setPreviewUrl(null)
-    }
+    revokeSafeLocalPreviewSrc(previewUrl)
+    setPreviewUrl(null)
     onClose()
   }
 
@@ -152,7 +155,7 @@ export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
           <BadgeBasicInfoFields
             fileInputRef={fileInputRef}
             onFileChange={handleFileChange}
-            previewUrl={previewUrl}
+            localPreviewUrl={previewUrl}
             hasSelectedFile={!!selectedFile}
             isEditMode={false}
           />

@@ -5,7 +5,11 @@ import { BaseModal } from '@/components/ui/Modal'
 import { AsyncButton, Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { usePostApiUsersMeAvatar } from '@/api/generated/endpoints/user/user'
-import { getSafeImageSrc } from '@/lib/imageHelpers'
+import {
+  createSafeLocalPreviewSrc,
+  revokeSafeLocalPreviewSrc,
+  type SafeLocalPreviewSrc,
+} from '@/lib/imageHelpers'
 
 interface AvatarUploadModalProps {
   isOpen: boolean
@@ -28,17 +32,14 @@ export function AvatarUploadModal({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<SafeLocalPreviewSrc | null>(null)
 
   const uploadAvatar = usePostApiUsersMeAvatar()
-  const safePreviewUrl = getSafeImageSrc(previewUrl)
 
   const handleClose = () => {
     setSelectedFile(null)
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      setPreviewUrl(null)
-    }
+    revokeSafeLocalPreviewSrc(previewUrl)
+    setPreviewUrl(null)
     onClose()
   }
 
@@ -50,7 +51,7 @@ export function AvatarUploadModal({
         return
       }
       setSelectedFile(file)
-      setPreviewUrl(URL.createObjectURL(file))
+      setPreviewUrl(createSafeLocalPreviewSrc(file))
     }
   }
 
@@ -110,10 +111,10 @@ export function AvatarUploadModal({
           onChange={handleFileChange}
         />
 
-        {safePreviewUrl ? (
+        {previewUrl ? (
           <div className="relative">
             <img
-              src={safePreviewUrl}
+              src={previewUrl}
               alt="Avatar Preview"
               className="size-40 rounded-full border-4 border-primary/20 object-cover shadow-md"
             />
