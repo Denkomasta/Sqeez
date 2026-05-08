@@ -13,29 +13,48 @@ export function getImageUrl(path?: string | null): string | undefined {
   return `${cleanBaseUrl}/${cleanPath}`
 }
 
+function hasUnsafeUrlCharacter(value: string): boolean {
+  return [...value].some((char) => {
+    const code = char.charCodeAt(0)
+    return code <= 32 || code === 127
+  })
+}
+
 export function getSafeImageSrc(src?: string | null): string | undefined {
   if (!src) return undefined
 
   const trimmedSrc = src.trim()
   if (!trimmedSrc) return undefined
 
-  if (trimmedSrc.startsWith('/') || trimmedSrc.startsWith('./')) {
+  if (hasUnsafeUrlCharacter(trimmedSrc)) return undefined
+
+  if (
+    (trimmedSrc.startsWith('/') && !trimmedSrc.startsWith('//')) ||
+    trimmedSrc.startsWith('./')
+  ) {
     return trimmedSrc
   }
 
-  try {
-    const parsedUrl = new URL(trimmedSrc, window.location.origin)
-
-    if (
-      parsedUrl.protocol === 'blob:' ||
-      parsedUrl.protocol === 'http:' ||
-      parsedUrl.protocol === 'https:'
-    ) {
-      return trimmedSrc
-    }
-  } catch {
-    return undefined
+  const lowerSrc = trimmedSrc.toLowerCase()
+  if (lowerSrc.startsWith('http://') || lowerSrc.startsWith('https://')) {
+    return trimmedSrc
   }
 
   return undefined
+}
+
+declare const safeLocalPreviewSrcBrand: unique symbol
+
+export type SafeLocalPreviewSrc = string & {
+  readonly [safeLocalPreviewSrcBrand]: true
+}
+
+export function createSafeLocalPreviewSrc(file: File): SafeLocalPreviewSrc {
+  return URL.createObjectURL(file) as SafeLocalPreviewSrc
+}
+
+export function revokeSafeLocalPreviewSrc(
+  src?: SafeLocalPreviewSrc | null,
+): void {
+  if (src) URL.revokeObjectURL(src)
 }
