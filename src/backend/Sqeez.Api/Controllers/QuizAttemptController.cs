@@ -52,24 +52,17 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// GET /api/quiz-attempts/{id}/next-question
-        /// Recovers the ID of the next unanswered question if the frontend loses context.
+        /// Recovers the ID of the next unanswered question and current answered count if the frontend loses context.
         /// </summary>
         [Authorize]
         [HttpGet("{id}/next-question")]
-        public async Task<ActionResult<long?>> GetNextPendingQuestionId(long id)
+        public async Task<ActionResult<NextQuestionProgressDto>> GetNextPendingQuestionId(long id)
         {
             var studentIdStr = GetUserIdFromClaims();
             if (!long.TryParse(studentIdStr, out long studentId))
                 return Unauthorized("Invalid student ID token.");
 
             var result = await _quizAttemptService.GetNextPendingQuestionIdAsync(id, studentId);
-
-            // For No Content
-            if (result.Success)
-            {
-                return Ok(result.Data);
-            }
-
             return HandleServiceResult(result);
         }
 

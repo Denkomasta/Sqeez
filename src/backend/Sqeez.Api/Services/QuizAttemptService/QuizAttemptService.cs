@@ -194,26 +194,32 @@ namespace Sqeez.Api.Services
             ));
         }
 
-        public async Task<ServiceResult<long?>> GetNextPendingQuestionIdAsync(long attemptId, long studentId)
+        public async Task<ServiceResult<NextQuestionProgressDto>> GetNextPendingQuestionIdAsync(long attemptId, long studentId)
         {
             var attempt = await _context.QuizAttempts
                 .Include(a => a.Enrollment)
                 .Include(a => a.Responses)
                 .FirstOrDefaultAsync(a => a.Id == attemptId);
 
-            if (attempt == null) return ServiceResult<long?>.Failure("Attempt not found.", ServiceError.NotFound);
-            if (attempt.Enrollment.StudentId != studentId) return ServiceResult<long?>.Failure("Access denied.", ServiceError.Forbidden);
+            if (attempt == null) return ServiceResult<NextQuestionProgressDto>.Failure("Attempt not found.", ServiceError.NotFound);
+            if (attempt.Enrollment.StudentId != studentId) return ServiceResult<NextQuestionProgressDto>.Failure("Access denied.", ServiceError.Forbidden);
 
             if (attempt.Status != AttemptStatus.Started && attempt.Status != AttemptStatus.Created)
-                return ServiceResult<long?>.Failure("This attempt is no longer in progress.", ServiceError.Conflict);
+                return ServiceResult<NextQuestionProgressDto>.Failure("This attempt is no longer in progress.", ServiceError.Conflict);
 
             long lastAnsweredQuestionId = attempt.Responses.Any()
                 ? attempt.Responses.Max(r => r.QuizQuestionId)
                 : 0;
+            int answeredQuestionsCount = attempt.Responses
+                .Select(r => r.QuizQuestionId)
+                .Distinct()
+                .Count();
 
             long? nextQuestionId = await GetNextQuestionId(attempt.QuizId, lastAnsweredQuestionId);
 
-            return ServiceResult<long?>.Ok(nextQuestionId);
+            return ServiceResult<NextQuestionProgressDto>.Ok(new NextQuestionProgressDto(
+                nextQuestionId,
+                answeredQuestionsCount));
         }
 
         private async Task<ServiceResult<List<StudentBadgeBasicDto>>> ProcessCompletedAttemptRewardsAsync(QuizAttempt attempt, long studentId)

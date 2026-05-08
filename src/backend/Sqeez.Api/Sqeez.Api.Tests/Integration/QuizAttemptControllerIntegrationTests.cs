@@ -234,28 +234,11 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
-        public async Task GetNextPendingQuestion_WhenServiceReturnsNull_ReturnsNoContent()
+        public async Task GetNextPendingQuestion_WhenNoQuestionRemains_ReturnsOkWithNullQuestionIdAndProgress()
         {
             _factory.QuizAttemptServiceMock
                 .Setup(service => service.GetNextPendingQuestionIdAsync(20, 7))
-                .ReturnsAsync(ServiceResult<long?>.Ok(null));
-
-            var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
-            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
-
-            var response = await client.GetAsync("/api/quiz-attempts/20/next-question");
-
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            _factory.QuizAttemptServiceMock.Verify(service => service.GetNextPendingQuestionIdAsync(20, 7), Times.Once);
-        }
-
-        [Fact]
-        public async Task GetNextPendingQuestion_WhenQuestionExists_ReturnsOkWithQuestionId()
-        {
-            _factory.QuizAttemptServiceMock
-                .Setup(service => service.GetNextPendingQuestionIdAsync(20, 7))
-                .ReturnsAsync(ServiceResult<long?>.Ok(3));
+                .ReturnsAsync(ServiceResult<NextQuestionProgressDto>.Ok(new NextQuestionProgressDto(null, 4)));
 
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
@@ -264,7 +247,31 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.GetAsync("/api/quiz-attempts/20/next-question");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("3", await response.Content.ReadAsStringAsync());
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("\"nextQuestionId\":null", body);
+            Assert.Contains("\"answeredQuestionsCount\":4", body);
+            _factory.QuizAttemptServiceMock.Verify(service => service.GetNextPendingQuestionIdAsync(20, 7), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetNextPendingQuestion_WhenQuestionExists_ReturnsOkWithQuestionIdAndProgress()
+        {
+            _factory.QuizAttemptServiceMock
+                .Setup(service => service.GetNextPendingQuestionIdAsync(20, 7))
+                .ReturnsAsync(ServiceResult<NextQuestionProgressDto>.Ok(new NextQuestionProgressDto(3, 2)));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
+
+            var response = await client.GetAsync("/api/quiz-attempts/20/next-question");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("\"nextQuestionId\":3", body);
+            Assert.Contains("\"answeredQuestionsCount\":2", body);
         }
 
         [Fact]
