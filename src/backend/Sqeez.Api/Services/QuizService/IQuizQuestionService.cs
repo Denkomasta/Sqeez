@@ -32,8 +32,9 @@ namespace Sqeez.Api.Services.Interfaces
         /// <param name="currentUserId">The requesting user id.</param>
         /// <param name="role">The requesting role.</param>
         /// <returns>
-        /// Detailed question data. Subject teachers can view directly; enrolled students must have an active
-        /// attempt for the quiz. Returns not found or forbidden otherwise.
+        /// Detailed question data. Admins and subject teachers can view directly. Enrolled students can view while
+        /// they have an active attempt, or after the quiz has closed.
+        /// Returns not found or forbidden otherwise.
         /// </returns>
         Task<ServiceResult<DetailedQuizQuestionDto>> GetDetailedQuizQuestionByIdAsync(long id, long quizId, long currentUserId, string role);
 

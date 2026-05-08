@@ -28,6 +28,7 @@ import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects
 import { useAuthStore } from '@/store/useAuthStore'
 import { formatDateTime } from '@/lib/dateHelpers'
 import { useQuizStore } from '@/store/useQuizStore'
+import { isQuizActive } from '@/lib/quizHelpers'
 
 export const Route = createFileRoute('/app/_authenticated/quizzes/$quizId/')({
   component: QuizDetailsPage,
@@ -90,6 +91,13 @@ function QuizDetailsPage() {
   const hasAttempts = attempts > 0
   const retries = Number(quiz.maxRetries)
   const maxRetriesReached = retries > 0 && attempts >= retries
+  const canTakeQuiz =
+    !maxRetriesReached &&
+    isQuizActive({
+      publishDate: quiz.publishDate,
+      closingDate: quiz.closingDate,
+    })
+
   const isPublished =
     quiz.publishDate && new Date(quiz.publishDate) <= new Date()
 
@@ -238,8 +246,8 @@ function QuizDetailsPage() {
                 </div>
               </CardContent>
 
-              <CardFooter className="border-t border-border bg-muted/40 pt-4">
-                {maxRetriesReached ? (
+              <CardFooter className="flex-col gap-3 border-t border-border bg-muted/40 pt-4">
+                {!canTakeQuiz ? (
                   <Button className="w-full" size="lg" asChild>
                     <Link
                       to="/app/quizzes/$quizId/attempts"
@@ -267,6 +275,23 @@ function QuizDetailsPage() {
                   <Button className="w-full text-base" size="lg" disabled>
                     <PlayCircle className="mr-2 size-5" />
                     {hasAttempts ? t('quiz.retakeQuiz') : t('quiz.startQuiz')}
+                  </Button>
+                )}
+
+                {hasAttempts && (
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    size="lg"
+                    asChild
+                  >
+                    <Link
+                      to="/app/quizzes/$quizId/results"
+                      params={{ quizId: quizId.toString() }}
+                    >
+                      <History className="mr-2 size-5" />
+                      {t('quiz.attemptHistory')}
+                    </Link>
                   </Button>
                 )}
               </CardFooter>

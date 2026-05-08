@@ -155,5 +155,89 @@ namespace Sqeez.Api.Tests.Services
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
             Assert.Contains("students have already started", result.ErrorMessage);
         }
+
+        [Fact]
+        public async Task GetDetailedQuizQuestionByIdAsync_WhenStudentHasActiveAttempt_ReturnsQuestion()
+        {
+            var context = await GetInMemoryDbContext();
+            long teacherId = 1;
+            long studentId = 2;
+
+            var subject = CreateActiveSubject(teacherId);
+            var enrollment = new Enrollment { Subject = subject, StudentId = studentId };
+            var quiz = new Quiz { Subject = subject, MaxRetries = 1, ClosingDate = DateTime.UtcNow.AddDays(1) };
+            var question = new QuizQuestion { Quiz = quiz, Title = "Active attempt question" };
+            var option = new QuizOption { QuizQuestion = question, Text = "Visible option", IsCorrect = true };
+            var attempt = new QuizAttempt { Quiz = quiz, Enrollment = enrollment, Status = AttemptStatus.Started };
+
+            context.AddRange(enrollment, question, option, attempt);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedQuizQuestionByIdAsync(question.Id, quiz.Id, studentId, "Student");
+
+            Assert.True(result.Success);
+            Assert.Equal("Active attempt question", result.Data!.Title);
+        }
+
+        [Fact]
+        public async Task GetDetailedQuizQuestionByIdAsync_WhenQuizIsClosed_ReturnsQuestion()
+        {
+            var context = await GetInMemoryDbContext();
+            long teacherId = 1;
+            long studentId = 2;
+
+            var subject = CreateActiveSubject(teacherId);
+            var enrollment = new Enrollment { Subject = subject, StudentId = studentId };
+            var quiz = new Quiz
+            {
+                Subject = subject,
+                ClosingDate = DateTime.UtcNow.AddMinutes(-1)
+            };
+            var question = new QuizQuestion { Quiz = quiz, Title = "Review question" };
+            var correctOption = new QuizOption { QuizQuestion = question, Text = "Review option", IsCorrect = true };
+
+            context.AddRange(enrollment, question, correctOption);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedQuizQuestionByIdAsync(question.Id, quiz.Id, studentId, "Student");
+
+            Assert.True(result.Success);
+            Assert.Equal("Review question", result.Data!.Title);
+            Assert.Single(result.Data.Options);
+        }
+
+        [Fact]
+        public async Task GetDetailedQuizQuestionByIdAsync_WhenQuizStillOpenAndNoActiveAttempt_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            long teacherId = 1;
+            long studentId = 2;
+
+            var subject = CreateActiveSubject(teacherId);
+            var enrollment = new Enrollment { Subject = subject, StudentId = studentId };
+            var quiz = new Quiz
+            {
+                Subject = subject,
+                MaxRetries = 1,
+                ClosingDate = DateTime.UtcNow.AddDays(1)
+            };
+            var question = new QuizQuestion { Quiz = quiz, Title = "Open quiz question" };
+            var option = new QuizOption { QuizQuestion = question, Text = "Open option", IsCorrect = true };
+            var attempt = new QuizAttempt { Quiz = quiz, Enrollment = enrollment, Status = AttemptStatus.Completed };
+
+            context.AddRange(enrollment, question, option, attempt);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedQuizQuestionByIdAsync(question.Id, quiz.Id, studentId, "Student");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
     }
 }
