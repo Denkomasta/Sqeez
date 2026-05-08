@@ -13,6 +13,22 @@ export function getImageUrl(path?: string | null): string | undefined {
   return `${cleanBaseUrl}/${cleanPath}`
 }
 
+export const allowedImageUploadMimeTypes = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+] as const
+
+export const allowedImageUploadAccept = allowedImageUploadMimeTypes.join(', ')
+
+const allowedImageUploadMimeTypeSet = new Set<string>(
+  allowedImageUploadMimeTypes,
+)
+
+export function isAllowedImageUploadFile(file: Pick<File, 'type'>): boolean {
+  return allowedImageUploadMimeTypeSet.has(file.type)
+}
+
 function hasUnsafeUrlCharacter(value: string): boolean {
   return [...value].some((char) => {
     const code = char.charCodeAt(0)

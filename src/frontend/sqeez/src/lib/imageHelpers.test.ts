@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
+  allowedImageUploadAccept,
   createSafeLocalPreviewSrc,
   getImageUrl,
   getSafeImageSrc,
+  isAllowedImageUploadFile,
   revokeSafeLocalPreviewSrc,
 } from './imageHelpers'
 
@@ -46,6 +48,24 @@ describe('getSafeImageSrc', () => {
     expect(
       getSafeImageSrc('https://example.com/image name.png'),
     ).toBeUndefined()
+  })
+})
+
+describe('image upload validation', () => {
+  it('exposes the accepted image mime types for file pickers', () => {
+    expect(allowedImageUploadAccept).toBe('image/jpeg, image/png, image/gif')
+  })
+
+  it('allows backend-supported image upload types', () => {
+    expect(isAllowedImageUploadFile({ type: 'image/jpeg' })).toBe(true)
+    expect(isAllowedImageUploadFile({ type: 'image/png' })).toBe(true)
+    expect(isAllowedImageUploadFile({ type: 'image/gif' })).toBe(true)
+  })
+
+  it('rejects svg and unknown upload types', () => {
+    expect(isAllowedImageUploadFile({ type: 'image/svg+xml' })).toBe(false)
+    expect(isAllowedImageUploadFile({ type: 'text/html' })).toBe(false)
+    expect(isAllowedImageUploadFile({ type: '' })).toBe(false)
   })
 })
 

@@ -21,6 +21,7 @@ import type {
 import {
   createSafeLocalPreviewSrc,
   getImageUrl,
+  isAllowedImageUploadFile,
   revokeSafeLocalPreviewSrc,
   type SafeLocalPreviewSrc,
 } from '@/lib/imageHelpers'
@@ -90,6 +91,11 @@ export function EditBadgeModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (!isAllowedImageUploadFile(file)) {
+        toast.error(t('errors.invalidFileType'))
+        return
+      }
+
       const maxSizeMB = Number(config?.maxAvatarAndBadgeUploadSizeMB) || 1
       const maxSizeBytes = maxSizeMB * 1024 * 1024
 
