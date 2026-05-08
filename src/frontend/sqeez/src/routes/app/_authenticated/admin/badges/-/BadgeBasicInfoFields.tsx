@@ -6,7 +6,11 @@ import { Input } from '@/components/ui/Input'
 import { TextArea } from '@/components/ui/TextArea'
 import { Button } from '@/components/ui/Button'
 import type { BadgeFormValues } from '@/schemas/badgeSchema'
-import { getSafeImageSrc, type SafeLocalPreviewSrc } from '@/lib/imageHelpers'
+import {
+  allowedImageUploadAccept,
+  getSafeImageSrc,
+  type SafeLocalPreviewSrc,
+} from '@/lib/imageHelpers'
 
 interface BadgeBasicInfoFieldsProps {
   fileInputRef: React.RefObject<HTMLInputElement | null>
@@ -37,7 +41,7 @@ export function BadgeBasicInfoFields({
       <div className="flex flex-col items-center gap-2 pt-2">
         <input
           type="file"
-          accept="image/jpeg, image/png, image/svg+xml"
+          accept={allowedImageUploadAccept}
           className="hidden"
           ref={fileInputRef}
           onChange={onFileChange}

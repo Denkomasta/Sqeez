@@ -6,7 +6,9 @@ import { AsyncButton, Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { usePostApiUsersMeAvatar } from '@/api/generated/endpoints/user/user'
 import {
+  allowedImageUploadAccept,
   createSafeLocalPreviewSrc,
+  isAllowedImageUploadFile,
   revokeSafeLocalPreviewSrc,
   type SafeLocalPreviewSrc,
 } from '@/lib/imageHelpers'
@@ -46,6 +48,11 @@ export function AvatarUploadModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (!isAllowedImageUploadFile(file)) {
+        toast.error(t('errors.invalidFileType'))
+        return
+      }
+
       if (file.size > maxFileSizeMB * 1024 * 1024) {
         toast.error(t('errors.fileTooLarge', { maxValue: maxFileSizeMB }))
         return
@@ -105,7 +112,7 @@ export function AvatarUploadModal({
       <div className="flex flex-col items-center gap-6 py-4">
         <input
           type="file"
-          accept="image/jpeg, image/png, image/gif"
+          accept={allowedImageUploadAccept}
           className="hidden"
           ref={fileInputRef}
           onChange={handleFileChange}
