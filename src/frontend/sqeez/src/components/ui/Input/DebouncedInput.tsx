@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Input } from '@/components/ui/Input'
 
 interface DebouncedInputProps extends Omit<
@@ -24,23 +24,49 @@ export function DebouncedInput({
   label,
   hideErrors,
   helpText,
+  onBlur,
   ...props
 }: DebouncedInputProps) {
-  const [localValue, setLocalValue] = useState(initialValue)
+  const [draftValue, setDraftValue] = useState<string | null>(null)
+  const [pendingCommit, setPendingCommit] = useState<{
+    value: string
+    baseValue: string
+  } | null>(null)
+  const lastSubmittedValueRef = useRef(initialValue)
 
   useEffect(() => {
-    setLocalValue(initialValue)
+    lastSubmittedValueRef.current = initialValue
   }, [initialValue])
 
+  const value =
+    draftValue ??
+    (pendingCommit && pendingCommit.baseValue === initialValue
+      ? pendingCommit.value
+      : initialValue)
+
+  const commitValue = useCallback(
+    (value: string) => {
+      setDraftValue(null)
+
+      if (value === lastSubmittedValueRef.current) return
+
+      lastSubmittedValueRef.current = value
+      setPendingCommit({ value, baseValue: initialValue })
+      onChange(value)
+    },
+    [initialValue, onChange],
+  )
+
   useEffect(() => {
-    if (localValue === initialValue) return
+    if (draftValue === null) return
+    if (draftValue === lastSubmittedValueRef.current) return
 
     const timer = setTimeout(() => {
-      onChange(localValue)
+      commitValue(draftValue)
     }, debounceTime)
 
     return () => clearTimeout(timer)
-  }, [localValue, initialValue, debounceTime, onChange])
+  }, [draftValue, debounceTime, commitValue])
 
   return (
     <div className={`relative w-full ${wrapperClassName}`}>
@@ -48,8 +74,15 @@ export function DebouncedInput({
         {...props}
         icon={icon}
         label={label}
-        value={localValue}
-        onChange={(e) => setLocalValue(e.target.value)}
+        value={value}
+        onChange={(e) => {
+          setPendingCommit(null)
+          setDraftValue(e.target.value)
+        }}
+        onBlur={(event) => {
+          commitValue(value)
+          onBlur?.(event)
+        }}
         hideErrors={hideErrors}
         helpText={helpText}
       />
