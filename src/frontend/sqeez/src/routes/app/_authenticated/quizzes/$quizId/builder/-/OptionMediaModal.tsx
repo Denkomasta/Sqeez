@@ -17,7 +17,11 @@ import { useSystemConfig } from '@/hooks/useSystemConfig'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
 import { cn } from '@/lib/utils'
-import { getSafeImageSrc } from '@/lib/imageHelpers'
+import {
+  createSafeLocalPreviewSrc,
+  revokeSafeLocalPreviewSrc,
+  type SafeLocalPreviewSrc,
+} from '@/lib/imageHelpers'
 
 interface OptionMediaModalProps {
   isOpen: boolean
@@ -39,7 +43,7 @@ export function OptionMediaModal({
   const isLocked = useQuizEditorUIStore((s) => s.isLocked)
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<SafeLocalPreviewSrc | null>(null)
   const [isConfirmingRemove, setIsConfirmingRemove] = useState(false)
 
   const uploadMedia = usePostApiMediaAssetsUpload()
@@ -48,17 +52,15 @@ export function OptionMediaModal({
 
   useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
+      revokeSafeLocalPreviewSrc(previewUrl)
     }
   }, [previewUrl])
 
   const handleClose = () => {
     setSelectedFile(null)
     setIsConfirmingRemove(false)
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      setPreviewUrl(null)
-    }
+    revokeSafeLocalPreviewSrc(previewUrl)
+    setPreviewUrl(null)
     onClose()
   }
 
@@ -72,7 +74,7 @@ export function OptionMediaModal({
         return
       }
       setSelectedFile(file)
-      setPreviewUrl(URL.createObjectURL(file))
+      setPreviewUrl(createSafeLocalPreviewSrc(file))
     }
   }
 
@@ -114,14 +116,10 @@ export function OptionMediaModal({
   const renderLocalPreview = () => {
     if (!selectedFile || !previewUrl) return null
 
-    const safePreviewUrl = getSafeImageSrc(previewUrl)
-
     if (selectedFile.type.startsWith('image/')) {
-      if (!safePreviewUrl) return null
-
       return (
         <img
-          src={safePreviewUrl}
+          src={previewUrl}
           alt="Local Preview"
           className="max-h-48 w-full rounded-xl object-contain"
         />
@@ -225,7 +223,8 @@ export function OptionMediaModal({
                 className="absolute top-2 right-2 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
                 onClick={() => {
                   setSelectedFile(null)
-                  if (previewUrl) URL.revokeObjectURL(previewUrl)
+                  revokeSafeLocalPreviewSrc(previewUrl)
+                  setPreviewUrl(null)
                 }}
               >
                 <X className="h-4 w-4" />
