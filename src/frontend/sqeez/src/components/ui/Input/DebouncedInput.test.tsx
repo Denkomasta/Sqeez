@@ -1,8 +1,12 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DebouncedInput } from './DebouncedInput'
 
 describe('DebouncedInput', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('calls onChange after the debounce delay', () => {
     vi.useFakeTimers()
     const onChange = vi.fn()
@@ -17,8 +21,10 @@ describe('DebouncedInput', () => {
       />,
     )
 
-    fireEvent.change(screen.getByLabelText('Search'), {
-      target: { value: 'science' },
+    act(() => {
+      fireEvent.change(screen.getByLabelText('Search'), {
+        target: { value: 'science' },
+      })
     })
 
     expect(onChange).not.toHaveBeenCalled()
@@ -28,7 +34,6 @@ describe('DebouncedInput', () => {
     })
 
     expect(onChange).toHaveBeenCalledWith('science')
-    vi.useRealTimers()
   })
 
   it('updates local value when the controlled value changes', () => {
@@ -58,8 +63,10 @@ describe('DebouncedInput', () => {
       />,
     )
 
-    fireEvent.change(screen.getByLabelText('Name'), {
-      target: { value: 'fresh local text' },
+    act(() => {
+      fireEvent.change(screen.getByLabelText('Name'), {
+        target: { value: 'fresh local text' },
+      })
     })
 
     rerender(
@@ -88,8 +95,10 @@ describe('DebouncedInput', () => {
     )
 
     const input = screen.getByLabelText('Name')
-    fireEvent.change(input, { target: { value: 'saved on blur' } })
-    fireEvent.blur(input)
+    act(() => {
+      fireEvent.change(input, { target: { value: 'saved on blur' } })
+      fireEvent.blur(input)
+    })
 
     expect(onChange).toHaveBeenCalledWith('saved on blur')
   })

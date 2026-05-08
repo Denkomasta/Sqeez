@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { PaginatedListView } from './PaginatedListView'
 
@@ -52,7 +52,9 @@ describe('PaginatedListView', () => {
     fireEvent.change(screen.getByPlaceholderText('common.search'), {
       target: { value: 'math' },
     })
-    vi.advanceTimersByTime(300)
+    act(() => {
+      vi.advanceTimersByTime(300)
+    })
 
     expect(setSearchQuery).toHaveBeenCalledWith('math')
     expect(setPageNumber).toHaveBeenCalledWith(1)
