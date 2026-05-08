@@ -10,7 +10,6 @@ import {
   usePostApiAuthResendVerification,
 } from '@/api/generated/endpoints/auth/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import type { TranslationKey } from '@/i18next'
 import { AxiosError } from 'axios'
@@ -19,13 +18,8 @@ import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/Spinner'
 import type { AspNetProblemDetails } from '@/api/custom-axios'
 
-const loginSchema = z.object({
-  email: z.email({ message: 'Invalid email address' }),
-  password: z
-    .string()
-    .min(4, { message: 'Password must be at least 4 characters' }),
-  remember: z.boolean(),
-})
+import { getLoginSchema, type LoginFormValues } from '@/schemas/loginSchema'
+import { useMemo } from 'react'
 
 const errorMapping: Record<number, TranslationKey> = {
   401: 'error.invalidCredentials',
@@ -33,12 +27,14 @@ const errorMapping: Record<number, TranslationKey> = {
   500: 'error.serverError',
 }
 
-type LoginFormValues = z.infer<typeof loginSchema>
+
 
 export function LoginForm() {
   const { t } = useTranslation()
   const search = useSearch({ strict: false })
   const handleAuthSuccess = useAuthSuccess()
+
+  const loginSchema = useMemo(() => getLoginSchema(t), [t])
 
   const {
     register,
