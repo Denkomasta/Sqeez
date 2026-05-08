@@ -5,32 +5,32 @@
   },
   "about": {
     "cta": {
-      "subtitle": "Vytvořte si bezplatný účet ještě dnes a vydejte se na cestu k mistrovství.",
-      "title": "Jste připraveni se k nám přidat?"
+      "subtitle": "Využijte kvízy, zpětnou vazbu a sledování pokroku jako podporu pravidelného učení.",
+      "title": "Začněte se učit se Sqeez"
     },
     "hero": {
-      "subtitle": "Věříme, že učení by mělo být dobrodružství, ne otrava.",
-      "title": "Naše mise"
+      "subtitle": "Kvízová platforma pro třídy, studijní skupiny a vlastní vzdělávací instance.",
+      "title": "O Sqeez"
     },
     "story": {
-      "graphicTitle": "Vědění je moc",
-      "p1": "Tradiční studium může působit osaměle a stereotypně. Chtěli jsme vybudovat platformu, která přinese vzrušení ze hry do výuky a pomůže studentům udržet si motivaci a lépe si pamatovat informace.",
-      "p2": "Kombinací rychlých interaktivních kvízů a propracovaného systému úspěchů měníme pasivní čtení v aktivní zapojení. Ať už se učíte na velkou zkoušku, nebo jen objevujete nový koníček, Sqeez se přizpůsobí vašemu tempu.",
+      "graphicTitle": "Procvičování se zpětnou vazbou",
+      "p1": "Sqeez vznikl proto, aby bylo procvičování aktivnější, ale nepůsobilo rušivě. Učitelé mohou vytvářet kvízy, studenti je řeší vlastním tempem a pokrok zůstává přehledně viditelný.",
+      "p2": "Cíl je jednoduchý: dát opakování jasnou strukturu a motivaci. Odznaky a zpětná vazba mají učení podporovat, ne ho nahrazovat.",
       "title": "Proč jsme vytvořili Sqeez"
     },
     "values": {
-      "title": "Naše klíčové hodnoty",
+      "title": "Na čem nám záleží",
       "v1": {
-        "desc": "Každá funkce, kterou vytvoříme, je navržena tak, aby byl proces učení pro uživatele co nejplynulejší a nejpříjemnější.",
-        "title": "Student na prvním místě"
+        "desc": "Studenti by měli vždy rozumět tomu, na co odpovídají, jak postupují a co mají dělat dál.",
+        "title": "Srozumitelný průběh učení"
       },
       "v2": {
-        "desc": "Společně se učí lépe. Vytváříme soutěživé, ale zároveň podporující prostředí, kde může růst každý.",
-        "title": "Síla komunity"
+        "desc": "Učitelé potřebují praktické nástroje pro tvorbu, kontrolu a zlepšování kvízů bez zbytečných překážek.",
+        "title": "Užitečné pro učitele"
       },
       "v3": {
-        "desc": "Vaše data jsou vaše. Soukromí a bezpečnost jsou naší prioritou, abyste se mohli plně soustředit na své vzdělávání.",
-        "title": "Spolehlivost a bezpečí"
+        "desc": "Sqeez může běžet na vlastní instanci, takže pravidla pro soukromí, přístup a uchovávání dat spravuje administrátor instance, kterou používáte. Konkrétní odpovědnosti popisují podmínky a zásady soukromí dané instance.",
+        "title": "Správa v rámci instance"
       }
     }
   },
@@ -621,26 +621,26 @@
   "landing": {
     "features": {
       "badges": {
-        "desc": "Proměňte učení ve hru. Získávejte XP za bezchybné série a odemykejte vzácné odznaky, kterými se můžete pochlubit na svém profilu.",
-        "title": "Získávejte odznaky a XP"
+        "desc": "XP a odznaky slouží jako přehled splněné práce, pravidelného procvičování a výsledků v kvízech.",
+        "title": "XP a odznaky"
       },
       "progress": {
-        "desc": "Vizualizujte si svou cestu za poznáním. Odhalte své slabiny a sledujte, jak se vaše úspěšnost postupem času zlepšuje díky detailním statistikám.",
-        "title": "Sledujte svůj pokrok"
+        "desc": "Procházejte si výsledky v čase a zjistěte, kterým tématům se ještě vyplatí věnovat.",
+        "title": "Přehled pokroku"
       },
       "quizzes": {
-        "desc": "Naskočte rovnou do kvízů na míru. Odpovídejte na dynamické otázky a získejte okamžitou zpětnou vazbu, abyste si látku hned upevnili.",
-        "title": "Bleskově rychlé kvízy"
+        "desc": "Procvičujte látku pomocí kvízů připravených učitelem nebo administrátorem a získejte zpětnou vazbu po každé odpovědi.",
+        "title": "Procvičování v kvízech"
       },
-      "subtitle": "Vše, co potřebujete, aby bylo studium poutavé a efektivní.",
-      "title": "Proč se učit s námi?"
+      "subtitle": "Nástroje pro procvičování, zpětnou vazbu a kontrolu pokroku v učení.",
+      "title": "S čím Sqeez pomáhá"
     },
     "hero": {
-      "description": "Překonávejte sami sebe, soutěžte s přáteli a sledujte svůj pokrok. Získávejte XP a odemykejte exkluzivní odznaky podle toho, jak se zlepšujete.",
+      "description": "Procvičujte látku v kvízech, procházejte si výsledky a mějte přehled o tom, co už máte hotové.",
       "learnMoreBtn": "Zjistit více",
-      "pill": "Dokonalý zážitek z učení",
+      "pill": "Kvízy pro pravidelné procvičování",
       "startBtn": "Začít se učit",
-      "title1": "Ovládněte jakékoliv téma díky",
+      "title1": "Učte se pomocí",
       "titleHighlight": "interaktivním kvízům."
     }
   },
@@ -708,7 +708,7 @@
       "title": "4. Vaše práva"
     },
     "storage": {
-      "p1": "Vaše data, včetně vašeho jména a e-mailu, jsou bezpečně uložena v PostgreSQL databázi naší instance. Hesla jsou kryptograficky hašována a nikdy se neukládají v čistém textu. Soubory cookie relace a místní úložiště (local storage) používáme výhradně k tomu, abyste zůstali přihlášeni a mohli aplikaci bez problémů používat.",
+      "p1": "Vaše data, včetně vašeho jména a e-mailu, jsou bezpečně uložena v databázi této instance. Hesla jsou kryptograficky hašována a nikdy se neukládají v čistém textu. Soubory cookie relace a místní úložiště (local storage) používáme výhradně k tomu, abyste zůstali přihlášeni a mohli aplikaci bez problémů používat.",
       "title": "3. Jak uchováváme vaše data"
     },
     "title": "Zásady ochrany osobních údajů"

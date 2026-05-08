@@ -5,32 +5,32 @@
   },
   "about": {
     "cta": {
-      "subtitle": "Create your account today and start your journey towards mastery.",
-      "title": "Ready to join the community?"
+      "subtitle": "Use quizzes, feedback, and progress tracking to support regular study.",
+      "title": "Start learning with Sqeez"
     },
     "hero": {
-      "subtitle": "We believe learning should be an adventure, not a chore.",
-      "title": "Our Mission"
+      "subtitle": "A quiz platform for classrooms, study groups, and self-hosted learning spaces.",
+      "title": "About Sqeez"
     },
     "story": {
-      "graphicTitle": "Knowledge is Power",
-      "p1": "Traditional studying can feel isolating and repetitive. We wanted to build a platform that brings the thrill of gaming into the classroom, making it easier for students to stay motivated and retain information.",
-      "p2": "By combining fast-paced interactive quizzes with a robust achievement system, we transform passive reading into active engagement. Whether you are studying for a massive exam or just learning a new hobby, Sqeez adapts to your pace.",
+      "graphicTitle": "Practice with feedback",
+      "p1": "Sqeez was built to make practice more active without turning learning into noise. Teachers can create quizzes, students can answer them at their own pace, and progress stays visible.",
+      "p2": "The goal is simple: make repetition feel structured and motivating, with badges and feedback supporting the learning rather than replacing it.",
       "title": "Why we built Sqeez"
     },
     "values": {
-      "title": "Our Core Values",
+      "title": "What we care about",
       "v1": {
-        "desc": "Every feature we build is designed to make the learning experience smoother and more enjoyable for the user.",
-        "title": "Student First"
+        "desc": "Students should always understand what they are answering, how they are progressing, and what to do next.",
+        "title": "Clear learning flow"
       },
       "v2": {
-        "desc": "Learning is better together. We foster a competitive but supportive environment where everyone grows.",
-        "title": "Community Driven"
+        "desc": "Teachers need practical tools for creating, reviewing, and improving quizzes without unnecessary friction.",
+        "title": "Useful for teachers"
       },
       "v3": {
-        "desc": "Your data is yours. We prioritize privacy and security so you can focus entirely on your education.",
-        "title": "Reliable & Safe"
+        "desc": "Sqeez can be self-hosted, so privacy, access, and data-retention rules are handled by the administrator of the instance you use. The terms and privacy policy for that instance explain the exact responsibilities.",
+        "title": "Instance controlled"
       }
     }
   },
@@ -621,26 +621,26 @@
   "landing": {
     "features": {
       "badges": {
-        "desc": "Turn studying into a game. Score perfect streaks to earn XP and unlock rare achievement badges to show off on your profile.",
-        "title": "Earn Badges & XP"
+        "desc": "Earn XP and badges as a record of completed work, consistent practice, and quiz results.",
+        "title": "XP and badges"
       },
       "progress": {
-        "desc": "Visualize your learning journey. Identify your weak spots and see your accuracy improve over time with detailed analytics.",
-        "title": "Track Your Progress"
+        "desc": "Review results over time and use them to see which topics need more practice.",
+        "title": "Progress overview"
       },
       "quizzes": {
-        "desc": "Jump right into tailored quiz sessions. Answer dynamic questions and get real-time feedback to reinforce your memory instantly.",
-        "title": "Lightning Fast Quizzes"
+        "desc": "Practice with quizzes created by your teacher or administrator, with feedback after each answer.",
+        "title": "Practice with quizzes"
       },
-      "subtitle": "Everything you need to make studying engaging and effective.",
-      "title": "Why learn with us?"
+      "subtitle": "Tools for practice, feedback, and reviewing learning progress.",
+      "title": "What Sqeez helps with"
     },
     "hero": {
-      "description": "Challenge yourself, compete with friends, and track your progress. Earn XP and unlock exclusive badges as you level up your knowledge.",
+      "description": "Practice with quizzes, review your results, and keep track of what you have already completed.",
       "learnMoreBtn": "Learn More",
-      "pill": "The ultimate learning experience",
+      "pill": "Quizzes for regular practice",
       "startBtn": "Start Learning",
-      "title1": "Master any subject with",
+      "title1": "Learn with",
       "titleHighlight": "interactive quizzes."
     }
   },
@@ -708,7 +708,7 @@
       "title": "4. Your Rights"
     },
     "storage": {
-      "p1": "Your data, including your name and email, is stored securely in our instance's PostgreSQL database. Passwords are cryptographically hashed and never stored as plain text. We use session cookies and local storage solely to keep you logged in and functional while using the app.",
+      "p1": "Your data, including your name and email, is stored securely in this instance's database. Passwords are cryptographically hashed and never stored as plain text. We use session cookies and local storage solely to keep you logged in and functional while using the app.",
       "title": "3. How We Store Your Data"
     },
     "title": "Privacy Policy"
