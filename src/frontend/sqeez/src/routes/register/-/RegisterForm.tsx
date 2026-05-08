@@ -196,7 +196,7 @@ export function RegisterForm() {
           />
           <Label
             htmlFor="remember"
-            className="cursor-pointer text-sm font-normal text-muted-foreground"
+            className="cursor-pointer text-sm font-medium text-foreground"
           >
             {t('login.rememberMe')}
           </Label>
