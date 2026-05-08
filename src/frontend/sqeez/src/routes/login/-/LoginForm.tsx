@@ -27,8 +27,6 @@ const errorMapping: Record<number, TranslationKey> = {
   500: 'error.serverError',
 }
 
-
-
 export function LoginForm() {
   const { t } = useTranslation()
   const search = useSearch({ strict: false })
