@@ -9,6 +9,7 @@ import type { BadgeFormValues } from '@/schemas/badgeSchema'
 import {
   allowedImageUploadAccept,
   getSafeImageSrc,
+  isSafeLocalPreviewSrc,
   type SafeLocalPreviewSrc,
 } from '@/lib/imageHelpers'
 
@@ -34,7 +35,9 @@ export function BadgeBasicInfoFields({
     register,
     formState: { errors },
   } = useFormContext<BadgeFormValues>()
-  const safePreviewUrl = localPreviewUrl ?? getSafeImageSrc(previewUrl)
+  const safePreviewUrl = isSafeLocalPreviewSrc(localPreviewUrl)
+    ? localPreviewUrl
+    : getSafeImageSrc(previewUrl)
 
   return (
     <div className="flex flex-col gap-6">
