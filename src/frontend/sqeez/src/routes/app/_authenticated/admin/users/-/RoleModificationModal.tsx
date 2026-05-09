@@ -5,6 +5,7 @@ import {
   GraduationCap,
   BookOpen,
   AlertTriangle,
+  type LucideIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
@@ -72,6 +73,12 @@ export function RoleModificationModal({
   const isDestructive =
     selectedRole === 'Admin' && user?.currentRole !== 'Admin'
 
+  const roleOptions: Array<readonly [UserRole, string, LucideIcon]> = [
+    ['Student', t('common.student'), GraduationCap],
+    ['Teacher', t('common.teacher'), BookOpen],
+    ['Admin', t('common.admin'), ShieldAlert],
+  ]
+
   return (
     <BaseModal
       isOpen={isOpen}
@@ -103,13 +110,7 @@ export function RoleModificationModal({
     >
       <div className="flex flex-col gap-4 py-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {(
-            [
-              t('common.student'),
-              t('common.teacher'),
-              t('common.admin'),
-            ] as UserRole[]
-          ).map((role) => {
+          {roleOptions.map(([role, label, Icon]) => {
             const isSelected = selectedRole === role
             return (
               <button
@@ -121,25 +122,13 @@ export function RoleModificationModal({
                     : 'border-border bg-card hover:bg-muted/50'
                 }`}
               >
-                {role === 'Admin' && (
-                  <ShieldAlert
-                    className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}
-                  />
-                )}
-                {role === 'Teacher' && (
-                  <BookOpen
-                    className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}
-                  />
-                )}
-                {role === 'Student' && (
-                  <GraduationCap
-                    className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}
-                  />
-                )}
+                <Icon
+                  className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}
+                />
                 <span
                   className={`font-semibold ${isSelected ? 'text-primary' : 'text-foreground'}`}
                 >
-                  {role}
+                  {label}
                 </span>
               </button>
             )
