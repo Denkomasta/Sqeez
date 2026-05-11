@@ -58,6 +58,20 @@ class ResizeObserverMock {
 
 vi.stubGlobal('ResizeObserver', ResizeObserverMock)
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false, // Defaulting to light mode in tests
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // Deprecated but often required by UI libs
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+})
+
 if (!window.PointerEvent) {
   vi.stubGlobal('PointerEvent', MouseEvent)
 }
