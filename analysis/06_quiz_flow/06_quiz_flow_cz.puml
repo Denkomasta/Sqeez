@@ -1,18 +1,24 @@
 @startuml
 title Průběh kvízu
 
-skinparam defaultFontSize 16
-skinparam titleFontSize 20
-skinparam sequenceMessageFontSize 16
-skinparam sequenceParticipantFontSize 16
-skinparam sequenceActorFontSize 16
-skinparam sequenceGroupFontSize 16
+scale 1.0
+
+skinparam defaultFontSize 22
+skinparam titleFontSize 26
+skinparam sequenceMessageFontSize 22
+skinparam sequenceParticipantFontSize 22
+skinparam sequenceActorFontSize 22
+skinparam sequenceGroupFontSize 22
+
+skinparam Padding 8
+skinparam BoxPadding 8
+skinparam ArrowThickness 1.4
 
 actor "Student" as User
 participant "Frontend" as FE
-participant "Quiz Service" as QuizService
-participant "Quiz Attempt Service" as AttemptService
-participant "Badge Service" as BadgeService
+participant "QuizService" as QuizService
+participant "AttemptService" as AttemptService
+participant "BadgeService" as BadgeService
 database "Databáze" as DB
 
 User -> FE: Otevře publikovaný kvíz
@@ -29,13 +35,13 @@ AttemptService -> DB: Najde první otázku
 AttemptService --> FE: QuizAttemptDto s nextQuestionId
 
 loop Dokud existuje nextQuestionId
-    FE -> QuizService: GET /api/quizzes/{quizId}/questions/{questionId}/detailed
+    FE -> QuizService: GET /api/quizzes/{quizId}/\nquestions/{questionId}/detailed
     QuizService -> DB: Načte otázku, možnosti odpovědi\na metadata médií
     QuizService --> FE: DetailedQuizQuestionDto
     FE --> User: Zobrazí otázku a možnosti odpovědi
 
     User -> FE: Odešle odpověď
-    FE -> AttemptService: POST /api/quiz-attempts/{attemptId}/answer
+    FE -> AttemptService: POST /api/quiz-attempts/\n{attemptId}/answer
     AttemptService -> DB: Ověří vlastnictví pokusu a stav
 
     alt První odeslaná odpověď
@@ -56,7 +62,7 @@ loop Dokud existuje nextQuestionId
 end
 
 User -> FE: Dokončí kvíz
-FE -> AttemptService: POST /api/quiz-attempts/{attemptId}/complete
+FE -> AttemptService: POST /api/quiz-attempts/\n{attemptId}/complete
 AttemptService -> DB: Načte pokus a odpovědi
 AttemptService -> AttemptService: Vypočítá celkové skóre
 
