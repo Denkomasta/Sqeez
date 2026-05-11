@@ -8,18 +8,29 @@ namespace Sqeez.Api.Services.Interfaces
     public interface IEnrollmentService
     {
         /// <summary>
-        /// Gets enrollments with paging and optional student, subject, mark, and active/archive filters.
+        /// Gets enrollments visible to the authenticated user with paging and optional student, subject, mark,
+        /// and active/archive filters.
         /// </summary>
         /// <param name="filter">Filtering, sorting, and paging values.</param>
-        /// <returns>A paged list of enrollment DTOs.</returns>
-        Task<ServiceResult<PagedResponse<EnrollmentDto>>> GetAllEnrollmentsAsync(EnrollmentFilterDto filter);
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>
+        /// A paged list of enrollment DTOs, or forbidden when the current user cannot search with the requested filters.
+        /// </returns>
+        Task<ServiceResult<PagedResponse<EnrollmentDto>>> GetAllEnrollmentsAsync(EnrollmentFilterDto filter, long currentUserId, string? currentUserRole);
 
         /// <summary>
-        /// Gets a single enrollment with student, subject, and quiz-attempt count details.
+        /// Gets a single enrollment for the authenticated user, allowing admins, the enrolled student, teachers
+        /// viewing their own student enrollment, and teachers of the enrollment's subject.
         /// </summary>
         /// <param name="id">The enrollment id.</param>
-        /// <returns>The enrollment DTO, or not found when the enrollment does not exist.</returns>
-        Task<ServiceResult<EnrollmentDto>> GetEnrollmentByIdAsync(long id);
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>
+        /// The enrollment DTO, not found when the enrollment does not exist, or forbidden when the current user
+        /// cannot view the enrollment.
+        /// </returns>
+        Task<ServiceResult<EnrollmentDto>> GetEnrollmentByIdAsync(long id, long currentUserId, string? currentUserRole);
 
         /// <summary>
         /// Updates an enrollment mark when requested by the subject's teacher.
@@ -34,11 +45,17 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<EnrollmentDto>> PatchEnrollmentAsync(long id, PatchEnrollmentDto enrollment, long currentUserId);
 
         /// <summary>
-        /// Removes an enrollment, archiving it instead when quiz attempts must be preserved.
+        /// Removes an enrollment for admins or for users deleting their own enrollment, archiving it instead when
+        /// quiz attempts must be preserved.
         /// </summary>
         /// <param name="id">The enrollment id.</param>
-        /// <returns>A successful result when removed or archived, or not found when the enrollment does not exist.</returns>
-        Task<ServiceResult<bool>> DeleteEnrollmentAsync(long id);
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>
+        /// A successful result when removed or archived, not found when the enrollment does not exist, or forbidden
+        /// when the current user cannot delete the enrollment.
+        /// </returns>
+        Task<ServiceResult<bool>> DeleteEnrollmentAsync(long id, long currentUserId, string? currentUserRole);
 
         /// <summary>
         /// Enrolls multiple students in a subject.

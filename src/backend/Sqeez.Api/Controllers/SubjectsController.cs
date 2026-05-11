@@ -92,23 +92,9 @@ namespace Sqeez.Api.Controllers
         [HttpGet("{subjectId}/enrollments")]
         public async Task<ActionResult<PagedResponse<EnrollmentDto>>> GetEnrollmentsForSubject(long subjectId, [FromQuery] EnrollmentFilterDto filter)
         {
-            var role = GetUserRoleFromClaims();
-            if (role == "Teacher")
-            {
-                var accessResult = await EnsureTeacherOwnsSubjectAsync(subjectId);
-                if (accessResult != null)
-                {
-                    return accessResult;
-                }
-            }
-            else if (role == "Student")
-            {
-                filter.StudentId = CurrentUserId;
-            }
-
             // Force the filter to only look at this specific subject
             filter.SubjectId = subjectId;
-            var result = await _enrollmentService.GetAllEnrollmentsAsync(filter);
+            var result = await _enrollmentService.GetAllEnrollmentsAsync(filter, CurrentUserId, GetUserRoleFromClaims());
             return HandleServiceResult(result);
         }
 

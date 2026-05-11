@@ -12,12 +12,10 @@ namespace Sqeez.Api.Controllers
     public class EnrollmentsController : ApiBaseController
     {
         private readonly IEnrollmentService _enrollmentService;
-        private readonly ISubjectService _subjectService;
 
-        public EnrollmentsController(IEnrollmentService enrollmentService, ISubjectService subjectService)
+        public EnrollmentsController(IEnrollmentService enrollmentService)
         {
             _enrollmentService = enrollmentService;
-            _subjectService = subjectService;
         }
 
         /// <summary>
@@ -28,26 +26,7 @@ namespace Sqeez.Api.Controllers
         [Authorize]
         public async Task<ActionResult<PagedResponse<EnrollmentDto>>> GetAllEnrollments([FromQuery] EnrollmentFilterDto filter)
         {
-            var role = GetUserRoleFromClaims();
-            if (role == "Student")
-            {
-                filter.StudentId = CurrentUserId;
-            }
-            else if (role == "Teacher")
-            {
-                if (!filter.SubjectId.HasValue)
-                {
-                    return Forbid();
-                }
-
-                var accessResult = await EnsureTeacherOwnsSubjectAsync(filter.SubjectId.Value);
-                if (accessResult != null)
-                {
-                    return accessResult;
-                }
-            }
-
-            var result = await _enrollmentService.GetAllEnrollmentsAsync(filter);
+            var result = await _enrollmentService.GetAllEnrollmentsAsync(filter, CurrentUserId, GetUserRoleFromClaims());
             return HandleServiceResult(result);
         }
 
@@ -59,27 +38,7 @@ namespace Sqeez.Api.Controllers
         [Authorize]
         public async Task<ActionResult<EnrollmentDto>> GetEnrollmentById(long id)
         {
-            var result = await _enrollmentService.GetEnrollmentByIdAsync(id);
-            if (!result.Success || result.Data == null)
-            {
-                return HandleServiceResult(result);
-            }
-
-            var role = GetUserRoleFromClaims();
-            if (role == "Student" && result.Data.StudentId != CurrentUserId)
-            {
-                return Forbid();
-            }
-
-            if (role == "Teacher")
-            {
-                var accessResult = await EnsureTeacherOwnsSubjectAsync(result.Data.SubjectId);
-                if (accessResult != null)
-                {
-                    return accessResult;
-                }
-            }
-
+            var result = await _enrollmentService.GetEnrollmentByIdAsync(id, CurrentUserId, GetUserRoleFromClaims());
             return HandleServiceResult(result);
         }
 
@@ -103,42 +62,8 @@ namespace Sqeez.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteEnrollment(long id)
         {
-            var role = GetUserRoleFromClaims();
-            if (role != "Admin")
-            {
-                var response = await _enrollmentService.GetEnrollmentByIdAsync(id);
-                if (!response.Success || response.Data == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, new
-                    {
-                        error = "Not found",
-                        message = response.ErrorMessage
-                    });
-                }
-
-                if (!IsIdLoggedUser(response.Data.StudentId))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden, new
-                    {
-                        error = "Forbidden",
-                        message = "You do not have permission to delete students's enrollment."
-                    });
-                }
-            }
-
-            var result = await _enrollmentService.DeleteEnrollmentAsync(id);
+            var result = await _enrollmentService.DeleteEnrollmentAsync(id, CurrentUserId, GetUserRoleFromClaims());
             return HandleServiceResult(result);
-        }
-
-        private async Task<ActionResult?> EnsureTeacherOwnsSubjectAsync(long subjectId)
-        {
-            var subjectResult = await _subjectService.GetSubjectByIdAsync(subjectId);
-            if (!subjectResult.Success || subjectResult.Data == null)
-            {
-                return HandleServiceResult(subjectResult);
-            }
-
-            return subjectResult.Data.TeacherId == CurrentUserId ? null : Forbid();
         }
     }
 }

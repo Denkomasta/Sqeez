@@ -26,7 +26,10 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             _factory.EnrollmentServiceMock.Verify(
-                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                service => service.GetAllEnrollmentsAsync(
+                    It.IsAny<EnrollmentFilterDto>(),
+                    It.IsAny<long>(),
+                    It.IsAny<string?>()),
                 Times.Never);
         }
 
@@ -41,7 +44,10 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             _factory.EnrollmentServiceMock.Verify(
-                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                service => service.GetAllEnrollmentsAsync(
+                    It.IsAny<EnrollmentFilterDto>(),
+                    It.IsAny<long>(),
+                    It.IsAny<string?>()),
                 Times.Never);
         }
 
@@ -100,9 +106,8 @@ namespace Sqeez.Api.Tests.Integration
         public async Task DeleteEnrollment_AsDifferentStudent_ReturnsForbiddenBeforeDelete()
         {
             _factory.EnrollmentServiceMock
-                .Setup(service => service.GetEnrollmentByIdAsync(10))
-                .ReturnsAsync(ServiceResult<EnrollmentDto>.Ok(
-                    new EnrollmentDto(10, null, DateTime.UtcNow, null, 8, "other-student", 5, "Math", "MATH", 0)));
+                .Setup(service => service.DeleteEnrollmentAsync(10, 7, "Student"))
+                .ReturnsAsync(ServiceResult<bool>.Failure("You do not have permission to delete this enrollment.", ServiceError.Forbidden));
 
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
@@ -111,19 +116,14 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.DeleteAsync("/api/enrollments/10");
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-            _factory.EnrollmentServiceMock.Verify(service => service.GetEnrollmentByIdAsync(10), Times.Once);
-            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(It.IsAny<long>()), Times.Never);
+            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(10, 7, "Student"), Times.Once);
         }
 
         [Fact]
         public async Task DeleteEnrollment_AsOwnerStudent_CallsDeleteService()
         {
             _factory.EnrollmentServiceMock
-                .Setup(service => service.GetEnrollmentByIdAsync(10))
-                .ReturnsAsync(ServiceResult<EnrollmentDto>.Ok(
-                    new EnrollmentDto(10, null, DateTime.UtcNow, null, 7, "student", 5, "Math", "MATH", 0)));
-            _factory.EnrollmentServiceMock
-                .Setup(service => service.DeleteEnrollmentAsync(10))
+                .Setup(service => service.DeleteEnrollmentAsync(10, 7, "Student"))
                 .ReturnsAsync(ServiceResult<bool>.Ok(true));
 
             var client = _factory.CreateClient();
@@ -133,7 +133,7 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.DeleteAsync("/api/enrollments/10");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(10), Times.Once);
+            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(10, 7, "Student"), Times.Once);
         }
     }
 }
