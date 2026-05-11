@@ -38,7 +38,6 @@ export function DeleteSubjectModal({
 
     try {
       await deleteSubjectMutation.mutateAsync({ id: subject.id.toString() })
-      console.log(`Deleted subject ID ${subject.id}`)
       onClose()
     } catch (error) {
       console.error('Failed to delete subject:', error)

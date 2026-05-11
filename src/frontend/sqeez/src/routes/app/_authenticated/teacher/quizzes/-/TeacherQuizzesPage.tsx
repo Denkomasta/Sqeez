@@ -21,7 +21,7 @@ export function TeacherQuizzesPage() {
   const search = Route.useSearch()
   const navigate = Route.useNavigate()
   const selectedSubjectId = search.subjectId || 'all'
-  const showActiveOnly = search.activeOnly ?? false
+  const showActiveOnly = search.activeOnly ?? true
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')

@@ -125,7 +125,6 @@ export function CreateSubjectModal({
           schoolClassId: data.schoolClassId === '' ? null : data.schoolClassId,
         },
       })
-      console.log('Creating subject:', data)
       handleClose()
     } catch (error) {
       console.error('Failed to create subject:', error)
