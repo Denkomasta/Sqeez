@@ -26,7 +26,9 @@ namespace Sqeez.Api.Tests.Integration
                     filter.SubjectId == 5 &&
                     filter.IsActive == true &&
                     filter.PageNumber == 2 &&
-                    filter.PageSize == 15)))
+                    filter.PageSize == 15),
+                    42,
+                    "Admin"))
                 .ReturnsAsync(ServiceResult<PagedResponse<EnrollmentDto>>.Ok(
                     new PagedResponse<EnrollmentDto>
                     {
@@ -47,17 +49,19 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.EnrollmentServiceMock.Verify(
-                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>(), 42, "Admin"),
                 Times.Once);
         }
 
         [Fact]
-        public async Task GetAllEnrollments_AsStudent_ForcesStudentIdToAuthenticatedUser()
+        public async Task GetAllEnrollments_AsStudent_PassesUserContextToService()
         {
             _factory.EnrollmentServiceMock
                 .Setup(service => service.GetAllEnrollmentsAsync(It.Is<EnrollmentFilterDto>(filter =>
-                    filter.StudentId == 7 &&
-                    filter.SubjectId == 5)))
+                    filter.StudentId == 99 &&
+                    filter.SubjectId == 5),
+                    7,
+                    "Student"))
                 .ReturnsAsync(ServiceResult<PagedResponse<EnrollmentDto>>.Ok(
                     new PagedResponse<EnrollmentDto>
                     {
@@ -75,13 +79,22 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.EnrollmentServiceMock.Verify(
-                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>(), 7, "Student"),
                 Times.Once);
         }
 
         [Fact]
-        public async Task GetAllEnrollments_AsTeacherWithoutSubjectFilter_ReturnsForbiddenBeforeCallingService()
+        public async Task GetAllEnrollments_WhenServiceReturnsForbidden_MapsForbidden()
         {
+            _factory.EnrollmentServiceMock
+                .Setup(service => service.GetAllEnrollmentsAsync(
+                    It.IsAny<EnrollmentFilterDto>(),
+                    42,
+                    "Teacher"))
+                .ReturnsAsync(ServiceResult<PagedResponse<EnrollmentDto>>.Failure(
+                    "Teachers must filter by an owned subject unless they are viewing their own enrollments.",
+                    ServiceError.Forbidden));
+
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
@@ -90,8 +103,8 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             _factory.EnrollmentServiceMock.Verify(
-                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
-                Times.Never);
+                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>(), 42, "Teacher"),
+                Times.Once);
         }
 
         [Fact]
@@ -105,7 +118,10 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             _factory.EnrollmentServiceMock.Verify(
-                service => service.GetAllEnrollmentsAsync(It.IsAny<EnrollmentFilterDto>()),
+                service => service.GetAllEnrollmentsAsync(
+                    It.IsAny<EnrollmentFilterDto>(),
+                    It.IsAny<long>(),
+                    It.IsAny<string?>()),
                 Times.Never);
         }
 
@@ -113,7 +129,7 @@ namespace Sqeez.Api.Tests.Integration
         public async Task GetEnrollmentById_WhenServiceReturnsNotFound_MapsNotFound()
         {
             _factory.EnrollmentServiceMock
-                .Setup(service => service.GetEnrollmentByIdAsync(10))
+                .Setup(service => service.GetEnrollmentByIdAsync(10, 42, "Teacher"))
                 .ReturnsAsync(ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound));
 
             var client = _factory.CreateClient();
@@ -123,15 +139,15 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.GetAsync("/api/enrollments/10");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            _factory.EnrollmentServiceMock.Verify(service => service.GetEnrollmentByIdAsync(10), Times.Once);
+            _factory.EnrollmentServiceMock.Verify(service => service.GetEnrollmentByIdAsync(10, 42, "Teacher"), Times.Once);
         }
 
         [Fact]
         public async Task GetEnrollmentById_AsDifferentStudent_ReturnsForbidden()
         {
             _factory.EnrollmentServiceMock
-                .Setup(service => service.GetEnrollmentByIdAsync(10))
-                .ReturnsAsync(ServiceResult<EnrollmentDto>.Ok(CreateEnrollment(id: 10, studentId: 8, subjectId: 5, mark: 2)));
+                .Setup(service => service.GetEnrollmentByIdAsync(10, 7, "Student"))
+                .ReturnsAsync(ServiceResult<EnrollmentDto>.Failure("You do not have permission to view this enrollment.", ServiceError.Forbidden));
 
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
@@ -140,6 +156,41 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.GetAsync("/api/enrollments/10");
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentById_AsTeacherViewingOwnEnrollment_ReturnsEnrollment()
+        {
+            _factory.EnrollmentServiceMock
+                .Setup(service => service.GetEnrollmentByIdAsync(10, 42, "Teacher"))
+                .ReturnsAsync(ServiceResult<EnrollmentDto>.Ok(CreateEnrollment(id: 10, studentId: 42, subjectId: 5, mark: 2)));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.GetAsync("/api/enrollments/10");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.SubjectServiceMock.Verify(
+                service => service.GetSubjectByIdAsync(It.IsAny<long>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentById_AsSubjectTeacher_ReturnsEnrollment()
+        {
+            _factory.EnrollmentServiceMock
+                .Setup(service => service.GetEnrollmentByIdAsync(10, 42, "Teacher"))
+                .ReturnsAsync(ServiceResult<EnrollmentDto>.Ok(CreateEnrollment(id: 10, studentId: 8, subjectId: 5, mark: 2)));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.GetAsync("/api/enrollments/10");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
@@ -218,7 +269,7 @@ namespace Sqeez.Api.Tests.Integration
         public async Task DeleteEnrollment_AsAdmin_CallsDeleteWithoutOwnershipLookup()
         {
             _factory.EnrollmentServiceMock
-                .Setup(service => service.DeleteEnrollmentAsync(10))
+                .Setup(service => service.DeleteEnrollmentAsync(10, 1, "Admin"))
                 .ReturnsAsync(ServiceResult<bool>.Ok(true));
 
             var client = _factory.CreateClient();
@@ -228,16 +279,15 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.DeleteAsync("/api/enrollments/10");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            _factory.EnrollmentServiceMock.Verify(service => service.GetEnrollmentByIdAsync(It.IsAny<long>()), Times.Never);
-            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(10), Times.Once);
+            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(10, 1, "Admin"), Times.Once);
         }
 
         [Fact]
         public async Task DeleteEnrollment_AsStudentWhenEnrollmentMissing_ReturnsNotFoundBeforeDelete()
         {
             _factory.EnrollmentServiceMock
-                .Setup(service => service.GetEnrollmentByIdAsync(10))
-                .ReturnsAsync(ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound));
+                .Setup(service => service.DeleteEnrollmentAsync(10, 7, "Student"))
+                .ReturnsAsync(ServiceResult<bool>.Failure("Enrollment not found.", ServiceError.NotFound));
 
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
@@ -246,7 +296,7 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.DeleteAsync("/api/enrollments/10");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(It.IsAny<long>()), Times.Never);
+            _factory.EnrollmentServiceMock.Verify(service => service.DeleteEnrollmentAsync(10, 7, "Student"), Times.Once);
         }
 
         private static EnrollmentDto CreateEnrollment(long id, long studentId, long subjectId, int? mark) =>

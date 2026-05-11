@@ -15,9 +15,45 @@ namespace Sqeez.Api.Services
         public EnrollmentService(SqeezDbContext context, ILogger<EnrollmentService> logger)
             : base(context, logger) { }
 
-        public async Task<ServiceResult<PagedResponse<EnrollmentDto>>> GetAllEnrollmentsAsync(EnrollmentFilterDto filter)
+        public async Task<ServiceResult<PagedResponse<EnrollmentDto>>> GetAllEnrollmentsAsync(
+            EnrollmentFilterDto filter,
+            long currentUserId,
+            string? currentUserRole)
         {
             _logger.LogInformation("Fetching enrollments with filters.");
+
+            if (currentUserRole == "Student" || filter.StudentId == currentUserId)
+            {
+                filter.StudentId = currentUserId;
+            }
+            else if (currentUserRole == "Teacher")
+            {
+                if (!filter.SubjectId.HasValue)
+                {
+                    return ServiceResult<PagedResponse<EnrollmentDto>>.Failure(
+                        "Teachers must filter by an owned subject unless they are viewing their own enrollments.",
+                        ServiceError.Forbidden);
+                }
+
+                var subjectTeacherId = await _context.Subjects
+                    .AsNoTracking()
+                    .Where(subject => subject.Id == filter.SubjectId.Value)
+                    .Select(subject => subject.TeacherId)
+                    .FirstOrDefaultAsync();
+
+                if (subjectTeacherId == null)
+                {
+                    return ServiceResult<PagedResponse<EnrollmentDto>>.Failure("Subject not found.", ServiceError.NotFound);
+                }
+
+                if (subjectTeacherId != currentUserId)
+                {
+                    return ServiceResult<PagedResponse<EnrollmentDto>>.Failure(
+                        "You do not have permission to view enrollments for this subject.",
+                        ServiceError.Forbidden);
+                }
+            }
+
             var query = _context.Enrollments.AsNoTracking();
 
             if (filter.StudentId.HasValue) query = query.Where(e => e.StudentId == filter.StudentId.Value);
@@ -62,7 +98,7 @@ namespace Sqeez.Api.Services
             });
         }
 
-        public async Task<ServiceResult<EnrollmentDto>> GetEnrollmentByIdAsync(long id)
+        public async Task<ServiceResult<EnrollmentDto>> GetEnrollmentByIdAsync(long id, long currentUserId, string? currentUserRole)
         {
             var e = await _context.Enrollments
                 .Include(e => e.QuizAttempts)
@@ -72,6 +108,16 @@ namespace Sqeez.Api.Services
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             if (e == null) return ServiceResult<EnrollmentDto>.Failure("Enrollment not found.", ServiceError.NotFound);
+
+            bool canViewEnrollment =
+                currentUserRole == "Admin" ||
+                ((currentUserRole == "Student" || currentUserRole == "Teacher") && e.StudentId == currentUserId) ||
+                (currentUserRole == "Teacher" && e.Subject.TeacherId == currentUserId);
+
+            if (!canViewEnrollment)
+            {
+                return ServiceResult<EnrollmentDto>.Failure("You do not have permission to view this enrollment.", ServiceError.Forbidden);
+            }
 
             var dto = new EnrollmentDto(e.Id, e.Mark, e.EnrolledAt, e.ArchivedAt, e.StudentId, e.Student.Username, e.SubjectId, e.Subject.Name, e.Subject.Code, e.QuizAttempts.Count);
             return ServiceResult<EnrollmentDto>.Ok(dto);
@@ -125,10 +171,19 @@ namespace Sqeez.Api.Services
             }
         }
 
-        public async Task<ServiceResult<bool>> DeleteEnrollmentAsync(long id)
+        public async Task<ServiceResult<bool>> DeleteEnrollmentAsync(long id, long currentUserId, string? currentUserRole)
         {
             var enrollment = await _context.Enrollments.Include(e => e.QuizAttempts).FirstOrDefaultAsync(e => e.Id == id);
             if (enrollment == null) return ServiceResult<bool>.Failure("Enrollment not found.", ServiceError.NotFound);
+
+            bool canDeleteEnrollment =
+                currentUserRole == "Admin" ||
+                ((currentUserRole == "Student" || currentUserRole == "Teacher") && enrollment.StudentId == currentUserId);
+
+            if (!canDeleteEnrollment)
+            {
+                return ServiceResult<bool>.Failure("You do not have permission to delete this enrollment.", ServiceError.Forbidden);
+            }
 
             RemoveOrArchiveEnrollment(enrollment, DateTime.UtcNow);
 

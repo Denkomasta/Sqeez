@@ -68,12 +68,88 @@ namespace Sqeez.Api.Tests.Services
 
             var service = CreateService(context);
 
-            var result = await service.GetEnrollmentByIdAsync(enrollment.Id);
+            var result = await service.GetEnrollmentByIdAsync(enrollment.Id, 1, "Admin");
 
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
             Assert.Equal(5, result.Data.Mark);
             Assert.Equal(student.Id, result.Data.StudentId);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentByIdAsync_WhenStudentOwnsEnrollment_ReturnsEnrollmentDto()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "Student" };
+            var subject = CreateActiveSubject(1);
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetEnrollmentByIdAsync(enrollment.Id, student.Id, "Student");
+
+            Assert.True(result.Success);
+            Assert.Equal(enrollment.Id, result.Data!.Id);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentByIdAsync_WhenTeacherOwnsEnrollmentAsStudent_ReturnsEnrollmentDto()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacherAsStudent = new Student { Username = "TeacherStudent" };
+            var subject = CreateActiveSubject(99);
+            var enrollment = new Enrollment { Student = teacherAsStudent, Subject = subject, EnrolledAt = DateTime.UtcNow };
+
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetEnrollmentByIdAsync(enrollment.Id, teacherAsStudent.Id, "Teacher");
+
+            Assert.True(result.Success);
+            Assert.Equal(teacherAsStudent.Id, result.Data!.StudentId);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentByIdAsync_WhenTeacherOwnsSubject_ReturnsEnrollmentDto()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "Student" };
+            var subject = CreateActiveSubject(42);
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetEnrollmentByIdAsync(enrollment.Id, 42, "Teacher");
+
+            Assert.True(result.Success);
+            Assert.Equal(enrollment.Id, result.Data!.Id);
+        }
+
+        [Fact]
+        public async Task GetEnrollmentByIdAsync_WhenRequesterCannotViewEnrollment_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "Student" };
+            var subject = CreateActiveSubject(42);
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetEnrollmentByIdAsync(enrollment.Id, 99, "Student");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
         }
 
         [Fact]
@@ -93,7 +169,7 @@ namespace Sqeez.Api.Tests.Services
 
             // Test Active Only
             var activeFilter = new EnrollmentFilterDto { IsActive = true, PageNumber = 1, PageSize = 10 };
-            var activeResult = await service.GetAllEnrollmentsAsync(activeFilter);
+            var activeResult = await service.GetAllEnrollmentsAsync(activeFilter, 1, "Admin");
 
             Assert.True(activeResult.Success);
             Assert.Equal(1, activeResult.Data!.TotalCount);
@@ -101,11 +177,109 @@ namespace Sqeez.Api.Tests.Services
 
             // Test Inactive Only
             var inactiveFilter = new EnrollmentFilterDto { IsActive = false, PageNumber = 1, PageSize = 10 };
-            var inactiveResult = await service.GetAllEnrollmentsAsync(inactiveFilter);
+            var inactiveResult = await service.GetAllEnrollmentsAsync(inactiveFilter, 1, "Admin");
 
             Assert.True(inactiveResult.Success);
             Assert.Equal(1, inactiveResult.Data!.TotalCount);
             Assert.NotNull(inactiveResult.Data.Data.First().ArchivedAt);
+        }
+
+        [Fact]
+        public async Task GetAllEnrollmentsAsync_WhenStudentRequestsAnotherStudent_ForcesCurrentStudent()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentStudent = new Student { Username = "CurrentStudent" };
+            var otherStudent = new Student { Username = "OtherStudent" };
+            var subject = CreateActiveSubject(1);
+
+            context.Enrollments.AddRange(
+                new Enrollment { Student = currentStudent, Subject = subject, EnrolledAt = DateTime.UtcNow },
+                new Enrollment { Student = otherStudent, Subject = subject, EnrolledAt = DateTime.UtcNow }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new EnrollmentFilterDto { StudentId = otherStudent.Id, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllEnrollmentsAsync(filter, currentStudent.Id, "Student");
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal(currentStudent.Id, result.Data.Data.First().StudentId);
+        }
+
+        [Fact]
+        public async Task GetAllEnrollmentsAsync_WhenTeacherViewsOwnEnrollments_DoesNotRequireSubjectFilter()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacherAsStudent = new Student { Username = "TeacherStudent" };
+            var subject = CreateActiveSubject(99);
+            var enrollment = new Enrollment { Student = teacherAsStudent, Subject = subject, EnrolledAt = DateTime.UtcNow };
+
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new EnrollmentFilterDto { StudentId = teacherAsStudent.Id, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllEnrollmentsAsync(filter, teacherAsStudent.Id, "Teacher");
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal(teacherAsStudent.Id, result.Data.Data.First().StudentId);
+        }
+
+        [Fact]
+        public async Task GetAllEnrollmentsAsync_WhenTeacherDoesNotFilterByOwnedSubject_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+
+            var result = await service.GetAllEnrollmentsAsync(new EnrollmentFilterDto(), 42, "Teacher");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task GetAllEnrollmentsAsync_WhenTeacherFiltersByOwnedSubject_ReturnsSubjectEnrollments()
+        {
+            var context = await GetInMemoryDbContext();
+            var student = new Student { Username = "Student" };
+            var ownedSubject = CreateActiveSubject(42);
+            var otherSubject = CreateActiveSubject(99);
+
+            context.Enrollments.AddRange(
+                new Enrollment { Student = student, Subject = ownedSubject, EnrolledAt = DateTime.UtcNow },
+                new Enrollment { Student = new Student { Username = "Other" }, Subject = otherSubject, EnrolledAt = DateTime.UtcNow }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new EnrollmentFilterDto { SubjectId = ownedSubject.Id, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllEnrollmentsAsync(filter, 42, "Teacher");
+
+            Assert.True(result.Success);
+            Assert.Single(result.Data!.Data);
+            Assert.Equal(ownedSubject.Id, result.Data.Data.First().SubjectId);
+        }
+
+        [Fact]
+        public async Task GetAllEnrollmentsAsync_WhenTeacherFiltersByDifferentTeacherSubject_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var subject = CreateActiveSubject(99);
+            context.Subjects.Add(subject);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new EnrollmentFilterDto { SubjectId = subject.Id, PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllEnrollmentsAsync(filter, 42, "Teacher");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
         }
 
         // --- Patch (Grading) Tests ---
@@ -216,7 +390,7 @@ namespace Sqeez.Api.Tests.Services
 
             var service = CreateService(context);
 
-            var result = await service.DeleteEnrollmentAsync(enrollment.Id);
+            var result = await service.DeleteEnrollmentAsync(enrollment.Id, 1, "Admin");
 
             Assert.True(result.Success);
             var deletedRecord = await context.Enrollments.FindAsync(enrollment.Id);
@@ -236,12 +410,28 @@ namespace Sqeez.Api.Tests.Services
 
             var service = CreateService(context);
 
-            var result = await service.DeleteEnrollmentAsync(enrollment.Id);
+            var result = await service.DeleteEnrollmentAsync(enrollment.Id, 1, "Admin");
 
             Assert.True(result.Success);
             var archivedRecord = await context.Enrollments.FindAsync(enrollment.Id);
             Assert.NotNull(archivedRecord); // Still exists
             Assert.NotNull(archivedRecord.ArchivedAt); // But is archived
+        }
+
+        [Fact]
+        public async Task DeleteEnrollmentAsync_WhenRequesterCannotDeleteEnrollment_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var enrollment = new Enrollment { Student = new Student(), Subject = new Subject() };
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.DeleteEnrollmentAsync(enrollment.Id, 99, "Student");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
         }
 
         // --- Bulk Enroll/Unenroll Tests ---
