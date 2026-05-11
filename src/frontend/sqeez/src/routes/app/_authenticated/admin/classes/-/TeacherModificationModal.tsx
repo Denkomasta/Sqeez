@@ -79,9 +79,6 @@ export function TeacherModificationModal({
           teacherId: selectedTeacherId === '' ? 0 : Number(selectedTeacherId),
         },
       })
-      console.log(
-        `Assigned teacher ID ${selectedTeacherId} to class ${schoolClass.name}`,
-      )
     } catch (error) {
       console.error('Failed to assign teacher:', error)
     }

@@ -2,31 +2,52 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { type Theme } from '@/types/theme'
 import { DAISY_DARK_THEMES, DAISY_THEMES } from '@/constants/themes'
 
+export type ThemeState = Theme | 'system'
+
 const ThemeContext = createContext<
   | {
-      theme: Theme
-      setTheme: (theme: Theme) => void
+      theme: ThemeState
+      setTheme: (theme: ThemeState) => void
     }
   | undefined
 >(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem('ui-theme') as Theme) || 'system',
+  const [theme, setTheme] = useState<ThemeState>(
+    () => (localStorage.getItem('ui-theme') as ThemeState) || 'system',
   )
 
   useEffect(() => {
     const root = window.document.documentElement
-    const allThemes = [...DAISY_THEMES]
-    root.classList.remove(...allThemes)
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-    root.setAttribute('data-theme', theme)
+    const applyTheme = () => {
+      root.classList.remove(...DAISY_THEMES, 'dark')
 
-    if (DAISY_DARK_THEMES.includes(theme)) {
-      root.classList.add('dark')
+      let activeDaisyTheme: Theme
+
+      if (theme === 'system') {
+        activeDaisyTheme = mediaQuery.matches ? 'dark' : 'light'
+      } else {
+        activeDaisyTheme = theme
+      }
+
+      root.setAttribute('data-theme', activeDaisyTheme)
+
+      if (DAISY_DARK_THEMES.includes(activeDaisyTheme)) {
+        root.classList.add('dark')
+      }
     }
 
+    applyTheme()
     localStorage.setItem('ui-theme', theme)
+
+    if (theme === 'system') {
+      const handleSystemThemeChange = () => applyTheme()
+      mediaQuery.addEventListener('change', handleSystemThemeChange)
+      return () =>
+        mediaQuery.removeEventListener('change', handleSystemThemeChange)
+    }
   }, [theme])
 
   return (

@@ -38,7 +38,6 @@ export function DeleteSchoolClassModal({
 
     try {
       await deleteClassMutation.mutateAsync({ id: schoolClass.id.toString() })
-      console.log(`Deleted class ID ${schoolClass.id}`)
       onClose()
     } catch (error) {
       console.error('Failed to delete class:', error)

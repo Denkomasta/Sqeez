@@ -149,7 +149,6 @@ export function EditSubjectModal({
           schoolClassId: data.schoolClassId === '' ? null : data.schoolClassId,
         },
       })
-      console.log('Updating subject:', subject.id, data)
       handleClose()
     } catch (error) {
       console.error('Failed to update subject:', error)

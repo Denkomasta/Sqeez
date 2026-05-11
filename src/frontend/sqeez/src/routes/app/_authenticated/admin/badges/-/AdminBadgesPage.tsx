@@ -118,7 +118,6 @@ export function AdminBadgesPage() {
     if (!badgeToDelete) return
     try {
       await deleteBadgeMutation.mutateAsync({ id: badgeToDelete.id.toString() })
-      console.log('Deleted badge:', badgeToDelete.id)
       setBadgeToDelete(null)
     } catch (error) {
       console.error('Failed to delete badge', error)
