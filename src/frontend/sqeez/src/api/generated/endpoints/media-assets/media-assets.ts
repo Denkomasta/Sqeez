@@ -28,6 +28,7 @@ import type {
   PatchMediaAssetDto,
   PostApiMediaAssetsUploadBody,
   ProblemDetails,
+  ReassignMediaAssetOwnerDto,
 } from '../../model'
 
 import { customInstance } from '../../../custom-axios'
@@ -598,6 +599,93 @@ export const useDeleteApiMediaAssetsId = <
 > => {
   return useMutation(
     getDeleteApiMediaAssetsIdMutationOptions(options),
+    queryClient,
+  )
+}
+export const patchApiMediaAssetsIdOwner = (
+  id: number | string,
+  reassignMediaAssetOwnerDto: ReassignMediaAssetOwnerDto,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<MediaAssetDto>(
+    {
+      url: `/api/media-assets/${id}/owner`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: reassignMediaAssetOwnerDto,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getPatchApiMediaAssetsIdOwnerMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof patchApiMediaAssetsIdOwner>>,
+    TError,
+    { id: number | string; data: ReassignMediaAssetOwnerDto },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof patchApiMediaAssetsIdOwner>>,
+  TError,
+  { id: number | string; data: ReassignMediaAssetOwnerDto },
+  TContext
+> => {
+  const mutationKey = ['patchApiMediaAssetsIdOwner']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof patchApiMediaAssetsIdOwner>>,
+    { id: number | string; data: ReassignMediaAssetOwnerDto }
+  > = (props) => {
+    const { id, data } = props ?? {}
+
+    return patchApiMediaAssetsIdOwner(id, data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PatchApiMediaAssetsIdOwnerMutationResult = NonNullable<
+  Awaited<ReturnType<typeof patchApiMediaAssetsIdOwner>>
+>
+export type PatchApiMediaAssetsIdOwnerMutationBody = ReassignMediaAssetOwnerDto
+export type PatchApiMediaAssetsIdOwnerMutationError = ErrorType<unknown>
+
+export const usePatchApiMediaAssetsIdOwner = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof patchApiMediaAssetsIdOwner>>,
+      TError,
+      { id: number | string; data: ReassignMediaAssetOwnerDto },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof patchApiMediaAssetsIdOwner>>,
+  TError,
+  { id: number | string; data: ReassignMediaAssetOwnerDto },
+  TContext
+> => {
+  return useMutation(
+    getPatchApiMediaAssetsIdOwnerMutationOptions(options),
     queryClient,
   )
 }

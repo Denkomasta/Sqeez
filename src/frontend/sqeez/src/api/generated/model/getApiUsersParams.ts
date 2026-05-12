@@ -23,6 +23,7 @@ export type GetApiUsersParams = {
    */
   SubjectId?: number | string
   IsArchived?: boolean
+  IsEmailVerified?: boolean
   Role?: UserRole
   StrictRoleOnly?: boolean
   /**
