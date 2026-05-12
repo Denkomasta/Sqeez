@@ -139,6 +139,11 @@ namespace Sqeez.Api.Services.UserService
                 query = query.Where(u => u.ArchivedAt == null);
             }
 
+            if (filter.IsEmailVerified is bool isEmailVerified)
+            {
+                query = query.Where(u => u.IsEmailVerified == isEmailVerified);
+            }
+
             if (!string.IsNullOrWhiteSpace(filter.Department))
             {
                 query = query.OfType<Teacher>().Where(t => t.Department == filter.Department).Cast<Student>();
