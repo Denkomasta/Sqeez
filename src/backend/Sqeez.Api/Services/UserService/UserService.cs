@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -15,13 +16,16 @@ namespace Sqeez.Api.Services.UserService
     public class UserService : BaseService<UserService>, IUserService
     {
         private readonly IFileStorageService _fileStorageService;
+        private readonly string _superUserEmail;
 
         public UserService(
             SqeezDbContext context,
             ILogger<UserService> logger,
-            IFileStorageService fileStorageService) : base(context, logger)
+            IFileStorageService fileStorageService,
+            IConfiguration configuration) : base(context, logger)
         {
             _fileStorageService = fileStorageService;
+            _superUserEmail = configuration["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
         }
 
         private static StudentDto MapUserToDto(Student user)
@@ -273,10 +277,16 @@ namespace Sqeez.Api.Services.UserService
             var username = dto.Username.Trim();
             var usernameLower = username.ToLower();
 
-            if (await _context.Students.AnyAsync(u => u.Email == email))
+            var existingIdentityMatches = await _context.Students
+                .AsNoTracking()
+                .Where(u => u.Email == email || u.Username.ToLower() == usernameLower)
+                .Select(u => new { u.Email, Username = u.Username.ToLower() })
+                .ToListAsync();
+
+            if (existingIdentityMatches.Any(u => u.Email == email))
                 return ServiceResult<StudentDto>.Failure("Email already in use.", ServiceError.Conflict);
 
-            if (await _context.Students.AnyAsync(u => u.Username.ToLower() == usernameLower))
+            if (existingIdentityMatches.Any(u => u.Username == usernameLower))
                 return ServiceResult<StudentDto>.Failure("Username is already taken.", ServiceError.Conflict);
 
             if (dto.SchoolClassId.HasValue && dto.SchoolClassId.Value != 0)
@@ -351,7 +361,7 @@ namespace Sqeez.Api.Services.UserService
 
                 if (isDuplicateEmail || isDuplicateUsername)
                 {
-                    string reason = isDuplicateEmail ? "Email already exists" : "Derived username already exists";
+                    string reason = isDuplicateEmail ? "Email already exists or is archived" : "Derived username already exists";
                     bulkResult.SkippedMessages.Add($"Student '{student.Email}' skipped: {reason}.");
                     continue;
                 }
@@ -372,18 +382,78 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<BulkOperationResult<StudentDto>>.Ok(bulkResult);
         }
 
-        public async Task<ServiceResult<bool>> ArchiveUserAsync(long id)
+        public async Task<ServiceResult<bool>> ArchiveUserAsync(long id, long currentUserId, string? currentUserRole)
         {
-            var user = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
+            var targetUser = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
+            if (targetUser == null)
                 return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
 
-            user.ArchivedAt = DateTime.UtcNow;
+            var currentUser = await _context.Students.AsNoTracking().FirstOrDefaultAsync(u => u.Id == currentUserId);
+            if (currentUser == null)
+                return ServiceResult<bool>.Failure("Current user not found.", ServiceError.Unauthorized);
+
+            bool targetIsSuperAdmin = IsSuperAdmin(targetUser);
+            bool currentUserIsSuperAdmin = IsSuperAdmin(currentUser);
+            bool canArchive =
+                !targetIsSuperAdmin &&
+                (targetUser.Id == currentUserId ||
+                 (currentUserRole == "Admin" &&
+                  (currentUserIsSuperAdmin || targetUser.Role != UserRole.Admin)));
+
+            if (!canArchive)
+            {
+                return ServiceResult<bool>.Failure("You do not have permission to archive this user.", ServiceError.Forbidden);
+            }
+
+            targetUser.ArchivedAt ??= DateTime.UtcNow;
+
+            var activeSessions = await _context.UserSessions
+                .Where(session => session.UserId == targetUser.Id && !session.IsRevoked)
+                .ToListAsync();
+
+            foreach (var session in activeSessions)
+            {
+                session.IsRevoked = true;
+            }
+
             await _context.SaveChangesAsync();
 
-            // Delete must be with file deletion
+            return ServiceResult<bool>.Ok(true);
+        }
+
+        public async Task<ServiceResult<bool>> RestoreUserAsync(long id, long currentUserId, string? currentUserRole)
+        {
+            var targetUser = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
+            if (targetUser == null)
+                return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
+
+            var currentUser = await _context.Students.AsNoTracking().FirstOrDefaultAsync(u => u.Id == currentUserId);
+            if (currentUser == null)
+                return ServiceResult<bool>.Failure("Current user not found.", ServiceError.Unauthorized);
+
+            bool targetIsSuperAdmin = IsSuperAdmin(targetUser);
+            bool currentUserIsSuperAdmin = IsSuperAdmin(currentUser);
+            bool canRestore =
+                currentUserRole == "Admin" &&
+                !targetIsSuperAdmin &&
+                (currentUserIsSuperAdmin || targetUser.Role != UserRole.Admin);
+
+            if (!canRestore)
+            {
+                return ServiceResult<bool>.Failure("You do not have permission to restore this user.", ServiceError.Forbidden);
+            }
+
+            targetUser.ArchivedAt = null;
+            await _context.SaveChangesAsync();
 
             return ServiceResult<bool>.Ok(true);
+        }
+
+        private bool IsSuperAdmin(Student user)
+        {
+            return user.Role == UserRole.Admin &&
+                   !string.IsNullOrWhiteSpace(_superUserEmail) &&
+                   user.Email.Equals(_superUserEmail, StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto)

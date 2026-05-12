@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Sqeez.Api.Data;
@@ -16,6 +17,8 @@ namespace Sqeez.Api.Tests.Services
 {
     public class UserServiceTests
     {
+        private const string SuperUserEmail = "founder@sqeez.org";
+
         private async Task<SqeezDbContext> GetInMemoryDbContext()
         {
             var options = new DbContextOptionsBuilder<SqeezDbContext>()
@@ -31,7 +34,14 @@ namespace Sqeez.Api.Tests.Services
         {
             var mockLogger = new Mock<ILogger<UserService>>();
             var mockedFileService = new Mock<IFileStorageService>();
-            return new UserService(context, mockLogger.Object, mockedFileService.Object);
+            return new UserService(context, mockLogger.Object, mockedFileService.Object, CreateConfiguration());
+        }
+
+        private static IConfiguration CreateConfiguration()
+        {
+            var mockConfiguration = new Mock<IConfiguration>();
+            mockConfiguration.Setup(configuration => configuration["SUPER_USER_EMAIL"]).Returns(SuperUserEmail);
+            return mockConfiguration.Object;
         }
 
         // ==========================================
@@ -119,6 +129,29 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task CreateUserAsync_WhenEmailBelongsToArchivedUser_ReturnsEmailConflict()
+        {
+            var context = await GetInMemoryDbContext();
+            context.Students.Add(new Student
+            {
+                Username = "Archived",
+                Email = "archived@sqeez.org",
+                Role = UserRole.Student,
+                ArchivedAt = DateTime.UtcNow
+            });
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var createDto = new CreateTeacherDto { Username = "Replacement", Email = "archived@sqeez.org", Password = "pwd" };
+
+            var result = await service.CreateUserAsync(createDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.Equal("Email already in use.", result.ErrorMessage);
+        }
+
+        [Fact]
         public async Task CreateUserAsync_WhenUsernameAlreadyExistsIgnoringCase_ReturnsConflict()
         {
             var context = await GetInMemoryDbContext();
@@ -178,11 +211,132 @@ namespace Sqeez.Api.Tests.Services
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var result = await service.ArchiveUserAsync(student.Id);
+            var result = await service.ArchiveUserAsync(student.Id, student.Id, "Student");
 
             Assert.Null(result.ErrorMessage);
             var deletedStudent = await context.Students.FindAsync(student.Id);
             Assert.NotNull(deletedStudent!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task ArchiveUserAsync_WhenAdminArchivesStudent_Succeeds()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var student = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
+            context.Students.AddRange(admin, student);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ArchiveUserAsync(student.Id, admin.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.NotNull((await context.Students.FindAsync(student.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task ArchiveUserAsync_WhenAdminArchivesAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin };
+            context.Students.AddRange(admin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ArchiveUserAsync(targetAdmin.Id, admin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.Null((await context.Students.FindAsync(targetAdmin.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task ArchiveUserAsync_WhenSuperAdminArchivesAdmin_Succeeds()
+        {
+            var context = await GetInMemoryDbContext();
+            var superAdmin = new Admin { Username = "SuperAdmin", Email = SuperUserEmail, Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin };
+            context.Students.AddRange(superAdmin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ArchiveUserAsync(targetAdmin.Id, superAdmin.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.NotNull((await context.Students.FindAsync(targetAdmin.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task ArchiveUserAsync_WhenSuperAdminArchivesSelf_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var superAdmin = new Admin { Username = "SuperAdmin", Email = SuperUserEmail, Role = UserRole.Admin };
+            context.Students.Add(superAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ArchiveUserAsync(superAdmin.Id, superAdmin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.Null((await context.Students.FindAsync(superAdmin.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task RestoreUserAsync_WhenAdminRestoresStudent_Succeeds()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var student = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student, ArchivedAt = DateTime.UtcNow };
+            context.Students.AddRange(admin, student);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.RestoreUserAsync(student.Id, admin.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.Null((await context.Students.FindAsync(student.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task RestoreUserAsync_WhenAdminRestoresAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin, ArchivedAt = DateTime.UtcNow };
+            context.Students.AddRange(admin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.RestoreUserAsync(targetAdmin.Id, admin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.NotNull((await context.Students.FindAsync(targetAdmin.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task RestoreUserAsync_WhenSuperAdminRestoresAdmin_Succeeds()
+        {
+            var context = await GetInMemoryDbContext();
+            var superAdmin = new Admin { Username = "SuperAdmin", Email = SuperUserEmail, Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin, ArchivedAt = DateTime.UtcNow };
+            context.Students.AddRange(superAdmin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.RestoreUserAsync(targetAdmin.Id, superAdmin.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.Null((await context.Students.FindAsync(targetAdmin.Id))!.ArchivedAt);
         }
 
         // ==========================================
@@ -491,7 +645,7 @@ namespace Sqeez.Api.Tests.Services
             mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
                 .ReturnsAsync(ServiceResult<string>.Ok("/avatars/new-avatar.png"));
 
-            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
             var mockFile = CreateMockFile("profile.png");
 
             var result = await service.UploadAvatarAsync(student.Id, mockFile.Object);
@@ -515,7 +669,7 @@ namespace Sqeez.Api.Tests.Services
             mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
                 .ReturnsAsync(ServiceResult<string>.Ok("/avatars/new.png"));
 
-            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
             var mockFile = CreateMockFile("new.png");
 
             await service.UploadAvatarAsync(student.Id, mockFile.Object);
@@ -528,7 +682,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var mockFileService = new Mock<IFileStorageService>();
-            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
 
             var mockFile = CreateMockFile("document.pdf");
 
@@ -544,7 +698,7 @@ namespace Sqeez.Api.Tests.Services
         {
             var context = await GetInMemoryDbContext();
             var mockFileService = new Mock<IFileStorageService>();
-            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
 
             var mockFile = CreateMockFile("profile.jpg");
 
@@ -698,7 +852,7 @@ namespace Sqeez.Api.Tests.Services
             mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
                 .ReturnsAsync(ServiceResult<string>.Failure("Upload failed.", ServiceError.InternalError));
 
-            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object);
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
             var mockFile = CreateMockFile("profile.png");
 
             var result = await service.UploadAvatarAsync(student.Id, mockFile.Object);

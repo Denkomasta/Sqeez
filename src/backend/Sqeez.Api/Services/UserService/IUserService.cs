@@ -59,11 +59,22 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto);
 
         /// <summary>
-        /// Archives a user by setting the archive timestamp.
+        /// Archives a user by setting the archive timestamp according to self, admin, and superadmin rules.
         /// </summary>
-        /// <param name="id">The user id.</param>
-        /// <returns>A successful result when archived, or not found when the user does not exist.</returns>
-        Task<ServiceResult<bool>> ArchiveUserAsync(long id);
+        /// <param name="id">The user id to archive.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>A successful result when archived, not found when a user does not exist, or forbidden when access is denied.</returns>
+        Task<ServiceResult<bool>> ArchiveUserAsync(long id, long currentUserId, string? currentUserRole);
+
+        /// <summary>
+        /// Restores an archived user by clearing the archive timestamp according to admin and superadmin rules.
+        /// </summary>
+        /// <param name="id">The user id to restore.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>A successful result when restored, not found when a user does not exist, or forbidden when access is denied.</returns>
+        Task<ServiceResult<bool>> RestoreUserAsync(long id, long currentUserId, string? currentUserRole);
 
         /// <summary>
         /// Uploads and assigns a user's avatar image.

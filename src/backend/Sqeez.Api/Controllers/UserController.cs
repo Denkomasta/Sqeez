@@ -121,25 +121,29 @@ namespace Sqeez.Api.Controllers
         }
 
         /// <summary>
-        /// Archives a user. Users can archive themselves; admins can archive any user.
+        /// Archives a user. Users can archive themselves; admins can archive non-admin users; the superadmin can archive admins too.
         /// </summary>
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> ArchiveUser(long id)
         {
-            var role = GetUserRoleFromClaims();
-            if (role != "Admin" && !IsIdLoggedUser(id))
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    error = "Forbidden",
-                    message = "You do not have permission to modify another student's profile."
-                });
-            }
+            var result = await _userService.ArchiveUserAsync(id, CurrentUserId, GetUserRoleFromClaims());
 
-            var result = await _userService.ArchiveUserAsync(id);
+            if (!result.Success) return HandleServiceResult(result);
 
-            if (!result.Success) return NotFound(result.ErrorMessage);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Restores an archived user. Admins can restore non-admin users; the superadmin can restore admins too.
+        /// </summary>
+        [HttpPatch("{id}/restore")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RestoreUser(long id)
+        {
+            var result = await _userService.RestoreUserAsync(id, CurrentUserId, GetUserRoleFromClaims());
+
+            if (!result.Success) return HandleServiceResult(result);
 
             return NoContent();
         }
