@@ -138,6 +138,30 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task LoginAsync_WhenUserIsArchived_ReturnsUnauthorized()
+        {
+            var context = await GetInMemoryDbContext();
+            var user = new Student
+            {
+                Username = "ArchivedLogin",
+                Email = "archived-login@sqeez.org",
+                PasswordHash = BC.HashPassword("CorrectPassword"),
+                ArchivedAt = DateTime.UtcNow,
+                IsEmailVerified = true
+            };
+            context.Students.Add(user);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.LoginAsync(new LoginDTO("archived-login@sqeez.org", "CorrectPassword"));
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Unauthorized, result.ErrorCode);
+            Assert.Equal(0, await context.UserSessions.CountAsync());
+        }
+
+        [Fact]
         public async Task RegisterAsync_WithNormalEmail_CreatesStudent()
         {
             var context = await GetInMemoryDbContext();
@@ -185,6 +209,28 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WithArchivedEmail_ReturnsEmailConflict()
+        {
+            var context = await GetInMemoryDbContext();
+            context.Students.Add(new Student
+            {
+                Username = "ArchivedUser",
+                Email = "archived@sqeez.org",
+                ArchivedAt = DateTime.UtcNow
+            });
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var registerDto = new RegisterDTO("Tonda", "Druhy", "SecondUser", "archived@sqeez.org", "pwd");
+
+            var result = await service.RegisterAsync(registerDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.Equal("Email already exists.", result.ErrorMessage);
         }
 
         [Fact]

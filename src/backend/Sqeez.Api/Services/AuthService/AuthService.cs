@@ -105,6 +105,9 @@ namespace Sqeez.Api.Services.AuthService
 
             if (user == null) return ServiceResult<AuthResponseDto>.Failure("Invalid email or password.", ServiceError.NotFound);
 
+            if (user.ArchivedAt != null)
+                return ServiceResult<AuthResponseDto>.Failure("This account has been archived.", ServiceError.Unauthorized);
+
             var config = await _configService.GetConfigAsync();
 
             if (!user.IsEmailVerified && (config.Data?.RequireEmailVerification ?? true))
@@ -133,9 +136,16 @@ namespace Sqeez.Api.Services.AuthService
             string email = dto.Email.Trim().ToLower();
             string username = string.IsNullOrWhiteSpace(dto.Username) ? email.Split('@')[0] : dto.Username.Trim();
 
-            if (await _context.Students.AnyAsync(x => x.Email == email))
+            var existingIdentityMatches = await _context.Students
+                .AsNoTracking()
+                .Where(x => x.Email == email || x.Username == username)
+                .Select(x => new { x.Email, x.Username })
+                .ToListAsync();
+
+            if (existingIdentityMatches.Any(x => x.Email == email))
                 return ServiceResult<bool>.Failure("Email already exists.", ServiceError.Conflict);
-            if (await _context.Students.AnyAsync(x => x.Username == username))
+
+            if (existingIdentityMatches.Any(x => x.Username == username))
                 return ServiceResult<bool>.Failure("Username already exists", ServiceError.Conflict);
 
             string salt = BC.GenerateSalt(12);
