@@ -789,6 +789,45 @@ paths:
             text/json:
               schema:
                 type: boolean
+  /api/media-assets/{id}/owner:
+    patch:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReassignMediaAssetOwnerDto"
+          text/json:
+            schema:
+              $ref: "#/components/schemas/ReassignMediaAssetOwnerDto"
+          application/*+json:
+            schema:
+              $ref: "#/components/schemas/ReassignMediaAssetOwnerDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/MediaAssetDto"
   /api/media-assets/upload:
     post:
       tags:
@@ -2763,6 +2802,10 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: IsEmailVerified
+          in: query
+          schema:
+            type: boolean
         - name: Role
           in: query
           schema:
@@ -2964,6 +3007,48 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/DetailedUserDto"
+  /api/users/{id}/restore:
+    patch:
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
+  /api/users/{id}/hard:
+    delete:
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: replacementMediaOwnerId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
   /api/users/me/avatar:
     post:
       tags:
@@ -5074,6 +5159,18 @@ components:
             - number
             - string
           format: double
+    ReassignMediaAssetOwnerDto:
+      required:
+        - ownerId
+      type: object
+      properties:
+        ownerId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     RegisterDTO:
       type: object
       properties:
@@ -5754,6 +5851,13 @@ components:
           type:
             - "null"
             - string
+        replacementMediaOwnerId:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int64
     UpdateSystemConfigDto:
       type: object
       properties:

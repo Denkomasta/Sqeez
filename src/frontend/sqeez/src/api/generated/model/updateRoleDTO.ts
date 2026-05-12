@@ -24,4 +24,9 @@ export interface UpdateRoleDTO {
    * @pattern ^\+?[0-9\s\-()]{7,15}$
    */
   phoneNumber?: string | null
+  /**
+   * @nullable
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
+  replacementMediaOwnerId?: number | string | null
 }
