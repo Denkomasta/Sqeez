@@ -215,5 +215,46 @@ namespace Sqeez.Api.Tests.Integration
                 service => service.PatchMediaAssetAsync(It.IsAny<long>(), It.IsAny<PatchMediaAssetDto>()),
                 Times.Never);
         }
+
+        [Fact]
+        public async Task ReassignMediaAssetOwner_AsAdmin_CallsMediaAssetService()
+        {
+            _factory.MediaAssetServiceMock
+                .Setup(service => service.ReassignMediaAssetOwnerAsync(5, 99))
+                .ReturnsAsync(ServiceResult<MediaAssetDto>.Ok(
+                    new MediaAssetDto(5, "/secure/media/file.png", MediaType.Image, true, null, 99, "replacement")));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.PatchAsJsonAsync("/api/media-assets/5/owner", new
+            {
+                ownerId = 99
+            });
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.ReassignMediaAssetOwnerAsync(5, 99),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task ReassignMediaAssetOwner_AsTeacher_ReturnsForbiddenBeforeServiceCall()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.PatchAsJsonAsync("/api/media-assets/5/owner", new
+            {
+                ownerId = 99
+            });
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.ReassignMediaAssetOwnerAsync(It.IsAny<long>(), It.IsAny<long?>()),
+                Times.Never);
+        }
     }
 }

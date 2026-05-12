@@ -37,6 +37,17 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<MediaAssetDto>> PatchMediaAssetAsync(long id, PatchMediaAssetDto dto);
 
         /// <summary>
+        /// Transfers media asset ownership to another active teacher or admin.
+        /// </summary>
+        /// <param name="id">The media asset id.</param>
+        /// <param name="ownerId">The replacement owner id.</param>
+        /// <returns>
+        /// The updated media asset, not found when the asset or owner does not exist, or validation failed when
+        /// the owner id is missing.
+        /// </returns>
+        Task<ServiceResult<MediaAssetDto>> ReassignMediaAssetOwnerAsync(long id, long? ownerId);
+
+        /// <summary>
         /// Deletes a media asset record and its stored file.
         /// </summary>
         /// <param name="id">The media asset id.</param>
