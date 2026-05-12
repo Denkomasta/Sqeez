@@ -427,12 +427,13 @@ namespace Sqeez.Api.Services.AuthService
                 {
                     bool hasClasses = teacher.ManagedClassId.HasValue;
                     bool hasSubjects = await _context.Subjects.AnyAsync(s => s.TeacherId == userId);
+                    bool hasMediaAssets = await _context.MediaAssets.AnyAsync(m => m.OwnerId == userId);
 
-                    if (hasSubjects || hasClasses)
+                    if (hasSubjects || hasClasses || hasMediaAssets)
                     {
                         _logger.LogWarning("Attempted to downgrade Teacher/Admin {Id} who has active dependencies.", userId);
                         return ServiceResult<bool>.Failure(
-                            "Cannot change this user to a Student because they are currently assigned to a subject or manage a school class. Please reassign their duties first.",
+                            "Cannot change this user to a Student because they are currently assigned to a subject, manage a school class, or own media assets. Please reassign or remove their duties first.",
                             ServiceError.Conflict);
                     }
                 }

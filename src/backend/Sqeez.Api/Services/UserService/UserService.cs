@@ -449,6 +449,147 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<bool>.Ok(true);
         }
 
+        public async Task<ServiceResult<bool>> DeleteUserAsync(long id, long currentUserId, string? currentUserRole)
+        {
+            if (currentUserRole != "Admin")
+            {
+                return ServiceResult<bool>.Failure("Only admins can permanently delete users.", ServiceError.Forbidden);
+            }
+
+            var currentUserExists = await _context.Students
+                .AsNoTracking()
+                .AnyAsync(user => user.Id == currentUserId && user.Role == UserRole.Admin);
+
+            if (!currentUserExists)
+            {
+                return ServiceResult<bool>.Failure("Current user not found.", ServiceError.Unauthorized);
+            }
+
+            var targetUser = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
+            if (targetUser == null)
+                return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
+
+            if (targetUser.Role == UserRole.Admin)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Admins must be changed to teacher before they can be permanently deleted.",
+                    ServiceError.Forbidden);
+            }
+
+            if (targetUser.ArchivedAt == null)
+            {
+                return ServiceResult<bool>.Failure(
+                    "User must be archived before permanent deletion.",
+                    ServiceError.ValidationFailed);
+            }
+
+            var fileUrlsToDelete = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (!string.IsNullOrWhiteSpace(targetUser.AvatarUrl))
+            {
+                fileUrlsToDelete.Add(targetUser.AvatarUrl);
+            }
+
+            var sessions = await _context.UserSessions
+                .Where(session => session.UserId == id)
+                .ToListAsync();
+            _context.UserSessions.RemoveRange(sessions);
+
+            var studentBadges = await _context.StudentBadges
+                .Where(studentBadge => studentBadge.StudentId == id)
+                .ToListAsync();
+            _context.StudentBadges.RemoveRange(studentBadges);
+
+            var enrollments = await _context.Enrollments
+                .Where(enrollment => enrollment.StudentId == id)
+                .ToListAsync();
+            var enrollmentIds = enrollments.Select(enrollment => enrollment.Id).ToList();
+
+            if (enrollmentIds.Any())
+            {
+                var attempts = await _context.QuizAttempts
+                    .Include(attempt => attempt.Responses)
+                    .Where(attempt => enrollmentIds.Contains(attempt.EnrollmentId))
+                    .ToListAsync();
+                var responses = attempts.SelectMany(attempt => attempt.Responses).ToList();
+
+                _context.QuizQuestionResponses.RemoveRange(responses);
+                _context.QuizAttempts.RemoveRange(attempts);
+                _context.Enrollments.RemoveRange(enrollments);
+            }
+
+            if (targetUser.Role == UserRole.Teacher)
+            {
+                var subjects = await _context.Subjects
+                    .Where(subject => subject.TeacherId == id)
+                    .ToListAsync();
+                foreach (var subject in subjects)
+                {
+                    subject.TeacherId = null;
+                }
+
+                var ownedMediaAssets = await _context.MediaAssets
+                    .Where(mediaAsset => mediaAsset.OwnerId == id)
+                    .ToListAsync();
+                var ownedMediaAssetIds = ownedMediaAssets.Select(mediaAsset => mediaAsset.Id).ToList();
+
+                if (ownedMediaAssetIds.Any())
+                {
+                    var questionsUsingMedia = await _context.QuizQuestions
+                        .Where(question => question.MediaAssetId.HasValue && ownedMediaAssetIds.Contains(question.MediaAssetId.Value))
+                        .ToListAsync();
+                    foreach (var question in questionsUsingMedia)
+                    {
+                        question.MediaAssetId = null;
+                    }
+
+                    var optionsUsingMedia = await _context.QuizOptions
+                        .Where(option => option.MediaAssetId.HasValue && ownedMediaAssetIds.Contains(option.MediaAssetId.Value))
+                        .ToListAsync();
+                    foreach (var option in optionsUsingMedia)
+                    {
+                        option.MediaAssetId = null;
+                    }
+
+                    foreach (var mediaAsset in ownedMediaAssets)
+                    {
+                        if (!string.IsNullOrWhiteSpace(mediaAsset.LocationUrl))
+                        {
+                            fileUrlsToDelete.Add(mediaAsset.LocationUrl);
+                        }
+                    }
+
+                    _context.MediaAssets.RemoveRange(ownedMediaAssets);
+                }
+            }
+
+            _context.Students.Remove(targetUser);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to permanently delete user {UserId}.", id);
+                return ServiceResult<bool>.Failure("Failed to permanently delete user.", ServiceError.InternalError);
+            }
+
+            foreach (var fileUrl in fileUrlsToDelete)
+            {
+                var deleteFileResult = await _fileStorageService.DeleteFileAsync(fileUrl);
+                if (!deleteFileResult.Success)
+                {
+                    _logger.LogWarning(
+                        "Failed to delete file {FileUrl} while permanently deleting user {UserId}: {Error}",
+                        fileUrl,
+                        id,
+                        deleteFileResult.ErrorMessage);
+                }
+            }
+
+            return ServiceResult<bool>.Ok(true);
+        }
+
         private bool IsSuperAdmin(Student user)
         {
             return user.Role == UserRole.Admin &&

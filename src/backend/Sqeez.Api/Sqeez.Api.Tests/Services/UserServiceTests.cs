@@ -8,6 +8,8 @@ using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.Gamification;
+using Sqeez.Api.Models.Media;
+using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.Interfaces;
 using Sqeez.Api.Services.UserService;
@@ -337,6 +339,145 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.True(result.Success);
             Assert.Null((await context.Students.FindAsync(targetAdmin.Id))!.ArchivedAt);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_WhenUserIsNotArchived_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var student = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
+            context.Students.AddRange(admin, student);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.DeleteUserAsync(student.Id, admin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.NotNull(await context.Students.FindAsync(student.Id));
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_WhenTargetIsAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin, ArchivedAt = DateTime.UtcNow };
+            context.Students.AddRange(admin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.DeleteUserAsync(targetAdmin.Id, admin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.NotNull(await context.Students.FindAsync(targetAdmin.Id));
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_WhenArchivedStudentHasHistory_DeletesStudentAndHistory()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var student = new Student
+            {
+                Username = "Student",
+                Email = "student@sqeez.org",
+                Role = UserRole.Student,
+                ArchivedAt = DateTime.UtcNow,
+                AvatarUrl = "/avatars/student.png"
+            };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow };
+            var quiz = new Quiz { Title = "Quiz", Description = "Desc", Subject = subject };
+            var question = new QuizQuestion { Title = "Q", Difficulty = 1, Quiz = quiz };
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+            var attempt = new QuizAttempt { Enrollment = enrollment, Quiz = quiz, Status = AttemptStatus.Completed };
+            var response = new QuizQuestionResponse { QuizAttempt = attempt, QuizQuestion = question, ResponseTimeMs = 100 };
+            var badge = new Badge { Name = "Badge", Description = "Desc" };
+            var studentBadge = new StudentBadge { Student = student, Badge = badge, EarnedAt = DateTime.UtcNow };
+            var session = new UserSession { User = student, RefreshToken = "refresh", ExpiresAt = DateTime.UtcNow.AddDays(1) };
+
+            context.Students.AddRange(admin, student);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.QuizQuestions.Add(question);
+            context.Enrollments.Add(enrollment);
+            context.QuizAttempts.Add(attempt);
+            context.QuizQuestionResponses.Add(response);
+            context.Badges.Add(badge);
+            context.StudentBadges.Add(studentBadge);
+            context.UserSessions.Add(session);
+            await context.SaveChangesAsync();
+
+            var mockFileStorage = new Mock<IFileStorageService>();
+            mockFileStorage
+                .Setup(storage => storage.DeleteFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileStorage.Object, CreateConfiguration());
+
+            var result = await service.DeleteUserAsync(student.Id, admin.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.Null(await context.Students.FindAsync(student.Id));
+            Assert.Empty(context.Enrollments.Where(e => e.StudentId == student.Id));
+            Assert.Empty(context.QuizAttempts.Where(a => a.EnrollmentId == enrollment.Id));
+            Assert.Empty(context.QuizQuestionResponses.Where(r => r.QuizAttemptId == attempt.Id));
+            Assert.Empty(context.StudentBadges.Where(sb => sb.StudentId == student.Id));
+            Assert.Empty(context.UserSessions.Where(s => s.UserId == student.Id));
+            mockFileStorage.Verify(storage => storage.DeleteFileAsync("/avatars/student.png"), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_WhenArchivedTeacherOwnsMedia_DeletesTeacherMediaAndClearsReferences()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var teacher = new Teacher
+            {
+                Username = "Teacher",
+                Email = "teacher@sqeez.org",
+                Role = UserRole.Teacher,
+                ArchivedAt = DateTime.UtcNow
+            };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var quiz = new Quiz { Title = "Quiz", Description = "Desc", Subject = subject };
+            var mediaAsset = new MediaAsset
+            {
+                Owner = teacher,
+                LocationUrl = "/secure/media/teacher.png",
+                MimeType = MediaType.Image
+            };
+            var question = new QuizQuestion { Title = "Q", Difficulty = 1, Quiz = quiz, Media = mediaAsset };
+            var option = new QuizOption { Text = "A", QuizQuestion = question, Media = mediaAsset };
+
+            context.Students.AddRange(admin, teacher);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.MediaAssets.Add(mediaAsset);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            await context.SaveChangesAsync();
+
+            var questionId = question.Id;
+            var optionId = option.Id;
+            var mockFileStorage = new Mock<IFileStorageService>();
+            mockFileStorage
+                .Setup(storage => storage.DeleteFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileStorage.Object, CreateConfiguration());
+
+            var result = await service.DeleteUserAsync(teacher.Id, admin.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.Null(await context.Students.FindAsync(teacher.Id));
+            Assert.Null((await context.Subjects.FindAsync(subject.Id))!.TeacherId);
+            Assert.Empty(context.MediaAssets.Where(media => media.OwnerId == teacher.Id));
+            Assert.Null((await context.QuizQuestions.FindAsync(questionId))!.MediaAssetId);
+            Assert.Null((await context.QuizOptions.FindAsync(optionId))!.MediaAssetId);
+            mockFileStorage.Verify(storage => storage.DeleteFileAsync("/secure/media/teacher.png"), Times.Once);
         }
 
         // ==========================================

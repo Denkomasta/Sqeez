@@ -77,6 +77,18 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<bool>> RestoreUserAsync(long id, long currentUserId, string? currentUserRole);
 
         /// <summary>
+        /// Permanently deletes an archived student or teacher and the user's dependent data.
+        /// </summary>
+        /// <param name="id">The archived student or teacher id to delete.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>
+        /// A successful result when deleted, not found when a user does not exist, validation failed when the user
+        /// is not archived, or forbidden when access is denied or the target is an admin.
+        /// </returns>
+        Task<ServiceResult<bool>> DeleteUserAsync(long id, long currentUserId, string? currentUserRole);
+
+        /// <summary>
         /// Uploads and assigns a user's avatar image.
         /// </summary>
         /// <param name="userId">The user id.</param>
