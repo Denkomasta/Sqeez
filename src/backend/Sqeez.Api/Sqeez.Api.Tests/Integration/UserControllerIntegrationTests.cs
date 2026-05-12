@@ -275,5 +275,22 @@ namespace Sqeez.Api.Tests.Integration
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             _factory.UserServiceMock.Verify(service => service.RestoreUserAsync(7, 1, "Admin"), Times.Once);
         }
+
+        [Fact]
+        public async Task DeleteUser_AsAdmin_ReturnsNoContentWhenServiceSucceeds()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.DeleteUserAsync(7, 1, "Admin"))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.DeleteAsync("/api/users/7/hard");
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            _factory.UserServiceMock.Verify(service => service.DeleteUserAsync(7, 1, "Admin"), Times.Once);
+        }
     }
 }

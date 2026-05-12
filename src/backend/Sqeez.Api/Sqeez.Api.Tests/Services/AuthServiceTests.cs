@@ -5,6 +5,7 @@ using Moq;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Models.Media;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.AuthService;
 using Sqeez.Api.Services.Interfaces;
@@ -327,6 +328,35 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task UpdateUserRoleAsync_WhenTeacherOwnsMediaAssetsAndBecomesStudent_ReturnsConflict()
+        {
+            var context = await GetInMemoryDbContext();
+
+            var performingAdmin = new Admin { Username = "Admin2", Email = "admin2@sqeez.org", Role = UserRole.Admin };
+            var targetTeacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = UserRole.Teacher };
+            context.Admins.Add(performingAdmin);
+            context.Teachers.Add(targetTeacher);
+            await context.SaveChangesAsync();
+
+            context.MediaAssets.Add(new MediaAsset
+            {
+                LocationUrl = "/uploads/teacher-image.png",
+                MimeType = MediaType.Image,
+                OwnerId = targetTeacher.Id
+            });
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new UpdateRoleDTO(targetTeacher.Id, UserRole.Student);
+
+            var result = await service.UpdateUserRoleAsync(performingAdmin.Id, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.Contains("own media assets", result.ErrorMessage);
         }
 
         [Fact]
