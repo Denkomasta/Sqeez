@@ -668,6 +668,29 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task GetAllUsersAsync_WithIsEmailVerified_FiltersCorrectly()
+        {
+            var context = await GetInMemoryDbContext();
+            context.Students.AddRange(
+                new Student { Username = "VerifiedUser", Role = UserRole.Student, IsEmailVerified = true },
+                new Student { Username = "UnverifiedUser", Role = UserRole.Student, IsEmailVerified = false }
+            );
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var verifiedFilter = new UserFilterDto { IsEmailVerified = true, PageNumber = 1, PageSize = 10 };
+            var verifiedResult = await service.GetAllUsersAsync(verifiedFilter);
+            Assert.Single(verifiedResult.Data!.Data);
+            Assert.Equal("VerifiedUser", verifiedResult.Data.Data.First().Username);
+
+            var unverifiedFilter = new UserFilterDto { IsEmailVerified = false, PageNumber = 1, PageSize = 10 };
+            var unverifiedResult = await service.GetAllUsersAsync(unverifiedFilter);
+            Assert.Single(unverifiedResult.Data!.Data);
+            Assert.Equal("UnverifiedUser", unverifiedResult.Data.Data.First().Username);
+        }
+
+        [Fact]
         public async Task GetAllUsersAsync_WithDepartment_OnlyReturnsMatchingTeachersAndAdmins()
         {
             var context = await GetInMemoryDbContext();

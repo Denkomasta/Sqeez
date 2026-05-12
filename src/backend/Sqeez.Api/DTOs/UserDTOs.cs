@@ -153,6 +153,7 @@ namespace Sqeez.Api.DTOs
         public long? SchoolClassId { get; init; }
         public long? SubjectId { get; init; }
         public bool? IsArchived { get; init; }
+        public bool? IsEmailVerified { get; init; }
 
         public UserRole? Role { get; init; }
         public bool StrictRoleOnly { get; init; } = false;

@@ -170,6 +170,33 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task GetUsers_WithIsEmailVerifiedQuery_BindsFilter()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter =>
+                    filter.IsEmailVerified == false)))
+                .ReturnsAsync(ServiceResult<PagedResponse<StudentDto>>.Ok(
+                    new PagedResponse<StudentDto>
+                    {
+                        Data = Array.Empty<StudentDto>(),
+                        PageNumber = 1,
+                        PageSize = 10,
+                        TotalCount = 0
+                    }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.GetAsync("/api/users?IsEmailVerified=false");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter => filter.IsEmailVerified == false)),
+                Times.Once);
+        }
+
+        [Fact]
         public async Task GetUserById_AsDifferentAuthenticatedStudent_CallsUserService()
         {
             _factory.UserServiceMock
