@@ -88,7 +88,7 @@ export function PageLayout({
         {HeaderContent}
         {headerControls}
       </div>
-      <main>{children}</main>
+      <div>{children}</div>
     </div>
   )
 }
