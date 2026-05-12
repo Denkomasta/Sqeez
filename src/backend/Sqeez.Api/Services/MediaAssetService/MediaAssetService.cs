@@ -166,6 +166,46 @@ namespace Sqeez.Api.Services
                 asset.Id, asset.LocationUrl, asset.MimeType, asset.IsPrivate, asset.Description, asset.OwnerId, asset.Owner.Username));
         }
 
+        public async Task<ServiceResult<MediaAssetDto>> ReassignMediaAssetOwnerAsync(long id, long? ownerId)
+        {
+            if (!ownerId.HasValue)
+            {
+                return ServiceResult<MediaAssetDto>.Failure("Replacement media owner is required.", ServiceError.ValidationFailed);
+            }
+
+            var asset = await _context.MediaAssets
+                .Include(m => m.Owner)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (asset == null)
+            {
+                return ServiceResult<MediaAssetDto>.Failure("Media asset not found.", ServiceError.NotFound);
+            }
+
+            var replacementOwner = await _context.Teachers
+                .AsNoTracking()
+                .Where(user => user.Id == ownerId.Value && user.ArchivedAt == null)
+                .Select(user => new { user.Id, user.Username })
+                .FirstOrDefaultAsync();
+
+            if (replacementOwner == null)
+            {
+                return ServiceResult<MediaAssetDto>.Failure("Replacement media owner must be an active teacher or admin.", ServiceError.NotFound);
+            }
+
+            asset.OwnerId = replacementOwner.Id;
+            await _context.SaveChangesAsync();
+
+            return ServiceResult<MediaAssetDto>.Ok(new MediaAssetDto(
+                asset.Id,
+                asset.LocationUrl,
+                asset.MimeType,
+                asset.IsPrivate,
+                asset.Description,
+                asset.OwnerId,
+                replacementOwner.Username));
+        }
+
         public async Task<ServiceResult<bool>> DeleteMediaAssetAsync(long id)
         {
             var asset = await _context.MediaAssets.FindAsync(id);

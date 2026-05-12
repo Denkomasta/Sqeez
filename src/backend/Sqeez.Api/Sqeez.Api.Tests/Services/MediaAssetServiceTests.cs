@@ -132,6 +132,76 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task ReassignMediaAssetOwnerAsync_WhenValidOwner_TransfersOwnership()
+        {
+            var context = await GetInMemoryDbContext();
+            var originalOwner = new Teacher { Username = "Original", Role = UserRole.Teacher };
+            var replacementOwner = new Teacher { Username = "Replacement", Role = UserRole.Teacher };
+            var asset = new MediaAsset
+            {
+                LocationUrl = "/media/file.png",
+                MimeType = MediaType.Image,
+                Owner = originalOwner
+            };
+
+            context.Teachers.AddRange(originalOwner, replacementOwner);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ReassignMediaAssetOwnerAsync(asset.Id, replacementOwner.Id);
+
+            Assert.True(result.Success);
+            Assert.Equal(replacementOwner.Id, result.Data!.OwnerId);
+            Assert.Equal("Replacement", result.Data.OwnerUsername);
+            Assert.Equal(replacementOwner.Id, (await context.MediaAssets.FindAsync(asset.Id))!.OwnerId);
+        }
+
+        [Fact]
+        public async Task ReassignMediaAssetOwnerAsync_WhenAssetMissing_ReturnsNotFound()
+        {
+            var context = await GetInMemoryDbContext();
+            var replacementOwner = new Teacher { Username = "Replacement", Role = UserRole.Teacher };
+            context.Teachers.Add(replacementOwner);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ReassignMediaAssetOwnerAsync(999, replacementOwner.Id);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.NotFound, result.ErrorCode);
+            Assert.Contains("Media asset not found", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task ReassignMediaAssetOwnerAsync_WhenReplacementOwnerIsArchived_ReturnsNotFound()
+        {
+            var context = await GetInMemoryDbContext();
+            var originalOwner = new Teacher { Username = "Original", Role = UserRole.Teacher };
+            var archivedOwner = new Teacher
+            {
+                Username = "Archived",
+                Role = UserRole.Teacher,
+                ArchivedAt = DateTime.UtcNow
+            };
+            var asset = new MediaAsset { LocationUrl = "/media/file.png", Owner = originalOwner };
+
+            context.Teachers.AddRange(originalOwner, archivedOwner);
+            context.MediaAssets.Add(asset);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.ReassignMediaAssetOwnerAsync(asset.Id, archivedOwner.Id);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.NotFound, result.ErrorCode);
+            Assert.Equal(originalOwner.Id, (await context.MediaAssets.FindAsync(asset.Id))!.OwnerId);
+        }
+
+        [Fact]
         public async Task DeleteMediaAssetAsync_WhenExists_DeletesAsset()
         {
             var context = await GetInMemoryDbContext();

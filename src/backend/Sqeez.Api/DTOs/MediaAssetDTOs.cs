@@ -79,6 +79,22 @@ namespace Sqeez.Api.DTOs
     }
 
     /// <summary>
+    /// Request for transferring media asset ownership to another teacher or admin.
+    /// </summary>
+    public record ReassignMediaAssetOwnerDto
+    {
+        public ReassignMediaAssetOwnerDto() { }
+
+        public ReassignMediaAssetOwnerDto(long ownerId)
+        {
+            OwnerId = ownerId;
+        }
+
+        [Required]
+        public long? OwnerId { get; init; }
+    }
+
+    /// <summary>
     /// Multipart upload request for storing a media file and creating its metadata.
     /// </summary>
     public class UploadMediaAssetDto

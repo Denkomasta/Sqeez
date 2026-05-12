@@ -106,6 +106,18 @@ namespace Sqeez.Api.Controllers
         }
 
         /// <summary>
+        /// PATCH /api/media-assets/{id}/owner
+        /// Transfers media asset ownership to another active teacher or admin. Admin-only.
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("{id}/owner")]
+        public async Task<ActionResult<MediaAssetDto>> ReassignOwner(long id, [FromBody] ReassignMediaAssetOwnerDto dto)
+        {
+            var result = await _mediaAssetService.ReassignMediaAssetOwnerAsync(id, dto.OwnerId);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
         /// POST /api/media-assets/upload
         /// Accepts a physical file, saves it securely, and creates the database record.
         /// </summary>
