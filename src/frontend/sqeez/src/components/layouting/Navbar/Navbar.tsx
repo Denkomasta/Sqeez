@@ -122,16 +122,19 @@ export function Navbar({
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[85vw] max-w-87.5 p-0">
-              <div className="flex h-full flex-col">
-                <SheetHeader className="border-b p-6 text-left">
+            <SheetContent
+              side="left"
+              className="h-svh max-h-svh w-[85vw] max-w-87.5 gap-0 overflow-hidden p-0"
+            >
+              <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden">
+                <SheetHeader className="sticky top-0 z-10 shrink-0 border-b bg-background p-6 text-left">
                   <SheetTitle>{navigationText}</SheetTitle>
                   <SheetDescription className="sr-only">
                     {navigationText}
                   </SheetDescription>
                 </SheetHeader>
 
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="min-h-0 overflow-y-auto overscroll-contain p-4">
                   <nav className="flex flex-col gap-1">
                     {navLinks.map((link) => {
                       const isExact = link.to === '/app' || link.to === '/'
@@ -155,18 +158,18 @@ export function Navbar({
                   </nav>
                 </div>
 
-                <div className="border-t bg-muted/20 p-4">
+                <div className="sticky bottom-0 z-10 shrink-0 border-t bg-muted/20 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
                   {isAuthenticated ? (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
                       <Link
                         to="/app/profile"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 rounded-xl border bg-background p-3 shadow-sm transition-colors hover:bg-accent"
+                        className="flex items-center gap-3 rounded-xl border bg-background px-3 py-2 shadow-sm transition-colors hover:bg-accent"
                       >
                         <SimpleAvatar
                           url={avatarUrl}
                           username={user?.username}
-                          wrapperClassName="size-10 shrink-0"
+                          wrapperClassName="size-9 shrink-0"
                           imageClassName="object-cover"
                         />
                         <div className="flex flex-col overflow-hidden">
@@ -179,13 +182,18 @@ export function Navbar({
                         </div>
                       </Link>
 
-                      <div className="flex items-center justify-between rounded-xl border bg-background px-4 py-2 shadow-sm">
+                      <div className="flex h-11 items-center justify-between rounded-xl border bg-background px-4 shadow-sm">
                         <LanguageSwitcher />
                         <div className="h-6 w-px bg-border"></div>{' '}
                         <ThemeSwitcher title={t('common.themes')} />
                       </div>
 
-                      <Button variant="destructive" className="w-full" asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="h-10 w-full"
+                        asChild
+                      >
                         <Link
                           to="/logout"
                           onClick={() => setIsMobileMenuOpen(false)}
