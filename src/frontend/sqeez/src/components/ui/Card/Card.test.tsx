@@ -52,12 +52,14 @@ describe('FeatureCard', () => {
     render(
       <FeatureCard
         icon={<span data-testid="feature-icon" />}
+        visual={<span data-testid="feature-visual" />}
         title="Practice"
         description="Sharpen skills"
       />,
     )
 
     expect(screen.getByTestId('feature-icon')).toBeInTheDocument()
+    expect(screen.getByTestId('feature-visual')).toBeInTheDocument()
     expect(screen.getByText('Practice')).toBeInTheDocument()
     expect(screen.getByText('Sharpen skills')).toBeInTheDocument()
   })

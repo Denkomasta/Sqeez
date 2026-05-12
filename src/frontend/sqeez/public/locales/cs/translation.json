@@ -9,7 +9,7 @@
       "title": "Začněte se učit se Sqeez"
     },
     "hero": {
-      "subtitle": "Kvízová platforma pro třídy, studijní skupiny a vlastní vzdělávací instance.",
+      "subtitle": "Kvízová platforma pro učitele, studenty a společné učení.",
       "title": "O Sqeez"
     },
     "story": {
@@ -641,7 +641,7 @@
       "pill": "Kvízy pro pravidelné procvičování",
       "startBtn": "Začít se učit",
       "title1": "Učte se pomocí",
-      "titleHighlight": "interaktivním kvízům."
+      "titleHighlight": "interaktivních kvízů."
     }
   },
   "leaderboard": {
