@@ -87,12 +87,13 @@ namespace Sqeez.Api.DTOs
     {
         public UpdateRoleDTO() { }
 
-        public UpdateRoleDTO(long Id, UserRole Role, string? Department = null, string? PhoneNumber = null)
+        public UpdateRoleDTO(long Id, UserRole Role, string? Department = null, string? PhoneNumber = null, long? ReplacementMediaOwnerId = null)
         {
             this.Id = Id;
             this.Role = Role;
             this.Department = Department;
             this.PhoneNumber = PhoneNumber;
+            this.ReplacementMediaOwnerId = ReplacementMediaOwnerId;
         }
 
         [Required]
@@ -108,6 +109,11 @@ namespace Sqeez.Api.DTOs
         [RegularExpression(ValidationConstants.FlexiblePhoneRegex, ErrorMessage = "Phone number must be between 7 and 15 characters and contain only valid phone symbols.")]
         [StringLength(ValidationConstants.PhoneNumberMaxLength)]
         public string? PhoneNumber { get; init; }
+
+        /// <summary>
+        /// Teacher/admin id that receives media owned by the user when changing the user to Student.
+        /// </summary>
+        public long? ReplacementMediaOwnerId { get; init; }
     }
 
     /// <summary>

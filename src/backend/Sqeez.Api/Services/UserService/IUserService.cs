@@ -82,11 +82,12 @@ namespace Sqeez.Api.Services.Interfaces
         /// <param name="id">The archived student or teacher id to delete.</param>
         /// <param name="currentUserId">The authenticated user's id.</param>
         /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <param name="replacementMediaOwnerId">Teacher/admin id that receives media owned by the deleted user.</param>
         /// <returns>
         /// A successful result when deleted, not found when a user does not exist, validation failed when the user
         /// is not archived, or forbidden when access is denied or the target is an admin.
         /// </returns>
-        Task<ServiceResult<bool>> DeleteUserAsync(long id, long currentUserId, string? currentUserRole);
+        Task<ServiceResult<bool>> DeleteUserAsync(long id, long currentUserId, string? currentUserRole, long? replacementMediaOwnerId = null);
 
         /// <summary>
         /// Uploads and assigns a user's avatar image.

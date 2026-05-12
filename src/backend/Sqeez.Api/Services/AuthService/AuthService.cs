@@ -429,19 +429,38 @@ namespace Sqeez.Api.Services.AuthService
                     bool hasSubjects = await _context.Subjects.AnyAsync(s => s.TeacherId == userId);
                     bool hasMediaAssets = await _context.MediaAssets.AnyAsync(m => m.OwnerId == userId);
 
-                    if (hasSubjects || hasClasses || hasMediaAssets)
+                    if (hasSubjects || hasClasses)
                     {
                         _logger.LogWarning("Attempted to downgrade Teacher/Admin {Id} who has active dependencies.", userId);
                         return ServiceResult<bool>.Failure(
-                            "Cannot change this user to a Student because they are currently assigned to a subject, manage a school class, or own media assets. Please reassign or remove their duties first.",
+                            "Cannot change this user to a Student because they are currently assigned to a subject or manage a school class. Please reassign their duties first.",
                             ServiceError.Conflict);
+                    }
+
+                    if (hasMediaAssets)
+                    {
+                        var replacementOwnerValidation = await ValidateReplacementMediaOwnerAsync(userId, dto.ReplacementMediaOwnerId);
+                        if (replacementOwnerValidation != null)
+                        {
+                            return replacementOwnerValidation;
+                        }
                     }
                 }
             }
 
             try
             {
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+
                 // We use ExecuteSqlInterpolatedAsync to update the 'Role' (User discriminator)
+                if (user.Role != UserRole.Student && newRole == UserRole.Student && dto.ReplacementMediaOwnerId.HasValue)
+                {
+                    await _context.Database.ExecuteSqlInterpolatedAsync($@"
+            UPDATE ""MediaAssets""
+            SET ""OwnerId"" = {dto.ReplacementMediaOwnerId.Value}
+            WHERE ""OwnerId"" = {userId}");
+                }
+
                 await _context.Database.ExecuteSqlInterpolatedAsync($@"
             UPDATE ""Users""
             SET ""Role"" = {(int)newRole},
@@ -449,6 +468,7 @@ namespace Sqeez.Api.Services.AuthService
                 ""PhoneNumber"" = {dto.PhoneNumber}
             WHERE ""Id"" = {userId}");
 
+                await transaction.CommitAsync();
                 _logger.LogInformation("Successfully updated user {Id} to {Role}", userId, newRole);
                 return ServiceResult<bool>.Ok(true);
             }
@@ -457,6 +477,36 @@ namespace Sqeez.Api.Services.AuthService
                 _logger.LogError(ex, "Error updating role for user {Id}", userId);
                 return ServiceResult<bool>.Failure("Internal error.", ServiceError.InternalError);
             }
+        }
+
+        private async Task<ServiceResult<bool>?> ValidateReplacementMediaOwnerAsync(long targetUserId, long? replacementMediaOwnerId)
+        {
+            if (!replacementMediaOwnerId.HasValue)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Replacement media owner is required because this user owns media assets.",
+                    ServiceError.Conflict);
+            }
+
+            if (replacementMediaOwnerId.Value == targetUserId)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Replacement media owner cannot be the user being changed.",
+                    ServiceError.Conflict);
+            }
+
+            var replacementOwnerExists = await _context.Teachers
+                .AsNoTracking()
+                .AnyAsync(user => user.Id == replacementMediaOwnerId.Value && user.ArchivedAt == null);
+
+            if (!replacementOwnerExists)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Replacement media owner must be an active teacher or admin.",
+                    ServiceError.NotFound);
+            }
+
+            return null;
         }
     }
 }

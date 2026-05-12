@@ -280,17 +280,17 @@ namespace Sqeez.Api.Tests.Integration
         public async Task DeleteUser_AsAdmin_ReturnsNoContentWhenServiceSucceeds()
         {
             _factory.UserServiceMock
-                .Setup(service => service.DeleteUserAsync(7, 1, "Admin"))
+                .Setup(service => service.DeleteUserAsync(7, 1, "Admin", 11))
                 .ReturnsAsync(ServiceResult<bool>.Ok(true));
 
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
 
-            var response = await client.DeleteAsync("/api/users/7/hard");
+            var response = await client.DeleteAsync("/api/users/7/hard?replacementMediaOwnerId=11");
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            _factory.UserServiceMock.Verify(service => service.DeleteUserAsync(7, 1, "Admin"), Times.Once);
+            _factory.UserServiceMock.Verify(service => service.DeleteUserAsync(7, 1, "Admin", 11), Times.Once);
         }
     }
 }
