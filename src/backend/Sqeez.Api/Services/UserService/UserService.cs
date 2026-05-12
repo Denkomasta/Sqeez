@@ -449,7 +449,11 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<bool>.Ok(true);
         }
 
-        public async Task<ServiceResult<bool>> DeleteUserAsync(long id, long currentUserId, string? currentUserRole)
+        public async Task<ServiceResult<bool>> DeleteUserAsync(
+            long id,
+            long currentUserId,
+            string? currentUserRole,
+            long? replacementMediaOwnerId = null)
         {
             if (currentUserRole != "Admin")
             {
@@ -530,35 +534,19 @@ namespace Sqeez.Api.Services.UserService
                 var ownedMediaAssets = await _context.MediaAssets
                     .Where(mediaAsset => mediaAsset.OwnerId == id)
                     .ToListAsync();
-                var ownedMediaAssetIds = ownedMediaAssets.Select(mediaAsset => mediaAsset.Id).ToList();
 
-                if (ownedMediaAssetIds.Any())
+                if (ownedMediaAssets.Any())
                 {
-                    var questionsUsingMedia = await _context.QuizQuestions
-                        .Where(question => question.MediaAssetId.HasValue && ownedMediaAssetIds.Contains(question.MediaAssetId.Value))
-                        .ToListAsync();
-                    foreach (var question in questionsUsingMedia)
+                    var replacementOwnerValidation = await ValidateReplacementMediaOwnerAsync(id, replacementMediaOwnerId);
+                    if (replacementOwnerValidation != null)
                     {
-                        question.MediaAssetId = null;
-                    }
-
-                    var optionsUsingMedia = await _context.QuizOptions
-                        .Where(option => option.MediaAssetId.HasValue && ownedMediaAssetIds.Contains(option.MediaAssetId.Value))
-                        .ToListAsync();
-                    foreach (var option in optionsUsingMedia)
-                    {
-                        option.MediaAssetId = null;
+                        return replacementOwnerValidation;
                     }
 
                     foreach (var mediaAsset in ownedMediaAssets)
                     {
-                        if (!string.IsNullOrWhiteSpace(mediaAsset.LocationUrl))
-                        {
-                            fileUrlsToDelete.Add(mediaAsset.LocationUrl);
-                        }
+                        mediaAsset.OwnerId = replacementMediaOwnerId!.Value;
                     }
-
-                    _context.MediaAssets.RemoveRange(ownedMediaAssets);
                 }
             }
 
@@ -588,6 +576,36 @@ namespace Sqeez.Api.Services.UserService
             }
 
             return ServiceResult<bool>.Ok(true);
+        }
+
+        private async Task<ServiceResult<bool>?> ValidateReplacementMediaOwnerAsync(long targetUserId, long? replacementMediaOwnerId)
+        {
+            if (!replacementMediaOwnerId.HasValue)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Replacement media owner is required because this user owns media assets.",
+                    ServiceError.Conflict);
+            }
+
+            if (replacementMediaOwnerId.Value == targetUserId)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Replacement media owner cannot be the user being removed.",
+                    ServiceError.Conflict);
+            }
+
+            var replacementOwnerExists = await _context.Teachers
+                .AsNoTracking()
+                .AnyAsync(user => user.Id == replacementMediaOwnerId.Value && user.ArchivedAt == null);
+
+            if (!replacementOwnerExists)
+            {
+                return ServiceResult<bool>.Failure(
+                    "Replacement media owner must be an active teacher or admin.",
+                    ServiceError.NotFound);
+            }
+
+            return null;
         }
 
         private bool IsSuperAdmin(Student user)

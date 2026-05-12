@@ -431,7 +431,7 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteUserAsync_WhenArchivedTeacherOwnsMedia_DeletesTeacherMediaAndClearsReferences()
+        public async Task DeleteUserAsync_WhenArchivedTeacherOwnsMediaWithoutReplacement_ReturnsConflict()
         {
             var context = await GetInMemoryDbContext();
             var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
@@ -471,13 +471,65 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.DeleteUserAsync(teacher.Id, admin.Id, "Admin");
 
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.NotNull(await context.Students.FindAsync(teacher.Id));
+            Assert.Equal(teacher.Id, (await context.MediaAssets.FindAsync(mediaAsset.Id))!.OwnerId);
+            Assert.Equal(mediaAsset.Id, (await context.QuizQuestions.FindAsync(questionId))!.MediaAssetId);
+            Assert.Equal(mediaAsset.Id, (await context.QuizOptions.FindAsync(optionId))!.MediaAssetId);
+            mockFileStorage.Verify(storage => storage.DeleteFileAsync("/secure/media/teacher.png"), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsync_WhenArchivedTeacherOwnsMediaWithReplacement_TransfersMediaAndKeepsReferences()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var replacementTeacher = new Teacher { Username = "Replacement", Email = "replacement@sqeez.org", Role = UserRole.Teacher };
+            var teacher = new Teacher
+            {
+                Username = "Teacher",
+                Email = "teacher@sqeez.org",
+                Role = UserRole.Teacher,
+                ArchivedAt = DateTime.UtcNow
+            };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var quiz = new Quiz { Title = "Quiz", Description = "Desc", Subject = subject };
+            var mediaAsset = new MediaAsset
+            {
+                Owner = teacher,
+                LocationUrl = "/secure/media/teacher.png",
+                MimeType = MediaType.Image
+            };
+            var question = new QuizQuestion { Title = "Q", Difficulty = 1, Quiz = quiz, Media = mediaAsset };
+            var option = new QuizOption { Text = "A", QuizQuestion = question, Media = mediaAsset };
+
+            context.Students.AddRange(admin, replacementTeacher, teacher);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.MediaAssets.Add(mediaAsset);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            await context.SaveChangesAsync();
+
+            var questionId = question.Id;
+            var optionId = option.Id;
+            var mockFileStorage = new Mock<IFileStorageService>();
+            mockFileStorage
+                .Setup(storage => storage.DeleteFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileStorage.Object, CreateConfiguration());
+
+            var result = await service.DeleteUserAsync(teacher.Id, admin.Id, "Admin", replacementTeacher.Id);
+
             Assert.True(result.Success);
             Assert.Null(await context.Students.FindAsync(teacher.Id));
             Assert.Null((await context.Subjects.FindAsync(subject.Id))!.TeacherId);
             Assert.Empty(context.MediaAssets.Where(media => media.OwnerId == teacher.Id));
-            Assert.Null((await context.QuizQuestions.FindAsync(questionId))!.MediaAssetId);
-            Assert.Null((await context.QuizOptions.FindAsync(optionId))!.MediaAssetId);
-            mockFileStorage.Verify(storage => storage.DeleteFileAsync("/secure/media/teacher.png"), Times.Once);
+            Assert.Equal(replacementTeacher.Id, (await context.MediaAssets.FindAsync(mediaAsset.Id))!.OwnerId);
+            Assert.Equal(mediaAsset.Id, (await context.QuizQuestions.FindAsync(questionId))!.MediaAssetId);
+            Assert.Equal(mediaAsset.Id, (await context.QuizOptions.FindAsync(optionId))!.MediaAssetId);
+            mockFileStorage.Verify(storage => storage.DeleteFileAsync("/secure/media/teacher.png"), Times.Never);
         }
 
         // ==========================================

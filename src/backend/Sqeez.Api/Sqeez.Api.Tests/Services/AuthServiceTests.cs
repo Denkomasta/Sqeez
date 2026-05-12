@@ -356,7 +356,7 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.Conflict, result.ErrorCode);
-            Assert.Contains("own media assets", result.ErrorMessage);
+            Assert.Contains("Replacement media owner is required", result.ErrorMessage);
         }
 
         [Fact]
