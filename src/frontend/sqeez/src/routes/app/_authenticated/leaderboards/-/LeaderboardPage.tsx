@@ -356,14 +356,14 @@ export function LeaderboardPage() {
           <div
             key={student.id}
             className={cn(
-              'flex items-center justify-between rounded-2xl border p-4 transition-all hover:shadow-md sm:px-6',
+              'flex min-w-0 items-center justify-between gap-3 rounded-2xl border p-3 transition-all hover:shadow-md sm:gap-4 sm:p-4 sm:px-6',
               isMe
                 ? 'border-primary bg-card shadow-sm ring-1 ring-primary/30'
                 : 'border-border bg-card',
             )}
           >
-            <div className="flex items-center gap-4 sm:gap-6">
-              <div className="flex w-8 shrink-0 items-center justify-center">
+            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-6">
+              <div className="flex w-6 shrink-0 items-center justify-center sm:w-8">
                 {getRankBadge(globalRank)}
               </div>
 
@@ -376,33 +376,36 @@ export function LeaderboardPage() {
                   url={getImageUrl(student.avatarUrl)}
                   firstName={student.firstName}
                   lastName={student.lastName}
-                  wrapperClassName="size-12"
+                  wrapperClassName="size-10 sm:size-12"
                 />
               </Link>
 
-              <div className="flex flex-col">
-                <span className="flex items-center gap-2 font-bold text-foreground sm:text-lg">
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="flex min-w-0 items-center gap-1.5 font-bold text-foreground sm:gap-2 sm:text-lg">
                   <Link
                     to="/app/profile/$userId"
                     params={{ userId: (student.id ?? 0).toString() }}
-                    className="hover:underline"
+                    className="min-w-0 truncate hover:underline"
                   >
                     {student.username}
                   </Link>
                   {isMe && (
-                    <Badge variant="default" className="h-5 px-1.5 text-[10px]">
+                    <Badge
+                      variant="default"
+                      className="h-5 shrink-0 px-1.5 text-[10px]"
+                    >
                       {t('class.me')}
                     </Badge>
                   )}
                 </span>
-                <span className="text-xs text-muted-foreground sm:text-sm">
+                <span className="truncate text-xs text-muted-foreground sm:text-sm">
                   {formatName(student.firstName, student.lastName)}
                 </span>
               </div>
             </div>
 
-            <div className="ml-4 flex shrink-0 flex-col items-end">
-              <span className="text-lg font-black text-primary sm:text-2xl">
+            <div className="flex w-11 shrink-0 flex-col items-end sm:w-16">
+              <span className="max-w-full truncate text-base font-black text-primary sm:text-2xl">
                 {student.currentXP || 0}
               </span>
               <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase sm:text-xs">
