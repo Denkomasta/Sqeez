@@ -23,6 +23,7 @@ import type {
 import type {
   AvatarUploadResponseDto,
   CreateStudentDto,
+  DeleteApiUsersIdHardParams,
   DetailedUserDto,
   GetApiUsersParams,
   PagedResponseOfStudentDto,
@@ -712,6 +713,167 @@ export function useGetApiUsersIdDetails<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+export const patchApiUsersIdRestore = (
+  id: number | string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/users/${id}/restore`, method: 'PATCH', signal },
+    options,
+  )
+}
+
+export const getPatchApiUsersIdRestoreMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof patchApiUsersIdRestore>>,
+    TError,
+    { id: number | string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof patchApiUsersIdRestore>>,
+  TError,
+  { id: number | string },
+  TContext
+> => {
+  const mutationKey = ['patchApiUsersIdRestore']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof patchApiUsersIdRestore>>,
+    { id: number | string }
+  > = (props) => {
+    const { id } = props ?? {}
+
+    return patchApiUsersIdRestore(id, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PatchApiUsersIdRestoreMutationResult = NonNullable<
+  Awaited<ReturnType<typeof patchApiUsersIdRestore>>
+>
+
+export type PatchApiUsersIdRestoreMutationError = ErrorType<unknown>
+
+export const usePatchApiUsersIdRestore = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof patchApiUsersIdRestore>>,
+      TError,
+      { id: number | string },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof patchApiUsersIdRestore>>,
+  TError,
+  { id: number | string },
+  TContext
+> => {
+  return useMutation(
+    getPatchApiUsersIdRestoreMutationOptions(options),
+    queryClient,
+  )
+}
+export const deleteApiUsersIdHard = (
+  id: number | string,
+  params?: DeleteApiUsersIdHardParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/users/${id}/hard`, method: 'DELETE', params, signal },
+    options,
+  )
+}
+
+export const getDeleteApiUsersIdHardMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiUsersIdHard>>,
+    TError,
+    { id: number | string; params?: DeleteApiUsersIdHardParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteApiUsersIdHard>>,
+  TError,
+  { id: number | string; params?: DeleteApiUsersIdHardParams },
+  TContext
+> => {
+  const mutationKey = ['deleteApiUsersIdHard']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteApiUsersIdHard>>,
+    { id: number | string; params?: DeleteApiUsersIdHardParams }
+  > = (props) => {
+    const { id, params } = props ?? {}
+
+    return deleteApiUsersIdHard(id, params, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteApiUsersIdHardMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiUsersIdHard>>
+>
+
+export type DeleteApiUsersIdHardMutationError = ErrorType<unknown>
+
+export const useDeleteApiUsersIdHard = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteApiUsersIdHard>>,
+      TError,
+      { id: number | string; params?: DeleteApiUsersIdHardParams },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteApiUsersIdHard>>,
+  TError,
+  { id: number | string; params?: DeleteApiUsersIdHardParams },
+  TContext
+> => {
+  return useMutation(
+    getDeleteApiUsersIdHardMutationOptions(options),
+    queryClient,
+  )
+}
 export const postApiUsersMeAvatar = (
   postApiUsersMeAvatarBody: PostApiUsersMeAvatarBody,
   options?: SecondParameter<typeof customInstance>,
