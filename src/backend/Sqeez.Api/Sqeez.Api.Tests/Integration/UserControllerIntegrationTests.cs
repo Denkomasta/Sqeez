@@ -246,7 +246,7 @@ namespace Sqeez.Api.Tests.Integration
         public async Task ArchiveUser_AsOwner_ReturnsNoContentWhenServiceSucceeds()
         {
             _factory.UserServiceMock
-                .Setup(service => service.ArchiveUserAsync(7))
+                .Setup(service => service.ArchiveUserAsync(7, 7, "Student"))
                 .ReturnsAsync(ServiceResult<bool>.Ok(true));
 
             var client = _factory.CreateClient();
@@ -256,7 +256,24 @@ namespace Sqeez.Api.Tests.Integration
             var response = await client.DeleteAsync("/api/users/7");
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            _factory.UserServiceMock.Verify(service => service.ArchiveUserAsync(7), Times.Once);
+            _factory.UserServiceMock.Verify(service => service.ArchiveUserAsync(7, 7, "Student"), Times.Once);
+        }
+
+        [Fact]
+        public async Task RestoreUser_AsAdmin_ReturnsNoContentWhenServiceSucceeds()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.RestoreUserAsync(7, 1, "Admin"))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.PatchAsync("/api/users/7/restore", null);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            _factory.UserServiceMock.Verify(service => service.RestoreUserAsync(7, 1, "Admin"), Times.Once);
         }
     }
 }
