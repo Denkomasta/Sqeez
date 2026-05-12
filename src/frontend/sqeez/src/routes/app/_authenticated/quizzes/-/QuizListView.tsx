@@ -98,7 +98,7 @@ export function QuizListView({
             />
 
             {showActiveToggle && setShowActiveOnly && (
-              <div className="flex rounded-lg bg-muted p-1">
+              <div className="flex justify-around rounded-lg bg-muted p-1">
                 <button
                   onClick={() => {
                     setShowActiveOnly(true)
