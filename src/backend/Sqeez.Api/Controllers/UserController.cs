@@ -150,12 +150,13 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// Permanently deletes an archived student or teacher. Admin targets must be changed to teacher first.
+        /// If the deleted user owns media assets, provide a replacement teacher/admin owner id.
         /// </summary>
         [HttpDelete("{id}/hard")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser(long id)
+        public async Task<IActionResult> DeleteUser(long id, [FromQuery] long? replacementMediaOwnerId = null)
         {
-            var result = await _userService.DeleteUserAsync(id, CurrentUserId, GetUserRoleFromClaims());
+            var result = await _userService.DeleteUserAsync(id, CurrentUserId, GetUserRoleFromClaims(), replacementMediaOwnerId);
 
             if (!result.Success) return HandleServiceResult(result);
 
