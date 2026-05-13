@@ -539,5 +539,54 @@ namespace Sqeez.Api.Tests.Services
             Assert.NotNull(dbEnrollment);
             Assert.NotNull(dbEnrollment.ArchivedAt); // Successfully Soft Deleted
         }
+
+        [Fact]
+        public async Task DeleteAllEnrollmentsFromSubjectAsync_WhenNotAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+
+            var result = await service.DeleteAllEnrollmentsFromSubjectAsync(1, "Teacher");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task DeleteAllEnrollmentsFromSubjectAsync_WhenSubjectHasHistory_RemovesEnrollmentsAttemptsAndResponses()
+        {
+            var context = await GetInMemoryDbContext();
+            var subject = CreateActiveSubject(1);
+            var student = new Student { Username = "Student", Email = "student@sqeez.org" };
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+            var quiz = new Quiz { Title = "Quiz", Subject = subject };
+            var question = new QuizQuestion { Title = "Question", Quiz = quiz };
+            var option = new QuizOption { Text = "Answer", QuizQuestion = question };
+            var attempt = new QuizAttempt { Quiz = quiz, Enrollment = enrollment };
+            var response = new QuizQuestionResponse { QuizAttempt = attempt, QuizQuestion = question };
+            response.Options.Add(option);
+
+            context.Subjects.Add(subject);
+            context.Students.Add(student);
+            context.Enrollments.Add(enrollment);
+            context.Quizzes.Add(quiz);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            context.QuizAttempts.Add(attempt);
+            context.QuizQuestionResponses.Add(response);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.DeleteAllEnrollmentsFromSubjectAsync(subject.Id, "Admin");
+
+            Assert.True(result.Success);
+            Assert.False(await context.Enrollments.AnyAsync(enrollment => enrollment.SubjectId == subject.Id));
+            Assert.False(await context.QuizAttempts.AnyAsync(attempt => attempt.QuizId == quiz.Id));
+            Assert.False(await context.QuizQuestionResponses.AnyAsync());
+            Assert.NotNull(await context.Quizzes.FindAsync(quiz.Id));
+            Assert.NotNull(await context.QuizQuestions.FindAsync(question.Id));
+            Assert.NotNull(await context.QuizOptions.FindAsync(option.Id));
+        }
     }
 }

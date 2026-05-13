@@ -5,6 +5,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
+using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services.SubjectService;
 using Xunit;
@@ -172,9 +173,8 @@ namespace Sqeez.Api.Tests.Services
 
             var result = await service.DeleteSubjectAsync(subject.Id);
 
-            Assert.Null(result.ErrorMessage);
+            Assert.True(result.Success);
 
-            // Verify it was NOT removed, but EndDate was set
             var softDeletedSubject = await context.Subjects.FindAsync(subject.Id);
             Assert.NotNull(softDeletedSubject);
             Assert.NotNull(softDeletedSubject.EndDate);

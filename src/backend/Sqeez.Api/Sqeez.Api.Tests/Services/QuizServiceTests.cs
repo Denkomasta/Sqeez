@@ -440,5 +440,64 @@ namespace Sqeez.Api.Tests.Services
             Assert.Single(result.Data!.Data);
             Assert.Equal("Available", result.Data.Data.First().Title);
         }
+
+        [Fact]
+        public async Task DeleteAllQuizzesFromSubjectAsync_WhenNotAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+
+            var result = await service.DeleteAllQuizzesFromSubjectAsync(1, isAdmin: false);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task DeleteAllQuizzesFromSubjectAsync_WhenEnrollmentsRemain_ReturnsConflict()
+        {
+            var context = await GetInMemoryDbContext();
+            var subject = CreateActiveSubject(1);
+            var student = new Sqeez.Api.Models.Users.Student { Username = "Student", Email = "student@sqeez.org" };
+            var quiz = new Quiz { Title = "Quiz", Subject = subject };
+            context.Subjects.Add(subject);
+            context.Students.Add(student);
+            context.Enrollments.Add(new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow });
+            context.Quizzes.Add(quiz);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.DeleteAllQuizzesFromSubjectAsync(subject.Id, isAdmin: true);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Conflict, result.ErrorCode);
+            Assert.NotNull(await context.Quizzes.FindAsync(quiz.Id));
+        }
+
+        [Fact]
+        public async Task DeleteAllQuizzesFromSubjectAsync_WhenEnrollmentHistoryRemoved_RemovesQuizzesQuestionsAndOptions()
+        {
+            var context = await GetInMemoryDbContext();
+            var subject = CreateActiveSubject(1);
+            var quiz = new Quiz { Title = "Quiz", Subject = subject };
+            var question = new QuizQuestion { Title = "Question", Quiz = quiz };
+            var option = new QuizOption { Text = "Answer", QuizQuestion = question };
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.DeleteAllQuizzesFromSubjectAsync(subject.Id, isAdmin: true);
+
+            Assert.True(result.Success);
+            Assert.NotNull(await context.Subjects.FindAsync(subject.Id));
+            Assert.False(await context.Quizzes.AnyAsync(quiz => quiz.SubjectId == subject.Id));
+            Assert.False(await context.QuizQuestions.AnyAsync());
+            Assert.False(await context.QuizOptions.AnyAsync());
+        }
     }
 }
