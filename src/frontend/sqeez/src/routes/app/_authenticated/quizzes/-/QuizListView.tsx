@@ -10,6 +10,7 @@ import {
   BookOpen,
   Edit,
   BarChart,
+  Trash2,
 } from 'lucide-react'
 import {
   Card,
@@ -45,6 +46,8 @@ interface QuizListViewProps {
   showActiveToggle?: boolean
   showActiveOnly?: boolean
   setShowActiveOnly?: (active: boolean) => void
+  onDeleteQuiz?: (quiz: QuizDto) => void
+  pendingDeleteQuizId?: string | number
 }
 
 export function QuizListView({
@@ -66,6 +69,8 @@ export function QuizListView({
   showActiveToggle = false,
   showActiveOnly = true,
   setShowActiveOnly,
+  onDeleteQuiz,
+  pendingDeleteQuizId,
 }: QuizListViewProps) {
   const { t } = useTranslation()
 
@@ -140,6 +145,14 @@ export function QuizListView({
           {quizzes.length > 0 ? (
             quizzes.map((quiz) => {
               const hasAttempts = Number(quiz.quizAttempts) > 0
+              const isDeleteDisabledBecauseOfAttempts =
+                !showActiveOnly && hasAttempts
+              const isDeleteDisabled =
+                pendingDeleteQuizId === quiz.id ||
+                isDeleteDisabledBecauseOfAttempts
+              const deleteButtonTitle = isDeleteDisabledBecauseOfAttempts
+                ? t('quiz.deleteDisabledHasAttempts')
+                : t('quiz.deleteQuiz')
 
               const targetSubjectId = subject?.id || 0
 
@@ -154,18 +167,31 @@ export function QuizListView({
                         {quiz.title}
                       </CardTitle>
 
-                      <Badge
-                        variant={hasAttempts ? 'default' : 'secondary'}
-                        className="shrink-0"
-                      >
-                        {role === 'Teacher'
-                          ? quiz.publishDate
-                            ? t('quiz.published')
-                            : t('quiz.draft')
-                          : hasAttempts
-                            ? t('quiz.completed')
-                            : t('quiz.pending')}
-                      </Badge>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <Badge variant={hasAttempts ? 'default' : 'secondary'}>
+                          {role === 'Teacher'
+                            ? quiz.publishDate
+                              ? t('quiz.published')
+                              : t('quiz.draft')
+                            : hasAttempts
+                              ? t('quiz.completed')
+                              : t('quiz.pending')}
+                        </Badge>
+
+                        {role === 'Teacher' && onDeleteQuiz && (
+                          <div title={deleteButtonTitle}>
+                            <button
+                              type="button"
+                              aria-label={deleteButtonTitle}
+                              disabled={isDeleteDisabled}
+                              onClick={() => onDeleteQuiz(quiz)}
+                              className="flex h-8 w-8 items-center justify-center rounded-md border border-destructive/30 text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground disabled:pointer-events-none disabled:opacity-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <CardDescription className="mt-1 line-clamp-2">
                       {quiz.description || t('quiz.noDescription')}

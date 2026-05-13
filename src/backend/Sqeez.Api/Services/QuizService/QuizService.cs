@@ -189,7 +189,23 @@ namespace Sqeez.Api.Services
                 }
             }
 
-            var intendedClosingDate = dto.ClosingDate.HasValue ? dto.ClosingDate.Value : quiz.ClosingDate;
+            if (dto.ResetPublishDate && dto.PublishDate.HasValue)
+            {
+                return ServiceResult<QuizDto>.Failure(
+                    "Publish date cannot be set and reset in the same request.",
+                    ServiceError.ValidationFailed);
+            }
+
+            if (dto.ResetClosingDate && dto.ClosingDate.HasValue)
+            {
+                return ServiceResult<QuizDto>.Failure(
+                    "Closing date cannot be set and reset in the same request.",
+                    ServiceError.ValidationFailed);
+            }
+
+            var intendedClosingDate = dto.ResetClosingDate
+                ? null
+                : dto.ClosingDate ?? quiz.ClosingDate;
 
             // Validate the intended closing date against the target subject's end date
             if (intendedClosingDate.HasValue && targetSubject.EndDate.HasValue && intendedClosingDate.Value > targetSubject.EndDate.Value)
@@ -202,8 +218,10 @@ namespace Sqeez.Api.Services
             if (!string.IsNullOrWhiteSpace(dto.Title)) quiz.Title = dto.Title;
             if (dto.Description != null) quiz.Description = dto.Description;
             if (dto.MaxRetries.HasValue) quiz.MaxRetries = dto.MaxRetries.Value;
-            if (dto.PublishDate.HasValue) quiz.PublishDate = dto.PublishDate.Value;
-            if (dto.ClosingDate.HasValue) quiz.ClosingDate = dto.ClosingDate.Value;
+            if (dto.ResetPublishDate) quiz.PublishDate = null;
+            else if (dto.PublishDate.HasValue) quiz.PublishDate = dto.PublishDate.Value;
+            if (dto.ResetClosingDate) quiz.ClosingDate = null;
+            else if (dto.ClosingDate.HasValue) quiz.ClosingDate = dto.ClosingDate.Value;
             if (dto.SubjectId.HasValue) quiz.SubjectId = dto.SubjectId.Value;
 
             await _context.SaveChangesAsync();
