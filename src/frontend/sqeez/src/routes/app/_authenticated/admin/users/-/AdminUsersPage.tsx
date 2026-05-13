@@ -13,9 +13,11 @@ import type { UserRole } from '@/api/generated/model'
 import {
   getGetApiUsersQueryKey,
   useDeleteApiUsersId,
+  useDeleteApiUsersIdHard,
   useGetApiUsers,
   usePatchApiUsersIdRestore,
 } from '@/api/generated/endpoints/user/user'
+import { useAuthStore } from '@/store/useAuthStore'
 
 import { RoleModificationModal } from './RoleModificationModal'
 import { AdminUsersTable, type SelectedUserForRole } from './AdminUsersTable'
@@ -27,6 +29,7 @@ type AdminUserFilterDropdown = 'role' | 'archive' | 'verification'
 export function AdminUsersPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const currentUser = useAuthStore((s) => s.user)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState<UserRole | ''>('')
@@ -44,6 +47,9 @@ export function AdminUsersPage() {
     useState<SelectedUserForRole | null>(null)
   const [userToRestore, setUserToRestore] =
     useState<SelectedUserForRole | null>(null)
+  const [userToDelete, setUserToDelete] = useState<SelectedUserForRole | null>(
+    null,
+  )
 
   const roleFilterRef = useRef<HTMLDivElement>(null)
   const archiveFilterRef = useRef<HTMLDivElement>(null)
@@ -116,6 +122,18 @@ export function AdminUsersPage() {
     },
   })
 
+  const deleteMutation = useDeleteApiUsersIdHard({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getGetApiUsersQueryKey() })
+        toast.success(t('admin.userDeleted'))
+      },
+      onError: () => {
+        toast.error(t('admin.userDeleteFailed'))
+      },
+    },
+  })
+
   const users = usersResponse?.data || []
   const totalPages = Number(usersResponse?.totalPages || 1)
   const totalCount = usersResponse?.totalCount || 0
@@ -125,6 +143,7 @@ export function AdminUsersPage() {
       : archiveFilter === 'archived'
         ? 'restore'
         : null
+  const canDeleteArchivedUsers = archiveFilter === 'archived'
 
   const roleOptions = useMemo(
     () => [
@@ -176,6 +195,35 @@ export function AdminUsersPage() {
     try {
       await restoreMutation.mutateAsync({ id: userToRestore.id })
       setUserToRestore(null)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete) return
+
+    if (
+      archiveFilter !== 'archived' ||
+      (userToDelete.currentRole !== 'Student' &&
+        userToDelete.currentRole !== 'Teacher')
+    ) {
+      toast.error(t('admin.userDeleteNotAllowed'))
+      setUserToDelete(null)
+      return
+    }
+
+    if (!currentUser?.id || currentUser.role !== 'Admin') {
+      toast.error(t('admin.userDeleteMissingReplacementOwner'))
+      return
+    }
+
+    try {
+      await deleteMutation.mutateAsync({
+        id: userToDelete.id,
+        params: { replacementMediaOwnerId: currentUser.id },
+      })
+      setUserToDelete(null)
     } catch (error) {
       console.error(error)
     }
@@ -321,14 +369,18 @@ export function AdminUsersPage() {
           isLoading={isLoading}
           onEditRole={setSelectedUserForRole}
           archiveAction={archiveAction}
+          canDeleteArchivedUsers={canDeleteArchivedUsers}
           onArchiveUser={setUserToArchive}
           onRestoreUser={setUserToRestore}
+          onDeleteUser={setUserToDelete}
           pendingUserId={
             archiveMutation.isPending
               ? archiveMutation.variables?.id
               : restoreMutation.isPending
                 ? restoreMutation.variables?.id
-                : undefined
+                : deleteMutation.isPending
+                  ? deleteMutation.variables?.id
+                  : undefined
           }
         />
 
@@ -373,6 +425,19 @@ export function AdminUsersPage() {
         })}
         confirmText={t('admin.restoreUser')}
         isLoading={restoreMutation.isPending}
+      />
+
+      <ConfirmModal
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        title={t('admin.deleteUserTitle')}
+        description={t('admin.deleteUserConfirm', {
+          name: userToDelete?.name,
+        })}
+        confirmText={t('admin.deleteUser')}
+        isDestructive
+        isLoading={deleteMutation.isPending}
       />
     </>
   )
