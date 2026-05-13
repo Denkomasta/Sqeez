@@ -519,6 +519,168 @@ export const useDeleteApiQuizzesQuizId = <
     queryClient,
   )
 }
+export const getApiQuizzesQuizIdExport = (
+  quizId: number | string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/quizzes/${quizId}/export`, method: 'GET', signal },
+    options,
+  )
+}
+
+export const getGetApiQuizzesQuizIdExportQueryKey = (
+  quizId: number | string,
+) => {
+  return [`/api/quizzes/${quizId}/export`] as const
+}
+
+export const getGetApiQuizzesQuizIdExportQueryOptions = <
+  TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+  TError = ErrorType<unknown>,
+>(
+  quizId: number | string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetApiQuizzesQuizIdExportQueryKey(quizId)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>
+  > = ({ signal }) => getApiQuizzesQuizIdExport(quizId, requestOptions, signal)
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!quizId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiQuizzesQuizIdExportQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>
+>
+export type GetApiQuizzesQuizIdExportQueryError = ErrorType<unknown>
+
+export function useGetApiQuizzesQuizIdExport<
+  TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+  TError = ErrorType<unknown>,
+>(
+  quizId: number | string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+          TError,
+          Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useGetApiQuizzesQuizIdExport<
+  TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+  TError = ErrorType<unknown>,
+>(
+  quizId: number | string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+          TError,
+          Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useGetApiQuizzesQuizIdExport<
+  TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+  TError = ErrorType<unknown>,
+>(
+  quizId: number | string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+
+export function useGetApiQuizzesQuizIdExport<
+  TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+  TError = ErrorType<unknown>,
+>(
+  quizId: number | string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getGetApiQuizzesQuizIdExportQueryOptions(quizId, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  return { ...query, queryKey: queryOptions.queryKey }
+}
+
 export const getApiQuizzesQuizIdQuestions = (
   quizId: number | string,
   params?: GetApiQuizzesQuizIdQuestionsParams,
