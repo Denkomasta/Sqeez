@@ -34,4 +34,6 @@ export interface PatchQuizDto {
   publishDate?: string | null
   /** @nullable */
   closingDate?: string | null
+  resetPublishDate?: boolean
+  resetClosingDate?: boolean
 }

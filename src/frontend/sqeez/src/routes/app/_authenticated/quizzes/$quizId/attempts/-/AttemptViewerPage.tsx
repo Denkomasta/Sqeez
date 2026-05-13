@@ -114,7 +114,7 @@ export function AttemptViewerPage({
         </CardContent>
       </Card>
 
-      <div className="space-y-6">
+      <div className="space-y-6 py-4">
         <h2 className="text-xl font-semibold tracking-tight">
           {t('attempts.responses')}
         </h2>
