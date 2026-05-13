@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
+using Sqeez.Api.Models.Import;
 using Sqeez.Api.Services.Interfaces;
 
 namespace Sqeez.Api.Controllers
@@ -15,16 +16,19 @@ namespace Sqeez.Api.Controllers
         private readonly ISubjectService _subjectService;
         private readonly IEnrollmentService _enrollmentService;
         private readonly IQuizService _quizService;
+        private readonly ICsvImportService _csvImportService;
 
         public SubjectsController(
             ISubjectService subjectService,
             IEnrollmentService enrollmentService,
-             IQuizService quizService
+            IQuizService quizService,
+            ICsvImportService csvImportService
             )
         {
             _subjectService = subjectService;
             _enrollmentService = enrollmentService;
             _quizService = quizService;
+            _csvImportService = csvImportService;
         }
 
         /// <summary>
@@ -202,6 +206,19 @@ namespace Sqeez.Api.Controllers
             // Force the subjectId from the route into the DTO
             var safeDto = dto with { SubjectId = subjectId };
             var result = await _quizService.CreateQuizAsync(safeDto, CurrentUserId);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// POST /api/subjects/5/quizzes/import
+        /// Imports quizzes, questions, and options from a CSV file into the subject. Subject teacher only.
+        /// </summary>
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpPost("{subjectId}/quizzes/import")]
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<ImportResultDto>> ImportQuizzesForSubject(long subjectId, IFormFile file)
+        {
+            var result = await _csvImportService.ImportQuizFileAsync(subjectId, file, CurrentUserId);
             return HandleServiceResult(result);
         }
 

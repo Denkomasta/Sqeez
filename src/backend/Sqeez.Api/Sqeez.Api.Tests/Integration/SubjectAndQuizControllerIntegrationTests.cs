@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Models.Import;
 
 namespace Sqeez.Api.Tests.Integration
 {
@@ -444,6 +446,54 @@ namespace Sqeez.Api.Tests.Integration
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.QuizServiceMock.Verify(
                 service => service.CreateQuizAsync(It.IsAny<CreateQuizDto>(), It.IsAny<long>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task ImportQuizzesForSubject_AsTeacher_PassesUploadedFileAndSubjectToService()
+        {
+            _factory.CsvImportServiceMock
+                .Setup(service => service.ImportQuizFileAsync(
+                    5,
+                    It.Is<IFormFile>(file => file.FileName == "quiz.csv" && file.Length > 0),
+                    42))
+                .ReturnsAsync(ServiceResult<ImportResultDto>.Ok(new ImportResultDto { RecordsImported = 3 }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StringContent("Quiz Title");
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv");
+            content.Add(fileContent, "file", "quiz.csv");
+
+            var response = await client.PostAsync("/api/subjects/5/quizzes/import", content);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.CsvImportServiceMock.Verify(
+                service => service.ImportQuizFileAsync(5, It.IsAny<IFormFile>(), 42),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task ExportQuiz_AsTeacher_ReturnsCsvFile()
+        {
+            _factory.CsvImportServiceMock
+                .Setup(service => service.ExportQuizFileAsync(10, 42))
+                .ReturnsAsync(ServiceResult<string>.Ok("Quiz Title\r\nExported quiz\r\n"));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.GetAsync("/api/quizzes/10/export");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("text/csv", response.Content.Headers.ContentType!.MediaType);
+            Assert.Contains("quiz-10.csv", response.Content.Headers.ContentDisposition!.FileNameStar ?? response.Content.Headers.ContentDisposition.FileName);
+            _factory.CsvImportServiceMock.Verify(
+                service => service.ExportQuizFileAsync(10, 42),
                 Times.Once);
         }
 

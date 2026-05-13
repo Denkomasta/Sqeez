@@ -55,6 +55,78 @@ namespace Sqeez.Api.Models.Import
     }
 
     /// <summary>
+    /// One parsed row from a quiz CSV import/export file. Each row represents one answer option.
+    /// </summary>
+    public class QuizImportDto
+    {
+        [Required]
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string QuizTitle { get; set; } = string.Empty;
+
+        [StringLength(ValidationConstants.DescriptionMaxLength)]
+        public string QuizDescription { get; set; } = string.Empty;
+
+        [Range(0, ValidationConstants.MaxQuizRetries)]
+        public int MaxRetries { get; set; }
+
+        public string PublishDate { get; set; } = string.Empty;
+
+        public string ClosingDate { get; set; } = string.Empty;
+
+        [Range(1, int.MaxValue)]
+        public int QuestionOrder { get; set; }
+
+        [Required]
+        [StringLength(ValidationConstants.TitleMaxLength)]
+        public string QuestionTitle { get; set; } = string.Empty;
+
+        [Range(0, ValidationConstants.MaxQuestionDifficulty)]
+        public int Difficulty { get; set; }
+
+        [Range(0, ValidationConstants.MaxQuestionTimeLimitSeconds)]
+        public int TimeLimit { get; set; }
+
+        public bool HasPenalty { get; set; }
+
+        public bool IsStrictMultipleChoice { get; set; }
+
+        [Range(1, int.MaxValue)]
+        public int OptionOrder { get; set; }
+
+        [StringLength(ValidationConstants.LongTextMaxLength)]
+        public string OptionText { get; set; } = string.Empty;
+
+        public bool IsCorrect { get; set; }
+
+        public bool IsFreeText { get; set; }
+    }
+
+    /// <summary>
+    /// CsvHelper mapping between quiz CSV column names and import DTO fields.
+    /// </summary>
+    public sealed class QuizImportMap : ClassMap<QuizImportDto>
+    {
+        public QuizImportMap()
+        {
+            Map(m => m.QuizTitle).Name("Quiz Title");
+            Map(m => m.QuizDescription).Name("Quiz Description").Optional();
+            Map(m => m.MaxRetries).Name("Max Retries").Optional();
+            Map(m => m.PublishDate).Name("Publish Date").Optional();
+            Map(m => m.ClosingDate).Name("Closing Date").Optional();
+            Map(m => m.QuestionOrder).Name("Question Order");
+            Map(m => m.QuestionTitle).Name("Question Title");
+            Map(m => m.Difficulty).Name("Difficulty");
+            Map(m => m.TimeLimit).Name("Time Limit");
+            Map(m => m.HasPenalty).Name("Has Penalty").Optional();
+            Map(m => m.IsStrictMultipleChoice).Name("Is Strict Multiple Choice").Optional();
+            Map(m => m.OptionOrder).Name("Option Order");
+            Map(m => m.OptionText).Name("Option Text").Optional();
+            Map(m => m.IsCorrect).Name("Is Correct");
+            Map(m => m.IsFreeText).Name("Is Free Text").Optional();
+        }
+    }
+
+    /// <summary>
     /// Import summary with number of imported records and row-level errors.
     /// </summary>
     public class ImportResultDto
