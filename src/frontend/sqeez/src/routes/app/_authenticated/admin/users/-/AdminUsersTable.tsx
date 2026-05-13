@@ -1,9 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from '@tanstack/react-router'
-import { ShieldAlert, GraduationCap, BookOpen, Edit2 } from 'lucide-react'
+import {
+  Archive,
+  BookOpen,
+  Edit2,
+  GraduationCap,
+  RotateCcw,
+  ShieldAlert,
+} from 'lucide-react'
 
 import { SimpleAvatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge/Badge'
+import { Button } from '@/components/ui/Button'
 import { getImageUrl } from '@/lib/imageHelpers'
 import { formatName } from '@/lib/userHelpers'
 import type { StudentDto, UserRole } from '@/api/generated/model'
@@ -20,12 +28,20 @@ interface AdminUsersTableProps {
   users: StudentDto[]
   isLoading: boolean
   onEditRole: (user: SelectedUserForRole) => void
+  archiveAction?: 'archive' | 'restore' | null
+  onArchiveUser?: (user: SelectedUserForRole) => void
+  onRestoreUser?: (user: SelectedUserForRole) => void
+  pendingUserId?: string | number
 }
 
 export function AdminUsersTable({
   users,
   isLoading,
   onEditRole,
+  archiveAction,
+  onArchiveUser,
+  onRestoreUser,
+  pendingUserId,
 }: AdminUsersTableProps) {
   const { t } = useTranslation()
 
@@ -108,6 +124,45 @@ export function AdminUsersTable({
       ),
     },
   ]
+
+  if (archiveAction) {
+    columns.push({
+      header: t('common.actions'),
+      className: 'text-right',
+      cell: (user) => {
+        const selectedUser = {
+          id: user.id!,
+          name:
+            formatName(user.firstName, user.lastName) || t('admin.unassigned'),
+          currentRole: user.role!,
+        }
+        const isPending = pendingUserId === user.id
+        const isArchiveAction = archiveAction === 'archive'
+        const Icon = isArchiveAction ? Archive : RotateCcw
+
+        return (
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              variant={isArchiveAction ? 'outline' : 'secondary'}
+              className="gap-2"
+              disabled={isPending}
+              onClick={() =>
+                isArchiveAction
+                  ? onArchiveUser?.(selectedUser)
+                  : onRestoreUser?.(selectedUser)
+              }
+            >
+              <Icon className="h-4 w-4" />
+              {isArchiveAction
+                ? t('admin.archiveUser')
+                : t('admin.restoreUser')}
+            </Button>
+          </div>
+        )
+      },
+    })
+  }
 
   return (
     <DataTable
