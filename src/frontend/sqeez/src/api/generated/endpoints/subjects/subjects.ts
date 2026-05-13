@@ -25,6 +25,8 @@ import type {
   BulkEnrollmentResultDto,
   CreateQuizDto,
   CreateSubjectDto,
+  DeleteApiSubjectsSubjectIdEnrollmentsParams,
+  DeleteApiSubjectsSubjectIdQuizzesParams,
   GetApiSubjectsParams,
   GetApiSubjectsSubjectIdEnrollmentsParams,
   GetApiSubjectsSubjectIdQuizzesParams,
@@ -860,7 +862,8 @@ export const usePostApiSubjectsSubjectIdEnrollments = <
 }
 export const deleteApiSubjectsSubjectIdEnrollments = (
   subjectId: number | string,
-  removeStudentsDto: RemoveStudentsDto,
+  nullRemoveStudentsDto: null | RemoveStudentsDto,
+  params?: DeleteApiSubjectsSubjectIdEnrollmentsParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -869,7 +872,8 @@ export const deleteApiSubjectsSubjectIdEnrollments = (
       url: `/api/subjects/${subjectId}/enrollments`,
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      data: removeStudentsDto,
+      data: nullRemoveStudentsDto,
+      params,
       signal,
     },
     options,
@@ -883,14 +887,22 @@ export const getDeleteApiSubjectsSubjectIdEnrollmentsMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdEnrollments>>,
     TError,
-    { subjectId: number | string; data: RemoveStudentsDto },
+    {
+      subjectId: number | string
+      data: null | RemoveStudentsDto
+      params?: DeleteApiSubjectsSubjectIdEnrollmentsParams
+    },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdEnrollments>>,
   TError,
-  { subjectId: number | string; data: RemoveStudentsDto },
+  {
+    subjectId: number | string
+    data: null | RemoveStudentsDto
+    params?: DeleteApiSubjectsSubjectIdEnrollmentsParams
+  },
   TContext
 > => {
   const mutationKey = ['deleteApiSubjectsSubjectIdEnrollments']
@@ -904,13 +916,18 @@ export const getDeleteApiSubjectsSubjectIdEnrollmentsMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdEnrollments>>,
-    { subjectId: number | string; data: RemoveStudentsDto }
+    {
+      subjectId: number | string
+      data: null | RemoveStudentsDto
+      params?: DeleteApiSubjectsSubjectIdEnrollmentsParams
+    }
   > = (props) => {
-    const { subjectId, data } = props ?? {}
+    const { subjectId, data, params } = props ?? {}
 
     return deleteApiSubjectsSubjectIdEnrollments(
       subjectId,
       data,
+      params,
       requestOptions,
     )
   }
@@ -922,7 +939,7 @@ export type DeleteApiSubjectsSubjectIdEnrollmentsMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdEnrollments>>
 >
 export type DeleteApiSubjectsSubjectIdEnrollmentsMutationBody =
-  RemoveStudentsDto
+  null | RemoveStudentsDto
 export type DeleteApiSubjectsSubjectIdEnrollmentsMutationError =
   ErrorType<unknown>
 
@@ -934,7 +951,11 @@ export const useDeleteApiSubjectsSubjectIdEnrollments = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdEnrollments>>,
       TError,
-      { subjectId: number | string; data: RemoveStudentsDto },
+      {
+        subjectId: number | string
+        data: null | RemoveStudentsDto
+        params?: DeleteApiSubjectsSubjectIdEnrollmentsParams
+      },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -943,7 +964,11 @@ export const useDeleteApiSubjectsSubjectIdEnrollments = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdEnrollments>>,
   TError,
-  { subjectId: number | string; data: RemoveStudentsDto },
+  {
+    subjectId: number | string
+    data: null | RemoveStudentsDto
+    params?: DeleteApiSubjectsSubjectIdEnrollmentsParams
+  },
   TContext
 > => {
   return useMutation(
@@ -1134,6 +1159,107 @@ export function useGetApiSubjectsSubjectIdQuizzes<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+export const deleteApiSubjectsSubjectIdQuizzes = (
+  subjectId: number | string,
+  params?: DeleteApiSubjectsSubjectIdQuizzesParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<boolean>(
+    {
+      url: `/api/subjects/${subjectId}/quizzes`,
+      method: 'DELETE',
+      params,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getDeleteApiSubjectsSubjectIdQuizzesMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdQuizzes>>,
+    TError,
+    {
+      subjectId: number | string
+      params?: DeleteApiSubjectsSubjectIdQuizzesParams
+    },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdQuizzes>>,
+  TError,
+  {
+    subjectId: number | string
+    params?: DeleteApiSubjectsSubjectIdQuizzesParams
+  },
+  TContext
+> => {
+  const mutationKey = ['deleteApiSubjectsSubjectIdQuizzes']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdQuizzes>>,
+    {
+      subjectId: number | string
+      params?: DeleteApiSubjectsSubjectIdQuizzesParams
+    }
+  > = (props) => {
+    const { subjectId, params } = props ?? {}
+
+    return deleteApiSubjectsSubjectIdQuizzes(subjectId, params, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteApiSubjectsSubjectIdQuizzesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdQuizzes>>
+>
+
+export type DeleteApiSubjectsSubjectIdQuizzesMutationError = ErrorType<unknown>
+
+export const useDeleteApiSubjectsSubjectIdQuizzes = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdQuizzes>>,
+      TError,
+      {
+        subjectId: number | string
+        params?: DeleteApiSubjectsSubjectIdQuizzesParams
+      },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteApiSubjectsSubjectIdQuizzes>>,
+  TError,
+  {
+    subjectId: number | string
+    params?: DeleteApiSubjectsSubjectIdQuizzesParams
+  },
+  TContext
+> => {
+  return useMutation(
+    getDeleteApiSubjectsSubjectIdQuizzesMutationOptions(options),
+    queryClient,
+  )
+}
 export const postApiSubjectsSubjectIdQuizzes = (
   subjectId: number | string,
   createQuizDto: CreateQuizDto,

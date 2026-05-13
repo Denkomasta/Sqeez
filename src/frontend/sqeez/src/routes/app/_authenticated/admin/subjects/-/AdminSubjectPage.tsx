@@ -6,7 +6,10 @@ import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
 import { Button } from '@/components/ui/Button'
 import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
-import { useGetApiSubjects } from '@/api/generated/endpoints/subjects/subjects'
+import {
+  getGetApiSubjectsQueryKey,
+  useGetApiSubjects,
+} from '@/api/generated/endpoints/subjects/subjects'
 import type { SubjectDto } from '@/api/generated/model'
 
 import { AdminSubjectsTable } from './AdminSubjectsTable'
@@ -28,12 +31,16 @@ export function AdminSubjectsPage() {
     null,
   )
 
-  const { data: subjectsResponse, isLoading } = useGetApiSubjects({
+  const subjectsQueryParams = {
     SearchTerm: searchQuery || undefined,
     Code: codeFilter || undefined,
     PageNumber: pageNumber,
     PageSize: pageSize,
-  })
+  }
+  const subjectsQueryKey = getGetApiSubjectsQueryKey(subjectsQueryParams)
+
+  const { data: subjectsResponse, isLoading } =
+    useGetApiSubjects(subjectsQueryParams)
 
   const subjects = subjectsResponse?.data || []
   const totalPages = Number(subjectsResponse?.totalPages || 1)
@@ -123,6 +130,7 @@ export function AdminSubjectsPage() {
       <DeleteSubjectModal
         isOpen={!!subjectToDelete}
         subject={subjectToDelete}
+        subjectsQueryKey={subjectsQueryKey}
         onClose={() => setSubjectToDelete(null)}
       />
     </>
