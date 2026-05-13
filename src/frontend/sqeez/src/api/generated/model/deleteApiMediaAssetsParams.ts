@@ -6,7 +6,7 @@
  */
 import type { MediaType } from './mediaType'
 
-export type GetApiMediaAssetsParams = {
+export type DeleteApiMediaAssetsParams = {
   /**
    * @minLength 0
    * @maxLength 100

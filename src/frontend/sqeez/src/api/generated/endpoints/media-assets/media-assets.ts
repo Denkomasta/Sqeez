@@ -22,6 +22,7 @@ import type {
 
 import type {
   CreateMediaAssetDto,
+  DeleteApiMediaAssetsParams,
   GetApiMediaAssetsParams,
   MediaAssetDto,
   PagedResponseOfMediaAssetDto,
@@ -275,6 +276,86 @@ export const usePostApiMediaAssets = <
   TContext
 > => {
   return useMutation(getPostApiMediaAssetsMutationOptions(options), queryClient)
+}
+export const deleteApiMediaAssets = (
+  params?: DeleteApiMediaAssetsParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<number | string>(
+    { url: `/api/media-assets`, method: 'DELETE', params, signal },
+    options,
+  )
+}
+
+export const getDeleteApiMediaAssetsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteApiMediaAssets>>,
+    TError,
+    { params?: DeleteApiMediaAssetsParams },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteApiMediaAssets>>,
+  TError,
+  { params?: DeleteApiMediaAssetsParams },
+  TContext
+> => {
+  const mutationKey = ['deleteApiMediaAssets']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteApiMediaAssets>>,
+    { params?: DeleteApiMediaAssetsParams }
+  > = (props) => {
+    const { params } = props ?? {}
+
+    return deleteApiMediaAssets(params, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteApiMediaAssetsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteApiMediaAssets>>
+>
+
+export type DeleteApiMediaAssetsMutationError = ErrorType<unknown>
+
+export const useDeleteApiMediaAssets = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteApiMediaAssets>>,
+      TError,
+      { params?: DeleteApiMediaAssetsParams },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteApiMediaAssets>>,
+  TError,
+  { params?: DeleteApiMediaAssetsParams },
+  TContext
+> => {
+  return useMutation(
+    getDeleteApiMediaAssetsMutationOptions(options),
+    queryClient,
+  )
 }
 export const getApiMediaAssetsId = (
   id: number | string,
