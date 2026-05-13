@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Services.Interfaces;
+using System.Text;
 
 namespace Sqeez.Api.Controllers
 {
@@ -15,15 +16,18 @@ namespace Sqeez.Api.Controllers
         private readonly IQuizService _quizService;
         private readonly IQuizQuestionService _questionService;
         private readonly IQuizOptionService _optionService;
+        private readonly ICsvImportService _csvImportService;
 
         public QuizzesController(
             IQuizService quizService,
             IQuizQuestionService questionService,
-            IQuizOptionService optionService)
+            IQuizOptionService optionService,
+            ICsvImportService csvImportService)
         {
             _quizService = quizService;
             _questionService = questionService;
             _optionService = optionService;
+            _csvImportService = csvImportService;
         }
 
         #region --- 1. QUIZZES ---
@@ -68,6 +72,26 @@ namespace Sqeez.Api.Controllers
         {
             var result = await _quizService.DeleteQuizAsync(quizId, CurrentUserId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// GET /api/quizzes/5/export
+        /// Exports one quiz into the quiz CSV import format. Subject teacher only.
+        /// </summary>
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpGet("{quizId}/export")]
+        public async Task<IActionResult> ExportQuiz(long quizId)
+        {
+            var result = await _csvImportService.ExportQuizFileAsync(quizId, CurrentUserId);
+            if (!result.Success)
+            {
+                return HandleServiceResult(result);
+            }
+
+            return File(
+                Encoding.UTF8.GetBytes(result.Data!),
+                "text/csv",
+                $"quiz-{quizId}.csv");
         }
 
         #endregion
