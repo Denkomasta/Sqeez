@@ -4351,6 +4351,10 @@ components:
             - "null"
             - string
           format: date-time
+        resetPublishDate:
+          type: boolean
+        resetClosingDate:
+          type: boolean
     PatchQuizOptionDto:
       type: object
       properties:

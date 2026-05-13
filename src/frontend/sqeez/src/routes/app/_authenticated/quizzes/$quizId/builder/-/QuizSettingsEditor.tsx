@@ -26,6 +26,7 @@ import { ConfirmModal } from '@/components/ui/Modal/ConfirmModal'
 import { useDeleteApiQuizAttemptsQuizIdAttempts } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import { toUtcIsoString } from '@/lib/dateHelpers'
+import type { PatchQuizDto } from '@/api/generated/model'
 
 interface QuizSettingsEditorProps {
   quizId: string
@@ -83,10 +84,29 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
 
   const quiz = quizResponse
 
+  const buildPatchPayload = (
+    field: string,
+    value: string | number | null,
+  ): PatchQuizDto => {
+    if (field === 'publishDate') {
+      return value === null
+        ? { resetPublishDate: true }
+        : { publishDate: String(value) }
+    }
+
+    if (field === 'closingDate') {
+      return value === null
+        ? { resetClosingDate: true }
+        : { closingDate: String(value) }
+    }
+
+    return { [field]: value } as PatchQuizDto
+  }
+
   const handleUpdate = async (field: string, value: string | number | null) => {
     await patchMutation.mutateAsync({
       quizId,
-      data: { [field]: value },
+      data: buildPatchPayload(field, value),
     })
   }
 
@@ -184,7 +204,10 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
             value={quiz?.closingDate}
             min={new Date().toISOString()}
             onChange={(isoString) =>
-              handleUpdate('closingDate', toUtcIsoString(isoString))
+              handleUpdate(
+                'closingDate',
+                isoString ? toUtcIsoString(isoString) : null,
+              )
             }
           />
         </div>
