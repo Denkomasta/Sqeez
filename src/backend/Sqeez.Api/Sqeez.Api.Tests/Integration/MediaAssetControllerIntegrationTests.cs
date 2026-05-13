@@ -79,6 +79,44 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task DeleteUnassignedMediaAssets_AsTeacher_ForcesOwnerToAuthenticatedUser()
+        {
+            _factory.MediaAssetServiceMock
+                .Setup(service => service.DeleteUnassignedMediaAssetsAndFilesAsync(It.Is<MediaAssetFilterDto>(filter =>
+                    filter.UnassignedOnly == true &&
+                    filter.OwnerId == 42)))
+                .ReturnsAsync(ServiceResult<int>.Ok(3));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.DeleteAsync("/api/media-assets?unassignedOnly=true&ownerId=99");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.DeleteUnassignedMediaAssetsAndFilesAsync(It.Is<MediaAssetFilterDto>(filter =>
+                    filter.UnassignedOnly == true &&
+                    filter.OwnerId == 42)),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteUnassignedMediaAssets_WithoutUnassignedOnly_ReturnsBadRequestBeforeServiceCall()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.DeleteAsync("/api/media-assets");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.DeleteUnassignedMediaAssetsAndFilesAsync(It.IsAny<MediaAssetFilterDto>()),
+                Times.Never);
+        }
+
+        [Fact]
         public async Task UploadFile_UsesStorageThenCreatesMediaAssetWithAuthenticatedOwner()
         {
             _factory.FileStorageServiceMock

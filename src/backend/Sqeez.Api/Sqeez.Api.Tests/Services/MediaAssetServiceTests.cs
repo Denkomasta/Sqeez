@@ -132,6 +132,69 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task DeleteUnassignedMediaAssetsAndFilesAsync_DeletesOnlyAssetsNotUsedByQuestionOrOption()
+        {
+            var context = await GetInMemoryDbContext();
+
+            var teacher = new Teacher { Username = "Teacher", Role = UserRole.Teacher };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var quiz = new Quiz { Title = "Quiz", Subject = subject, CreatedAt = DateTime.UtcNow };
+            var freeAsset = new MediaAsset { LocationUrl = "/media/free.png", MimeType = MediaType.Image, Owner = teacher };
+            var questionAsset = new MediaAsset { LocationUrl = "/media/question.png", MimeType = MediaType.Image, Owner = teacher };
+            var optionAsset = new MediaAsset { LocationUrl = "/media/option.png", MimeType = MediaType.Image, Owner = teacher };
+            var question = new QuizQuestion
+            {
+                Quiz = quiz,
+                Title = "Question with media",
+                Media = questionAsset
+            };
+            var option = new QuizOption
+            {
+                QuizQuestion = question,
+                Text = "Option with media",
+                Media = optionAsset
+            };
+
+            context.Teachers.Add(teacher);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.MediaAssets.AddRange(freeAsset, questionAsset, optionAsset);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            await context.SaveChangesAsync();
+
+            var mockLogger = new Mock<ILogger<MediaAssetService>>();
+            var mockFileService = new Mock<IFileStorageService>();
+            mockFileService
+                .Setup(service => service.DeleteFileAsync(It.IsAny<string>()))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+            var service = new MediaAssetService(context, mockLogger.Object, mockFileService.Object);
+
+            var result = await service.DeleteUnassignedMediaAssetsAndFilesAsync(new MediaAssetFilterDto { UnassignedOnly = true });
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal(1, result.Data);
+            Assert.Null(await context.MediaAssets.FindAsync(freeAsset.Id));
+            Assert.NotNull(await context.MediaAssets.FindAsync(questionAsset.Id));
+            Assert.NotNull(await context.MediaAssets.FindAsync(optionAsset.Id));
+            mockFileService.Verify(service => service.DeleteFileAsync("/media/free.png"), Times.Once);
+            mockFileService.Verify(service => service.DeleteFileAsync("/media/question.png"), Times.Never);
+            mockFileService.Verify(service => service.DeleteFileAsync("/media/option.png"), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteUnassignedMediaAssetsAndFilesAsync_WithoutUnassignedOnly_ReturnsValidationError()
+        {
+            var context = await GetInMemoryDbContext();
+            var service = CreateService(context);
+
+            var result = await service.DeleteUnassignedMediaAssetsAndFilesAsync(new MediaAssetFilterDto());
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+        }
+
+        [Fact]
         public async Task CreateMediaAssetAsync_WhenValidOwner_CreatesAsset()
         {
             var context = await GetInMemoryDbContext();
