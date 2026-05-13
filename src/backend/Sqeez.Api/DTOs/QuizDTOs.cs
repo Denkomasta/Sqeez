@@ -80,7 +80,15 @@ namespace Sqeez.Api.DTOs
     {
         public PatchQuizDto() { }
 
-        public PatchQuizDto(string? Title = null, string? Description = null, int? MaxRetries = null, long? SubjectId = null, DateTime? PublishDate = null, DateTime? ClosingDate = null)
+        public PatchQuizDto(
+            string? Title = null,
+            string? Description = null,
+            int? MaxRetries = null,
+            long? SubjectId = null,
+            DateTime? PublishDate = null,
+            DateTime? ClosingDate = null,
+            bool ResetPublishDate = false,
+            bool ResetClosingDate = false)
         {
             this.Title = Title;
             this.Description = Description;
@@ -88,6 +96,8 @@ namespace Sqeez.Api.DTOs
             this.SubjectId = SubjectId;
             this.PublishDate = PublishDate;
             this.ClosingDate = ClosingDate;
+            this.ResetPublishDate = ResetPublishDate;
+            this.ResetClosingDate = ResetClosingDate;
         }
 
         [StringLength(ValidationConstants.TitleMaxLength)]
@@ -103,6 +113,8 @@ namespace Sqeez.Api.DTOs
         public DateTime? PublishDate { get; init; }
         [UtcDateTime]
         public DateTime? ClosingDate { get; init; }
+        public bool ResetPublishDate { get; init; } = false;
+        public bool ResetClosingDate { get; init; } = false;
     }
 
     /// <summary>

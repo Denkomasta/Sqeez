@@ -251,6 +251,98 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task PatchQuizAsync_WithResetDateFlags_ClearsPublishAndClosingDates()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentUserId = 1;
+
+            var subject = CreateActiveSubject(currentUserId);
+            var quiz = new Quiz
+            {
+                Title = "Scheduled",
+                Subject = subject,
+                PublishDate = DateTime.UtcNow.AddDays(-1),
+                ClosingDate = DateTime.UtcNow.AddDays(5)
+            };
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new PatchQuizDto(ResetPublishDate: true, ResetClosingDate: true);
+
+            var result = await service.PatchQuizAsync(quiz.Id, dto, currentUserId);
+
+            Assert.True(result.Success);
+            Assert.Null(result.Data!.PublishDate);
+            Assert.Null(result.Data.ClosingDate);
+
+            var dbQuiz = await context.Quizzes.FindAsync(quiz.Id);
+            Assert.Null(dbQuiz!.PublishDate);
+            Assert.Null(dbQuiz.ClosingDate);
+        }
+
+        [Fact]
+        public async Task PatchQuizAsync_WhenPublishDateSetAndReset_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentUserId = 1;
+
+            var subject = CreateActiveSubject(currentUserId);
+            var originalPublishDate = DateTime.UtcNow.AddDays(1);
+            var quiz = new Quiz
+            {
+                Title = "Scheduled",
+                Subject = subject,
+                PublishDate = originalPublishDate
+            };
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new PatchQuizDto(
+                PublishDate: DateTime.UtcNow.AddDays(2),
+                ResetPublishDate: true);
+
+            var result = await service.PatchQuizAsync(quiz.Id, dto, currentUserId);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Equal(originalPublishDate, (await context.Quizzes.FindAsync(quiz.Id))!.PublishDate);
+        }
+
+        [Fact]
+        public async Task PatchQuizAsync_WhenClosingDateSetAndReset_ReturnsValidationFailed()
+        {
+            var context = await GetInMemoryDbContext();
+            long currentUserId = 1;
+
+            var subject = CreateActiveSubject(currentUserId);
+            var originalClosingDate = DateTime.UtcNow.AddDays(5);
+            var quiz = new Quiz
+            {
+                Title = "Scheduled",
+                Subject = subject,
+                ClosingDate = originalClosingDate
+            };
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var dto = new PatchQuizDto(
+                ClosingDate: DateTime.UtcNow.AddDays(6),
+                ResetClosingDate: true);
+
+            var result = await service.PatchQuizAsync(quiz.Id, dto, currentUserId);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
+            Assert.Equal(originalClosingDate, (await context.Quizzes.FindAsync(quiz.Id))!.ClosingDate);
+        }
+
+        [Fact]
         public async Task GetAllQuizzesAsync_WithSubjectFilter_ReturnsFilteredQuizzes()
         {
             var context = await GetInMemoryDbContext();
