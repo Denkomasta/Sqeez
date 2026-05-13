@@ -26,6 +26,7 @@ namespace Sqeez.Api.DTOs
         public MediaType? MimeType { get; set; }
         public bool? IsPrivate { get; set; }
         public long? OwnerId { get; set; }
+        public bool? UnassignedOnly { get; set; }
     }
 
     /// <summary>

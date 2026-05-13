@@ -38,6 +38,13 @@ namespace Sqeez.Api.Services
                 query = query.Where(m => m.IsPrivate == filter.IsPrivate.Value);
             }
 
+            if (filter.UnassignedOnly == true)
+            {
+                query = query.Where(m =>
+                    !_context.QuizQuestions.Any(q => q.MediaAssetId == m.Id) &&
+                    !_context.QuizOptions.Any(o => o.MediaAssetId == m.Id));
+            }
+
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var search = filter.SearchTerm.Trim().ToLower();
