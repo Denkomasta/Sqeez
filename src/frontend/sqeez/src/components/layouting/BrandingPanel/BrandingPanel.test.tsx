@@ -14,7 +14,15 @@ describe('BrandingPanel', () => {
     expect(
       screen.getByText('brandingPanel.learningLoop.quiz'),
     ).toBeInTheDocument()
-    expect(screen.getByText('12-day')).toBeInTheDocument()
-    expect(screen.getByText('Speed Demon')).toBeInTheDocument()
+    expect(
+      screen.getByText('brandingPanel.stats.badges.value'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('brandingPanel.stats.xp.label')).toBeInTheDocument()
+    expect(
+      screen.getByText('brandingPanel.badges.speedDemon'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('brandingPanel.badges.quizExplorer'),
+    ).toBeInTheDocument()
   })
 })
