@@ -185,7 +185,6 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
           </div>
           <div className="flex flex-wrap justify-end gap-2">
             <Button
-              variant="outline"
               onClick={handleExportQuiz}
               disabled={isExporting}
               className="gap-2 shadow-sm"
