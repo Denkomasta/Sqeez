@@ -30,10 +30,12 @@ import type {
   GetApiSubjectsParams,
   GetApiSubjectsSubjectIdEnrollmentsParams,
   GetApiSubjectsSubjectIdQuizzesParams,
+  ImportResultDto,
   PagedResponseOfEnrollmentDto,
   PagedResponseOfQuizDto,
   PagedResponseOfSubjectDto,
   PatchSubjectDto,
+  PostApiSubjectsSubjectIdQuizzesImportBody,
   QuizDto,
   RemoveStudentsDto,
   SubjectDto,
@@ -1344,6 +1346,118 @@ export const usePostApiSubjectsSubjectIdQuizzes = <
 > => {
   return useMutation(
     getPostApiSubjectsSubjectIdQuizzesMutationOptions(options),
+    queryClient,
+  )
+}
+export const postApiSubjectsSubjectIdQuizzesImport = (
+  subjectId: number | string,
+  postApiSubjectsSubjectIdQuizzesImportBody: PostApiSubjectsSubjectIdQuizzesImportBody,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  const formData = new FormData()
+  if (postApiSubjectsSubjectIdQuizzesImportBody.file !== undefined) {
+    formData.append(`file`, postApiSubjectsSubjectIdQuizzesImportBody.file)
+  }
+
+  return customInstance<ImportResultDto>(
+    {
+      url: `/api/subjects/${subjectId}/quizzes/import`,
+      method: 'POST',
+      data: formData,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getPostApiSubjectsSubjectIdQuizzesImportMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postApiSubjectsSubjectIdQuizzesImport>>,
+    TError,
+    {
+      subjectId: number | string
+      data: PostApiSubjectsSubjectIdQuizzesImportBody
+    },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postApiSubjectsSubjectIdQuizzesImport>>,
+  TError,
+  {
+    subjectId: number | string
+    data: PostApiSubjectsSubjectIdQuizzesImportBody
+  },
+  TContext
+> => {
+  const mutationKey = ['postApiSubjectsSubjectIdQuizzesImport']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postApiSubjectsSubjectIdQuizzesImport>>,
+    {
+      subjectId: number | string
+      data: PostApiSubjectsSubjectIdQuizzesImportBody
+    }
+  > = (props) => {
+    const { subjectId, data } = props ?? {}
+
+    return postApiSubjectsSubjectIdQuizzesImport(
+      subjectId,
+      data,
+      requestOptions,
+    )
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostApiSubjectsSubjectIdQuizzesImportMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postApiSubjectsSubjectIdQuizzesImport>>
+>
+export type PostApiSubjectsSubjectIdQuizzesImportMutationBody =
+  PostApiSubjectsSubjectIdQuizzesImportBody
+export type PostApiSubjectsSubjectIdQuizzesImportMutationError =
+  ErrorType<unknown>
+
+export const usePostApiSubjectsSubjectIdQuizzesImport = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof postApiSubjectsSubjectIdQuizzesImport>>,
+      TError,
+      {
+        subjectId: number | string
+        data: PostApiSubjectsSubjectIdQuizzesImportBody
+      },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof postApiSubjectsSubjectIdQuizzesImport>>,
+  TError,
+  {
+    subjectId: number | string
+    data: PostApiSubjectsSubjectIdQuizzesImportBody
+  },
+  TContext
+> => {
+  return useMutation(
+    getPostApiSubjectsSubjectIdQuizzesImportMutationOptions(options),
     queryClient,
   )
 }

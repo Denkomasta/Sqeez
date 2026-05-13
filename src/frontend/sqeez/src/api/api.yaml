@@ -1426,6 +1426,23 @@ paths:
             text/json:
               schema:
                 type: boolean
+  /api/quizzes/{quizId}/export:
+    get:
+      tags:
+        - Quizzes
+      parameters:
+        - name: quizId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      responses:
+        "200":
+          description: OK
   /api/quizzes/{quizId}/questions:
     get:
       tags:
@@ -2763,6 +2780,42 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/QuizDto"
+  /api/subjects/{subjectId}/quizzes/import:
+    post:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  $ref: "#/components/schemas/IFormFile"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ImportResultDto"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportResultDto"
+            text/json:
+              schema:
+                $ref: "#/components/schemas/ImportResultDto"
   /api/system-config:
     get:
       tags:

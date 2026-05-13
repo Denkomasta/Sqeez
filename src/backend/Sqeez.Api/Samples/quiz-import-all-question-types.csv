@@ -1,0 +1,11 @@
+Quiz Title,Quiz Description,Max Retries,Publish Date,Closing Date,Question Order,Question Title,Difficulty,Time Limit,Has Penalty,Is Strict Multiple Choice,Option Order,Option Text,Is Correct,Is Free Text
+All Question Types Demo,Sample quiz containing every supported question type,2,,,1,Single choice question,1,60,false,false,1,Paris,true,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,1,Single choice question,1,60,false,false,2,London,false,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,1,Single choice question,1,60,false,false,3,Berlin,false,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,2,Multiple choice question,2,90,true,false,1,2 is an even number,true,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,2,Multiple choice question,2,90,true,false,2,3 is an odd number,true,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,2,Multiple choice question,2,90,true,false,3,4 is an odd number,false,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,3,Strict multiple choice question,3,120,true,true,1,HTTP GET should be safe,true,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,3,Strict multiple choice question,3,120,true,true,2,HTTP POST is commonly used to create resources,true,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,3,Strict multiple choice question,3,120,true,true,3,HTTP DELETE is always cacheable,false,false
+All Question Types Demo,Sample quiz containing every supported question type,2,,,4,Free text question with suggested solution,2,180,false,false,1,A class is a blueprint for creating objects,true,true
