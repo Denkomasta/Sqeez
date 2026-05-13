@@ -51,6 +51,7 @@ function DashboardLaunchpad() {
       href: '/app/subjects',
       iconPanelClassName:
         'bg-nav-blue/20 text-nav-blue ring-1 ring-nav-blue/30',
+      accentClassName: 'bg-nav-blue',
     },
     {
       title: t('dashboard.myClass'),
@@ -59,6 +60,7 @@ function DashboardLaunchpad() {
       href: '/app/class',
       iconPanelClassName:
         'bg-nav-green/20 text-nav-green ring-1 ring-nav-green/30',
+      accentClassName: 'bg-nav-green',
     },
     {
       title: t('dashboard.quizzes'),
@@ -67,6 +69,7 @@ function DashboardLaunchpad() {
       href: '/app/quizzes',
       iconPanelClassName:
         'bg-nav-purple/20 text-nav-purple ring-1 ring-nav-purple/30',
+      accentClassName: 'bg-nav-purple',
     },
     {
       title: t('dashboard.leaderboards'),
@@ -75,6 +78,7 @@ function DashboardLaunchpad() {
       href: '/app/leaderboards',
       iconPanelClassName:
         'bg-nav-yellow/20 text-nav-yellow ring-1 ring-nav-yellow/35',
+      accentClassName: 'bg-nav-yellow',
     },
   ]
 
@@ -86,6 +90,7 @@ function DashboardLaunchpad() {
       href: '/app/teacher/subjects',
       iconPanelClassName:
         'bg-nav-blue/20 text-nav-blue ring-1 ring-nav-blue/30',
+      accentClassName: 'bg-nav-blue',
     },
     {
       title: t('dashboard.manageQuizzes'),
@@ -94,6 +99,7 @@ function DashboardLaunchpad() {
       href: '/app/teacher/quizzes',
       iconPanelClassName:
         'bg-nav-orange/20 text-nav-orange ring-1 ring-nav-orange/30',
+      accentClassName: 'bg-nav-orange',
     },
     ...(teacherData?.managedClassId
       ? [
@@ -105,6 +111,7 @@ function DashboardLaunchpad() {
             params: { classId: String(teacherData.managedClassId) },
             iconPanelClassName:
               'bg-nav-teal/20 text-nav-teal ring-1 ring-nav-teal/30',
+            accentClassName: 'bg-nav-teal',
           },
         ]
       : []),
@@ -118,6 +125,7 @@ function DashboardLaunchpad() {
       href: '/app/admin/users',
       iconPanelClassName:
         'bg-destructive/20 text-destructive ring-1 ring-destructive/30',
+      accentClassName: 'bg-destructive',
     },
     {
       title: t('dashboard.adminClasses'),
@@ -126,6 +134,7 @@ function DashboardLaunchpad() {
       href: '/app/admin/classes',
       iconPanelClassName:
         'bg-nav-indigo/20 text-nav-indigo ring-1 ring-nav-indigo/30',
+      accentClassName: 'bg-nav-indigo',
     },
     {
       title: t('dashboard.adminSubjects'),
@@ -134,6 +143,7 @@ function DashboardLaunchpad() {
       href: '/app/admin/subjects',
       iconPanelClassName:
         'bg-nav-cyan/20 text-nav-cyan ring-1 ring-nav-cyan/30',
+      accentClassName: 'bg-nav-cyan',
     },
     {
       title: t('dashboard.adminBadges'),
@@ -142,6 +152,7 @@ function DashboardLaunchpad() {
       href: '/app/admin/badges',
       iconPanelClassName:
         'bg-nav-amber/20 text-nav-amber ring-1 ring-nav-amber/35',
+      accentClassName: 'bg-nav-amber',
     },
     {
       title: t('dashboard.adminImport'),
@@ -150,6 +161,7 @@ function DashboardLaunchpad() {
       href: '/app/admin/imports',
       iconPanelClassName:
         'bg-nav-emerald/20 text-nav-emerald ring-1 ring-nav-emerald/30',
+      accentClassName: 'bg-nav-emerald',
     },
     {
       title: t('dashboard.systemSettings'),
@@ -157,6 +169,7 @@ function DashboardLaunchpad() {
       icon: <Settings className="h-8 w-8" />,
       href: '/app/admin/settings',
       iconPanelClassName: 'bg-foreground/20 text-foreground ring-1 ring-border',
+      accentClassName: 'bg-foreground',
     },
   ]
 
