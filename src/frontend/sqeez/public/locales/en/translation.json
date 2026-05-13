@@ -239,7 +239,13 @@
     "userTitle": "{{name}}'s Badges"
   },
   "brandingPanel": {
-    "description": "Turn every quiz into progress. Climb leaderboards, unlock achievements, and build your knowledge streak.",
+    "badges": {
+      "perfectScore": "Perfect Score",
+      "quizExplorer": "Quiz Explorer",
+      "quizMaster": "Quiz Master",
+      "speedDemon": "Speed Demon"
+    },
+    "description": "Turn every quiz into progress. Climb leaderboards, unlock achievements, and keep learning with clear feedback.",
     "learningLoop": {
       "badge": "Unlock badges",
       "quiz": "Answer quizzes",
@@ -247,6 +253,24 @@
       "xp": "Earn XP"
     },
     "recentBadges": "Recently unlocked badges",
+    "stats": {
+      "accuracy": {
+        "label": "Accuracy rate",
+        "value": "87%"
+      },
+      "badges": {
+        "label": "For milestones",
+        "value": "Badges"
+      },
+      "leaderboard": {
+        "label": "Leaderboard",
+        "value": "#3"
+      },
+      "xp": {
+        "label": "Earned weekly",
+        "value": "4,200 XP"
+      }
+    },
     "title": "Learn with fun, compete with friends",
     "welcomeTo": "Welcome to"
   },

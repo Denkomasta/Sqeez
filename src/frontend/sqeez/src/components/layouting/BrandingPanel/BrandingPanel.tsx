@@ -1,4 +1,4 @@
-import { Flame, Trophy, Zap, Target, Star, BookOpen } from 'lucide-react'
+import { Award, Trophy, Zap, Target, Star, BookOpen } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 function StatCard({
@@ -21,10 +21,10 @@ function StatCard({
         {icon}
       </div>
       <div>
-        <p className="text-lg leading-tight font-bold text-primary-foreground">
+        <p className="text-start text-lg leading-tight font-bold text-primary-foreground">
           {value}
         </p>
-        <p className="text-xs text-primary-foreground/60">{label}</p>
+        <p className="text-start text-xs text-primary-foreground/60">{label}</p>
       </div>
     </div>
   )
@@ -63,6 +63,12 @@ function LearningStep({
 
 export function BrandingPanel() {
   const { t } = useTranslation()
+  const badgeLabels = [
+    t('brandingPanel.badges.speedDemon'),
+    t('brandingPanel.badges.perfectScore'),
+    t('brandingPanel.badges.quizExplorer'),
+    t('brandingPanel.badges.quizMaster'),
+  ]
 
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-primary px-12 py-16">
@@ -104,27 +110,27 @@ export function BrandingPanel() {
         {/* Gamification stat cards */}
         <div className="grid w-full grid-cols-2 gap-3">
           <StatCard
-            icon={<Flame className="h-5 w-5 text-primary-foreground" />}
-            value="12-day"
-            label="Avg. streak"
-            color="hsl(15, 80%, 55%)"
+            icon={<Award className="h-5 w-5 text-primary-foreground" />}
+            value={t('brandingPanel.stats.badges.value')}
+            label={t('brandingPanel.stats.badges.label')}
+            color="hsl(142, 62%, 38%)"
           />
           <StatCard
             icon={<Zap className="h-5 w-5 text-primary-foreground" />}
-            value="4,200 XP"
-            label="Earned weekly"
+            value={t('brandingPanel.stats.xp.value')}
+            label={t('brandingPanel.stats.xp.label')}
             color="hsl(38, 92%, 50%)"
           />
           <StatCard
             icon={<Trophy className="h-5 w-5 text-primary-foreground" />}
-            value="#3"
-            label="Leaderboard"
+            value={t('brandingPanel.stats.leaderboard.value')}
+            label={t('brandingPanel.stats.leaderboard.label')}
             color="hsl(262, 60%, 52%)"
           />
           <StatCard
             icon={<Target className="h-5 w-5 text-primary-foreground" />}
-            value="87%"
-            label="Accuracy rate"
+            value={t('brandingPanel.stats.accuracy.value')}
+            label={t('brandingPanel.stats.accuracy.label')}
             color="hsl(215, 72%, 52%)"
           />
         </div>
@@ -135,10 +141,9 @@ export function BrandingPanel() {
             {t('brandingPanel.recentBadges', 'Recently unlocked badges')}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <BadgeItem label="Speed Demon" />
-            <BadgeItem label="Perfect Score" />
-            <BadgeItem label="7-Day Streak" />
-            <BadgeItem label="Quiz Master" />
+            {badgeLabels.map((label) => (
+              <BadgeItem key={label} label={label} />
+            ))}
           </div>
         </div>
 
