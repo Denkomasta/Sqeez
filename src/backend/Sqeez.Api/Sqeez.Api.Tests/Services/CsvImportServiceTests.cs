@@ -244,6 +244,43 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task ImportQuizFileAsync_WhenQuizTitleAlreadyExists_CreatesAnotherQuiz()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = Sqeez.Api.Enums.UserRole.Teacher };
+            var subject = new Subject
+            {
+                Name = "Math",
+                Code = "MATH",
+                StartDate = DateTime.UtcNow.AddDays(-1),
+                Teacher = teacher
+            };
+            context.Teachers.Add(teacher);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(new Quiz
+            {
+                Title = "Repeated title",
+                Description = "Existing quiz",
+                Subject = subject,
+                CreatedAt = DateTime.UtcNow
+            });
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context, new Mock<ISchoolClassService>(), new Mock<ISubjectService>(), new Mock<IUserService>());
+            var csvContent = "Quiz Title,Quiz Description,Max Retries,Publish Date,Closing Date,Question Order,Question Title,Difficulty,Time Limit,Has Penalty,Is Strict Multiple Choice,Option Order,Option Text,Is Correct,Is Free Text\n" +
+                             "Repeated title,Imported quiz,0,,,1,What is 2+2?,1,60,false,false,1,4,true,false\n" +
+                             "Repeated title,Imported quiz,0,,,1,What is 2+2?,1,60,false,false,2,5,false,false\n";
+            var file = CreateMockFile(csvContent, "quiz.csv");
+
+            var result = await service.ImportQuizFileAsync(subject.Id, file, teacher.Id);
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Empty(result.Data!.Errors);
+            Assert.Equal(4, result.Data.RecordsImported);
+            Assert.Equal(2, await context.Quizzes.CountAsync(q => q.SubjectId == subject.Id && q.Title == "Repeated title"));
+        }
+
+        [Fact]
         public async Task ImportQuizFileAsync_WhenFreeTextQuestionHasMultipleOptions_ReturnsErrorsAndSkipsQuiz()
         {
             var context = await GetInMemoryDbContext();
