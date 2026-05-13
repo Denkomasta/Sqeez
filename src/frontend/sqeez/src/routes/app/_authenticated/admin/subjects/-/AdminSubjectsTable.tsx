@@ -136,39 +136,24 @@ export function AdminSubjectsTable({
     {
       header: '',
       className: 'text-right w-[100px]',
-      cell: (subject) => {
-        const canDelete =
-          Number(subject.enrollmentCount) === 0 &&
-          Number(subject.quizCount) === 0
-
-        return (
-          <div className="flex justify-end gap-1">
-            <button
-              onClick={() => onEditSubject?.(subject)}
-              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-              title={t('common.edit')}
-            >
-              <Edit2 className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => canDelete && onDeleteSubject?.(subject)}
-              disabled={!canDelete}
-              className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none ${
-                canDelete
-                  ? 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-                  : 'cursor-not-allowed text-muted-foreground/30'
-              }`}
-              title={
-                canDelete
-                  ? t('common.delete')
-                  : t('admin.subjects.cannotDelete')
-              }
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
-        )
-      },
+      cell: (subject) => (
+        <div className="flex justify-end gap-1">
+          <button
+            onClick={() => onEditSubject?.(subject)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+            title={t('common.edit')}
+          >
+            <Edit2 className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => onDeleteSubject?.(subject)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
+            title={t('common.delete')}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      ),
     },
   ]
 

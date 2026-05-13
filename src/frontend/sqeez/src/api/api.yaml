@@ -2568,18 +2568,28 @@ paths:
               - integer
               - string
             format: int64
+        - name: deleteAll
+          in: query
+          schema:
+            type: boolean
+            default: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RemoveStudentsDto"
+              oneOf:
+                - type: "null"
+                - $ref: "#/components/schemas/RemoveStudentsDto"
           text/json:
             schema:
-              $ref: "#/components/schemas/RemoveStudentsDto"
+              oneOf:
+                - type: "null"
+                - $ref: "#/components/schemas/RemoveStudentsDto"
           application/*+json:
             schema:
-              $ref: "#/components/schemas/RemoveStudentsDto"
-        required: true
+              oneOf:
+                - type: "null"
+                - $ref: "#/components/schemas/RemoveStudentsDto"
       responses:
         "200":
           description: OK
@@ -2684,6 +2694,37 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/PagedResponseOfQuizDto"
+    delete:
+      tags:
+        - Subjects
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: deleteAll
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: boolean
+            application/json:
+              schema:
+                type: boolean
+            text/json:
+              schema:
+                type: boolean
     post:
       tags:
         - Subjects
