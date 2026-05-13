@@ -6,6 +6,7 @@ using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.Import;
+using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
@@ -194,6 +195,129 @@ namespace Sqeez.Api.Tests.Services
             mockUserService.Verify(s => s.CreateStudentsBulkAsync(
                 It.Is<IEnumerable<Student>>(students => students.Count() == 1 && students.First().Email == "jane@sqeez.org")),
                 Times.Once);
+        }
+
+        [Fact]
+        public async Task ImportQuizFileAsync_WithFreeTextQuestion_CreatesQuizTreeWithoutMedia()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = Sqeez.Api.Enums.UserRole.Teacher };
+            var subject = new Subject
+            {
+                Name = "Math",
+                Code = "MATH",
+                StartDate = DateTime.UtcNow.AddDays(-1),
+                EndDate = DateTime.UtcNow.AddMonths(2),
+                Teacher = teacher
+            };
+            context.Teachers.Add(teacher);
+            context.Subjects.Add(subject);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context, new Mock<ISchoolClassService>(), new Mock<ISubjectService>(), new Mock<IUserService>());
+            var csvContent = "Quiz Title,Quiz Description,Max Retries,Publish Date,Closing Date,Question Order,Question Title,Difficulty,Time Limit,Has Penalty,Is Strict Multiple Choice,Option Order,Option Text,Is Correct,Is Free Text\n" +
+                             "Algebra basics,Intro quiz,2,2026-05-20T08:00:00Z,2026-06-01T08:00:00Z,1,What is 2+2?,1,60,false,false,1,4,true,false\n" +
+                             "Algebra basics,Intro quiz,2,2026-05-20T08:00:00Z,2026-06-01T08:00:00Z,1,What is 2+2?,1,60,false,false,2,5,false,false\n" +
+                             "Algebra basics,Intro quiz,2,2026-05-20T08:00:00Z,2026-06-01T08:00:00Z,2,Explain distributivity,2,180,false,false,1,a*(b+c)=a*b+a*c,true,true\n";
+            var file = CreateMockFile(csvContent, "quiz.csv");
+
+            var result = await service.ImportQuizFileAsync(subject.Id, file, teacher.Id);
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal(6, result.Data!.RecordsImported);
+
+            var quiz = await context.Quizzes
+                .Include(q => q.QuizQuestions)
+                    .ThenInclude(q => q.Options)
+                .SingleAsync();
+            Assert.Equal("Algebra basics", quiz.Title);
+            Assert.Equal(subject.Id, quiz.SubjectId);
+            Assert.Equal(2, quiz.QuizQuestions.Count);
+            Assert.All(quiz.QuizQuestions, question => Assert.Null(question.MediaAssetId));
+            Assert.All(quiz.QuizQuestions.SelectMany(question => question.Options), option => Assert.Null(option.MediaAssetId));
+
+            var freeTextQuestion = quiz.QuizQuestions.Single(question => question.Title == "Explain distributivity");
+            var freeTextOption = Assert.Single(freeTextQuestion.Options);
+            Assert.True(freeTextOption.IsFreeText);
+            Assert.True(freeTextOption.IsCorrect);
+            Assert.Equal("a*(b+c)=a*b+a*c", freeTextOption.Text);
+        }
+
+        [Fact]
+        public async Task ImportQuizFileAsync_WhenFreeTextQuestionHasMultipleOptions_ReturnsErrorsAndSkipsQuiz()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = Sqeez.Api.Enums.UserRole.Teacher };
+            var subject = new Subject
+            {
+                Name = "Math",
+                Code = "MATH",
+                StartDate = DateTime.UtcNow.AddDays(-1),
+                Teacher = teacher
+            };
+            context.Teachers.Add(teacher);
+            context.Subjects.Add(subject);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context, new Mock<ISchoolClassService>(), new Mock<ISubjectService>(), new Mock<IUserService>());
+            var csvContent = "Quiz Title,Quiz Description,Max Retries,Publish Date,Closing Date,Question Order,Question Title,Difficulty,Time Limit,Has Penalty,Is Strict Multiple Choice,Option Order,Option Text,Is Correct,Is Free Text\n" +
+                             "Written quiz,Intro,0,,,1,Explain gravity,1,120,false,false,1,Gravity attracts masses,true,true\n" +
+                             "Written quiz,Intro,0,,,1,Explain gravity,1,120,false,false,2,Second solution,false,true\n";
+            var file = CreateMockFile(csvContent, "quiz.csv");
+
+            var result = await service.ImportQuizFileAsync(subject.Id, file, teacher.Id);
+
+            Assert.True(result.Success);
+            Assert.Equal(0, result.Data!.RecordsImported);
+            Assert.Contains(result.Data.Errors, error => error.Contains("free-text question"));
+            Assert.False(await context.Quizzes.AnyAsync());
+        }
+
+        [Fact]
+        public async Task ExportQuizFileAsync_WhenTeacherOwnsSubject_ReturnsQuizCsv()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = Sqeez.Api.Enums.UserRole.Teacher };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var quiz = new Quiz
+            {
+                Title = "Exported quiz",
+                Description = "Ready",
+                MaxRetries = 1,
+                Subject = subject,
+                PublishDate = new DateTime(2026, 5, 20, 8, 0, 0, DateTimeKind.Utc)
+            };
+            var question = new QuizQuestion
+            {
+                Quiz = quiz,
+                Title = "Explain distributivity",
+                Difficulty = 2,
+                TimeLimit = 180
+            };
+            var option = new QuizOption
+            {
+                QuizQuestion = question,
+                Text = "a*(b+c)=a*b+a*c",
+                IsCorrect = true,
+                IsFreeText = true
+            };
+
+            context.Teachers.Add(teacher);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context, new Mock<ISchoolClassService>(), new Mock<ISubjectService>(), new Mock<IUserService>());
+
+            var result = await service.ExportQuizFileAsync(quiz.Id, teacher.Id);
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Contains("Quiz Title", result.Data);
+            Assert.Contains("Exported quiz", result.Data);
+            Assert.Contains("a*(b+c)=a*b+a*c", result.Data);
+            Assert.Contains("True", result.Data);
         }
     }
 }
