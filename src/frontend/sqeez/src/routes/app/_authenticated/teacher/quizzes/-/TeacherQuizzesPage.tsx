@@ -161,7 +161,7 @@ export function TeacherQuizzesPage() {
         title={t('dashboard.selectSubjectToImport')}
         className="cursor-not-allowed"
       >
-        <Button disabled size="sm" variant="outline" className="w-fit gap-1">
+        <Button disabled size="sm" className="w-fit gap-1 shadow-md">
           <FileUp className="h-4 w-4" />
           {t('dashboard.importQuizCsv')}
         </Button>
@@ -179,8 +179,7 @@ export function TeacherQuizzesPage() {
       </Button>
       <Button
         size="sm"
-        variant="outline"
-        className="w-fit gap-1"
+        className="w-fit gap-1 shadow-md"
         onClick={() => setIsImportModalOpen(true)}
       >
         <FileUp className="h-4 w-4" />
