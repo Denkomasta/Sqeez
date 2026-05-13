@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Filter } from 'lucide-react'
+import { FileUp, Filter, Plus } from 'lucide-react'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
@@ -16,6 +16,7 @@ import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/Scrol
 import { QuizListView } from '../../../quizzes/-/QuizListView'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CreateQuizModal } from './CreateQuizModal'
+import { ImportQuizCsvModal } from './ImportQuizCsvModal'
 import { CollapsibleSidebar } from '@/components/ui/CollapsibleSidebar'
 import type { QuizDto } from '@/api/generated/model'
 import type { AspNetProblemDetails } from '@/api/custom-axios'
@@ -35,6 +36,7 @@ export function TeacherQuizzesPage() {
   const showActiveOnly = search.activeOnly ?? true
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
   const [quizToDelete, setQuizToDelete] = useState<QuizDto | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
@@ -50,22 +52,21 @@ export function TeacherQuizzesPage() {
     useGetApiSubjects({ TeacherId: userId }, { query: { enabled: !!userId } })
   const subjects = subjectsData?.data || []
 
+  const quizzesQueryParams = {
+    TeacherId: userId,
+    SubjectId:
+      selectedSubjectId === 'all' ? undefined : Number(selectedSubjectId),
+    SearchTerm: searchQuery || undefined,
+    PageNumber: pageNumber,
+    PageSize: 12,
+    IsActive: showActiveOnly,
+  }
+
   const {
     data: quizzesResponse,
     isLoading: isLoadingQuizzes,
     isFetching: isFetchingQuizzes,
-  } = useGetApiQuizzes(
-    {
-      TeacherId: userId,
-      SubjectId:
-        selectedSubjectId === 'all' ? undefined : Number(selectedSubjectId),
-      SearchTerm: searchQuery || undefined,
-      PageNumber: pageNumber,
-      PageSize: 12,
-      IsActive: showActiveOnly,
-    },
-    { query: { enabled: !!userId } },
-  )
+  } = useGetApiQuizzes(quizzesQueryParams, { query: { enabled: !!userId } })
 
   const subjectOptions = [
     { id: 'all', title: t('dashboard.allSubjects') },
@@ -139,25 +140,53 @@ export function TeacherQuizzesPage() {
     }
   }
 
-  const createQuizAction = isAllSubjects ? (
-    <div
-      title={t('dashboard.selectSubjectToCreate')}
-      className="cursor-not-allowed"
-    >
-      <Button disabled size="sm" className="w-fit gap-1 shadow-md">
+  const handleQuizImported = () => {
+    queryClient.invalidateQueries({
+      queryKey: getGetApiQuizzesQueryKey(quizzesQueryParams),
+    })
+  }
+
+  const quizActions = isAllSubjects ? (
+    <div className="flex flex-wrap gap-2">
+      <div
+        title={t('dashboard.selectSubjectToCreate')}
+        className="cursor-not-allowed"
+      >
+        <Button disabled size="sm" className="w-fit gap-1 shadow-md">
+          <Plus className="h-4 w-4" />
+          {t('dashboard.createNewQuiz')}
+        </Button>
+      </div>
+      <div
+        title={t('dashboard.selectSubjectToImport')}
+        className="cursor-not-allowed"
+      >
+        <Button disabled size="sm" variant="outline" className="w-fit gap-1">
+          <FileUp className="h-4 w-4" />
+          {t('dashboard.importQuizCsv')}
+        </Button>
+      </div>
+    </div>
+  ) : (
+    <div className="flex flex-wrap gap-2">
+      <Button
+        size="sm"
+        className="w-fit gap-1 shadow-md"
+        onClick={() => setIsCreateModalOpen(true)}
+      >
         <Plus className="h-4 w-4" />
         {t('dashboard.createNewQuiz')}
       </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        className="w-fit gap-1"
+        onClick={() => setIsImportModalOpen(true)}
+      >
+        <FileUp className="h-4 w-4" />
+        {t('dashboard.importQuizCsv')}
+      </Button>
     </div>
-  ) : (
-    <Button
-      size="sm"
-      className="w-fit gap-1 shadow-md"
-      onClick={() => setIsCreateModalOpen(true)}
-    >
-      <Plus className="h-4 w-4" />
-      {t('dashboard.createNewQuiz')}
-    </Button>
   )
 
   const titleNode = t('dashboard.myQuizzes')
@@ -194,7 +223,7 @@ export function TeacherQuizzesPage() {
         <QuizListView
           role="Teacher"
           titleNode={titleNode}
-          headerActions={createQuizAction}
+          headerActions={quizActions}
           quizzes={quizzesResponse?.data || []}
           totalQuizzes={Number(quizzesResponse?.totalCount || 0)}
           totalPages={Number(quizzesResponse?.totalPages || 1)}
@@ -222,6 +251,14 @@ export function TeacherQuizzesPage() {
         onClose={() => setIsCreateModalOpen(false)}
         subjectId={selectedSubjectId}
       />
+      {!isAllSubjects && (
+        <ImportQuizCsvModal
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+          onImported={handleQuizImported}
+          subjectId={selectedSubjectId}
+        />
+      )}
 
       <ConfirmModal
         isOpen={!!quizToDelete}

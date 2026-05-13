@@ -10,9 +10,11 @@ import {
   Trash2,
   AlertTriangle,
   Lock,
+  FileDown,
 } from 'lucide-react'
 
 import {
+  getApiQuizzesQuizIdExport,
   getGetApiQuizzesQuizIdQueryKey,
   useGetApiQuizzesQuizId,
   usePatchApiQuizzesQuizId,
@@ -32,12 +34,22 @@ interface QuizSettingsEditorProps {
   quizId: string
 }
 
+const getCsvFileName = (title?: string | null) => {
+  const safeTitle = title
+    ?.trim()
+    .replace(/[^a-zA-Z0-9-_]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  return `${safeTitle || 'quiz'}.csv`
+}
+
 export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { isLocked, actions } = useQuizEditorUIStore()
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
 
   const { data: quizResponse, isLoading } = useGetApiQuizzesQuizId(
     quizId,
@@ -124,6 +136,30 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
     })
   }
 
+  const handleExportQuiz = async () => {
+    try {
+      setIsExporting(true)
+      const response = await getApiQuizzesQuizIdExport(quizId, {
+        responseType: 'blob',
+      })
+      const blob = response as unknown as Blob
+      const objectUrl = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = objectUrl
+      link.download = getCsvFileName(quiz?.title)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(objectUrl)
+      toast.success(t('editor.quizExported'))
+    } catch (error) {
+      console.error(error)
+      toast.error(t('editor.quizExportFailed'))
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex flex-1 items-center justify-center bg-background">
@@ -147,24 +183,39 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
               <Lock className="ml-2 h-5 w-5 text-muted-foreground" />
             )}
           </div>
-          <Button
-            variant={isPublished ? 'outline' : 'default'}
-            onClick={togglePublish}
-            disabled={patchMutation.isPending}
-            className="gap-2 shadow-sm"
-          >
-            {isPublished ? (
-              <>
-                <Globe className="h-4 w-4 text-muted-foreground" />
-                {t('editor.unpublish')}
-              </>
-            ) : (
-              <>
-                <Globe2 className="h-4 w-4" />
-                {t('editor.publish')}
-              </>
-            )}
-          </Button>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={handleExportQuiz}
+              disabled={isExporting}
+              className="gap-2 shadow-sm"
+            >
+              {isExporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <FileDown className="h-4 w-4" />
+              )}
+              {t('editor.exportCsv')}
+            </Button>
+            <Button
+              variant={isPublished ? 'outline' : 'default'}
+              onClick={togglePublish}
+              disabled={patchMutation.isPending}
+              className="gap-2 shadow-sm"
+            >
+              {isPublished ? (
+                <>
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  {t('editor.unpublish')}
+                </>
+              ) : (
+                <>
+                  <Globe2 className="h-4 w-4" />
+                  {t('editor.publish')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         <DebouncedInput
