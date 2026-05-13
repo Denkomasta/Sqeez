@@ -4,7 +4,9 @@ using Moq;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Models.Academics;
 using Sqeez.Api.Models.Media;
+using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.Users;
 using Sqeez.Api.Services;
 using Sqeez.Api.Services.Interfaces;
@@ -85,6 +87,48 @@ namespace Sqeez.Api.Tests.Services
             Assert.True(result.Success);
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.All(result.Data.Data, a => Assert.Equal(teacher1.Id, a.OwnerId));
+        }
+
+        [Fact]
+        public async Task GetAllMediaAssetsAsync_WithUnassignedOnly_ReturnsAssetsNotUsedByQuestionOrOption()
+        {
+            var context = await GetInMemoryDbContext();
+
+            var teacher = new Teacher { Username = "Teacher", Role = UserRole.Teacher };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var quiz = new Quiz { Title = "Quiz", Subject = subject, CreatedAt = DateTime.UtcNow };
+            var freeAsset = new MediaAsset { LocationUrl = "free.png", MimeType = MediaType.Image, Owner = teacher };
+            var questionAsset = new MediaAsset { LocationUrl = "question.png", MimeType = MediaType.Image, Owner = teacher };
+            var optionAsset = new MediaAsset { LocationUrl = "option.png", MimeType = MediaType.Image, Owner = teacher };
+            var question = new QuizQuestion
+            {
+                Quiz = quiz,
+                Title = "Question with media",
+                Media = questionAsset
+            };
+            var option = new QuizOption
+            {
+                QuizQuestion = question,
+                Text = "Option with media",
+                Media = optionAsset
+            };
+
+            context.Teachers.Add(teacher);
+            context.Subjects.Add(subject);
+            context.Quizzes.Add(quiz);
+            context.MediaAssets.AddRange(freeAsset, questionAsset, optionAsset);
+            context.QuizQuestions.Add(question);
+            context.QuizOptions.Add(option);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetAllMediaAssetsAsync(new MediaAssetFilterDto { UnassignedOnly = true });
+
+            Assert.True(result.Success);
+            var asset = Assert.Single(result.Data!.Data);
+            Assert.Equal(freeAsset.Id, asset.Id);
+            Assert.Equal(1, result.Data.TotalCount);
         }
 
         [Fact]
