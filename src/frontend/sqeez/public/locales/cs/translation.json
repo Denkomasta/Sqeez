@@ -38,6 +38,12 @@
     "academicYear": "Školní rok",
     "adminWarningDesc": "Přidělením administrátorských práv získá tento uživatel plný přístup ke všem systémovým nastavením, správě uživatelů a k nevratným akcím.",
     "allRoles": "Všechny role",
+    "archiveStatusActive": "Aktivní uživatelé",
+    "archiveStatusAll": "Všichni uživatelé",
+    "archiveStatusArchived": "Archivovaní uživatelé",
+    "archiveUser": "Archivovat",
+    "archiveUserConfirm": "Archivovat uživatele {{name}}? Už se nebude moct přihlásit.",
+    "archiveUserTitle": "Archivovat uživatele",
     "badges": {
       "addRule": "Přidat pravidlo",
       "atLeastOneRule": "Musíte přidat alespoň jedno pravidlo.",
@@ -119,6 +125,9 @@
       "yearPlaceholder": "např. 2024/2025"
     },
     "clickToEditRole": "Klikněte pro úpravu role",
+    "emailVerificationAll": "Všechny stavy ověření",
+    "emailVerificationUnverified": "Neověřený e-mail",
+    "emailVerificationVerified": "Ověřený e-mail",
     "import": {
       "clickToUpload": "Klikněte nebo přetáhněte soubor CSV sem",
       "completed": "Proces importu byl dokončen",
@@ -162,6 +171,9 @@
     "modifyRoleDesc": "Změnit přístupová práva pro {{name}}.",
     "modifyRoleTitle": "Upravit roli uživatele",
     "noUsersFound": "Nenalezeni žádní uživatelé odpovídající vašim filtrům.",
+    "restoreUser": "Obnovit",
+    "restoreUserConfirm": "Obnovit uživatele {{name}}? Bude se moct znovu přihlásit.",
+    "restoreUserTitle": "Obnovit uživatele",
     "roleUpdated": "Role uživatele byla úspěšně aktualizována",
     "searchClasses": "Hledat třídy...",
     "searchStudents": "Hledat studenty...",
@@ -203,7 +215,11 @@
     "unassigned": "Nepřiřazeno",
     "unassignedClass": "Bez třídy",
     "unassignedTeacher": "Bez učitele",
+    "userArchiveFailed": "Uživatele se nepodařilo archivovat.",
+    "userArchived": "Uživatel byl úspěšně archivován.",
     "userManagement": "Správa uživatelů",
+    "userRestoreFailed": "Uživatele se nepodařilo obnovit.",
+    "userRestored": "Uživatel byl úspěšně obnoven.",
     "warning": "Varování"
   },
   "attempts": {
