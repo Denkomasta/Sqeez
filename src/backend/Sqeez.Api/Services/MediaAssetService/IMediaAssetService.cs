@@ -58,6 +58,13 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<bool>> DeleteMediaAssetAsync(long id);
 
         /// <summary>
+        /// Deletes all media assets matching the filter that are not attached to any quiz question or option.
+        /// </summary>
+        /// <param name="filter">Filtering values. UnassignedOnly must be true.</param>
+        /// <returns>The number of deleted media assets.</returns>
+        Task<ServiceResult<int>> DeleteUnassignedMediaAssetsAndFilesAsync(MediaAssetFilterDto filter);
+
+        /// <summary>
         /// Gets file URL and content type metadata for downloading a media asset.
         /// </summary>
         /// <param name="mediaId">The media asset id.</param>
