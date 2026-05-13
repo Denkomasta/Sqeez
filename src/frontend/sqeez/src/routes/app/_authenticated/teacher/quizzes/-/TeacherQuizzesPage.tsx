@@ -79,21 +79,34 @@ export function TeacherQuizzesPage() {
   const selectedQuizHasAttempts = Number(quizToDelete?.quizAttempts ?? 0) > 0
   const selectedQuizWillBeClosed = showActiveOnly && selectedQuizHasAttempts
 
-  const isClosedSubjectDeleteError = (error: unknown) => {
-    if (!isAxiosError<AspNetProblemDetails>(error)) return false
+  const getDeleteQuizForbiddenMessage = (error: unknown) => {
+    if (
+      !isAxiosError<AspNetProblemDetails>(error) ||
+      error.response?.status !== 403
+    ) {
+      return null
+    }
 
-    const message =
+    return (
       error.response?.data?.detail ||
       error.response?.data?.title ||
       error.response?.data?.error ||
-      ''
-
-    return (
-      error.response?.status === 403 &&
-      message.includes(
-        'Cannot delete a quiz that belongs to a subject that has already ended.',
-      )
+      null
     )
+  }
+
+  const getDeleteQuizErrorToast = (error: unknown) => {
+    const forbiddenMessage = getDeleteQuizForbiddenMessage(error)
+
+    if (forbiddenMessage?.includes('subject')) {
+      return t('quiz.closedSubjectDeleteFailed')
+    }
+
+    if (forbiddenMessage?.includes('permission')) {
+      return t('quiz.deletePermissionDenied')
+    }
+
+    return t('quiz.quizDeleteFailed')
   }
 
   const deleteQuizMutation = useDeleteApiQuizzesQuizId({
@@ -110,11 +123,7 @@ export function TeacherQuizzesPage() {
         toast.success(t('quiz.quizDeleted'))
       },
       onError: (error) => {
-        toast.error(
-          isClosedSubjectDeleteError(error)
-            ? t('quiz.closedSubjectDeleteFailed')
-            : t('quiz.quizDeleteFailed'),
-        )
+        toast.error(getDeleteQuizErrorToast(error))
       },
     },
   })
