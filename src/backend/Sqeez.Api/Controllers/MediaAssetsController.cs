@@ -184,6 +184,34 @@ namespace Sqeez.Api.Controllers
         }
 
         /// <summary>
+        /// DELETE /api/media-assets?unassignedOnly=true
+        /// Deletes unassigned media assets. Admins can delete all matching unassigned assets; teachers are limited to their own.
+        /// </summary>
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpDelete]
+        public async Task<ActionResult<int>> DeleteUnassigned([FromQuery] MediaAssetFilterDto filter)
+        {
+            if (filter.UnassignedOnly != true)
+            {
+                return BadRequest(new { error = "Bulk media asset deletion requires unassignedOnly=true." });
+            }
+
+            var userIdStr = GetUserIdFromClaims();
+            if (!long.TryParse(userIdStr, out long currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            if (!IsCurrentUserAdmin)
+            {
+                filter.OwnerId = currentUserId;
+            }
+
+            var result = await _mediaAssetService.DeleteUnassignedMediaAssetsAndFilesAsync(filter);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
         /// DELETE /api/media-assets/{id}
         /// Deletes the database metadata and physical file. Admins can delete any asset; teachers can delete only their own assets.
         /// </summary>

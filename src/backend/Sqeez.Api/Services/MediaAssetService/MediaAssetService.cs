@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
+using Sqeez.Api.Extensions;
 using Sqeez.Api.Models.Media;
 using Sqeez.Api.Services.Interfaces;
 
@@ -21,37 +22,9 @@ namespace Sqeez.Api.Services
 
         public async Task<ServiceResult<PagedResponse<MediaAssetDto>>> GetAllMediaAssetsAsync(MediaAssetFilterDto filter)
         {
-            var query = _context.MediaAssets.AsNoTracking();
-
-            if (filter.OwnerId.HasValue)
-            {
-                query = query.Where(m => m.OwnerId == filter.OwnerId.Value);
-            }
-
-            if (filter.MimeType.HasValue)
-            {
-                query = query.Where(m => m.MimeType == filter.MimeType.Value);
-            }
-
-            if (filter.IsPrivate.HasValue)
-            {
-                query = query.Where(m => m.IsPrivate == filter.IsPrivate.Value);
-            }
-
-            if (filter.UnassignedOnly == true)
-            {
-                query = query.Where(m =>
-                    !_context.QuizQuestions.Any(q => q.MediaAssetId == m.Id) &&
-                    !_context.QuizOptions.Any(o => o.MediaAssetId == m.Id));
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
-            {
-                var search = filter.SearchTerm.Trim().ToLower();
-                query = query.Where(m =>
-                    (m.Description != null && m.Description.ToLower().Contains(search)) ||
-                    m.LocationUrl.ToLower().Contains(search));
-            }
+            var query = _context.MediaAssets
+                .AsNoTracking()
+                .ApplyFilters(filter, _context);
 
             int totalCount = await query.CountAsync();
 
@@ -77,6 +50,47 @@ namespace Sqeez.Api.Services
                 PageNumber = filter.PageNumber,
                 PageSize = filter.PageSize
             });
+        }
+
+        public async Task<ServiceResult<int>> DeleteUnassignedMediaAssetsAndFilesAsync(MediaAssetFilterDto filter)
+        {
+            if (filter.UnassignedOnly != true)
+            {
+                return ServiceResult<int>.Failure(
+                    "Bulk media asset deletion requires unassignedOnly=true.",
+                    ServiceError.ValidationFailed);
+            }
+
+            var assets = await _context.MediaAssets
+                .ApplyFilters(filter, _context)
+                .ToListAsync();
+            if (!assets.Any())
+            {
+                return ServiceResult<int>.Ok(0);
+            }
+
+            try
+            {
+                foreach (var asset in assets)
+                {
+                    if (!string.IsNullOrWhiteSpace(asset.LocationUrl))
+                    {
+                        await _fileStorageService.DeleteFileAsync(asset.LocationUrl);
+                    }
+                }
+
+                _context.MediaAssets.RemoveRange(assets);
+                await _context.SaveChangesAsync();
+
+                return ServiceResult<int>.Ok(assets.Count);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to bulk delete unassigned media assets due to database constraints.");
+                return ServiceResult<int>.Failure(
+                    "Cannot delete one or more media assets because they are currently attached to quiz content.",
+                    ServiceError.Conflict);
+            }
         }
 
         public async Task<ServiceResult<MediaAssetDto>> GetMediaAssetByIdAsync(long id)
