@@ -47,6 +47,38 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task GetAllMediaAssets_WithUnassignedOnlyFilter_ForwardsFilterToService()
+        {
+            _factory.MediaAssetServiceMock
+                .Setup(service => service.GetAllMediaAssetsAsync(It.Is<MediaAssetFilterDto>(filter =>
+                    filter.UnassignedOnly == true &&
+                    filter.OwnerId == 42)))
+                .ReturnsAsync(ServiceResult<PagedResponse<MediaAssetDto>>.Ok(new PagedResponse<MediaAssetDto>
+                {
+                    Data = new List<MediaAssetDto>
+                    {
+                        new MediaAssetDto(5, "/media/free.png", MediaType.Image, false, null, 42, "teacher")
+                    },
+                    TotalCount = 1,
+                    PageNumber = 1,
+                    PageSize = 10
+                }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.GetAsync("/api/media-assets?unassignedOnly=true&ownerId=42");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.MediaAssetServiceMock.Verify(
+                service => service.GetAllMediaAssetsAsync(It.Is<MediaAssetFilterDto>(filter =>
+                    filter.UnassignedOnly == true &&
+                    filter.OwnerId == 42)),
+                Times.Once);
+        }
+
+        [Fact]
         public async Task UploadFile_UsesStorageThenCreatesMediaAssetWithAuthenticatedOwner()
         {
             _factory.FileStorageServiceMock
