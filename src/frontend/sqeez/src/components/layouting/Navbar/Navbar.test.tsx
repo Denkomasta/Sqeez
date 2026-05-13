@@ -34,6 +34,9 @@ describe('Navbar', () => {
       'href',
       '/',
     )
+    const logo = screen.getByLabelText('Sqeez Logo')
+    expect(logo).toHaveAttribute('style', 'background-color: transparent;')
+    expect(logo.querySelector('mask#q-cutout-mask')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Log in' })).toHaveAttribute(
