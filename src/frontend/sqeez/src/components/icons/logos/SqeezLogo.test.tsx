@@ -12,4 +12,18 @@ describe('SqeezLogo', () => {
     expect(logo).toHaveClass('logo')
     expect(logo).toHaveStyle({ backgroundColor: '#ffffff' })
   })
+
+  it('renders a transparent container with a masked Q cutout', () => {
+    render(<SqeezLogo size={48} backgroundColor="transparent" />)
+
+    const logo = screen.getByLabelText('Sqeez Logo')
+    expect(logo).toHaveAttribute('style', 'background-color: transparent;')
+    expect(
+      logo.querySelector('path[fill="transparent"]'),
+    ).not.toBeInTheDocument()
+    expect(logo.querySelector('mask#q-cutout-mask')).toBeInTheDocument()
+    expect(
+      logo.querySelector('path[mask="url(#q-cutout-mask)"]'),
+    ).toHaveAttribute('fill', 'url(#gradient_0)')
+  })
 })
