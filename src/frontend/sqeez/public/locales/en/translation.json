@@ -38,6 +38,12 @@
     "academicYear": "Academic Year",
     "adminWarningDesc": "Giving this user Admin privileges grants them full access to all system settings, user management, and destructive actions.",
     "allRoles": "All Roles",
+    "archiveStatusActive": "Active users",
+    "archiveStatusAll": "All users",
+    "archiveStatusArchived": "Archived users",
+    "archiveUser": "Archive",
+    "archiveUserConfirm": "Archive {{name}}? They will no longer be able to sign in.",
+    "archiveUserTitle": "Archive user",
     "badges": {
       "addRule": "Add Rule",
       "atLeastOneRule": "You must add at least one rule.",
@@ -119,6 +125,9 @@
       "yearPlaceholder": "e.g. 2024/2025"
     },
     "clickToEditRole": "Click to edit role",
+    "emailVerificationAll": "All verification states",
+    "emailVerificationUnverified": "Unverified email",
+    "emailVerificationVerified": "Verified email",
     "import": {
       "clickToUpload": "Click or drag CSV file here to upload",
       "completed": "Import process finished",
@@ -162,6 +171,9 @@
     "modifyRoleDesc": "Change access permissions for {{name}}.",
     "modifyRoleTitle": "Modify User Role",
     "noUsersFound": "No users found matching your filters.",
+    "restoreUser": "Restore",
+    "restoreUserConfirm": "Restore {{name}}? They will be able to sign in again.",
+    "restoreUserTitle": "Restore user",
     "roleUpdated": "User role updated successfully",
     "searchClasses": "Search classes...",
     "searchStudents": "Search students...",
@@ -203,7 +215,11 @@
     "unassigned": "Unassigned",
     "unassignedClass": "No Class",
     "unassignedTeacher": "No Teacher",
+    "userArchiveFailed": "User could not be archived.",
+    "userArchived": "User archived successfully.",
     "userManagement": "User Management",
+    "userRestoreFailed": "User could not be restored.",
+    "userRestored": "User restored successfully.",
     "warning": "Warning"
   },
   "attempts": {
