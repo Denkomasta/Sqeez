@@ -362,13 +362,11 @@ namespace Sqeez.Api.Services.SubjectService
 
             try
             {
-                // HARD DELETE: If the subject is completely empty, it's safe to actually delete it.
                 if (subject.Enrollments.Count == 0 && subject.Quizzes.Count == 0)
                 {
                     _context.Subjects.Remove(subject);
                     _logger.LogInformation("Hard deleted empty subject {Id}", id);
                 }
-                // SOFT DELETE: If there is historical data, we just archive it.
                 else
                 {
                     subject.EndDate = DateTime.UtcNow;

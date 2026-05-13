@@ -75,7 +75,7 @@ namespace Sqeez.Api.Controllers
 
         /// <summary>
         /// DELETE /api/subjects/5
-        /// Performs a Smart Delete (Hard delete if empty, Soft delete if active)
+        /// Deletes an empty subject or archives it when enrollments or quizzes are present.
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
@@ -128,8 +128,27 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin,Teacher")]
         [HttpDelete("{subjectId}/enrollments")]
-        public async Task<ActionResult<bool>> UnenrollStudents(long subjectId, [FromBody] RemoveStudentsDto dto)
+        public async Task<ActionResult<bool>> UnenrollStudents(
+            long subjectId,
+            [FromQuery] bool deleteAll = false,
+            [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] RemoveStudentsDto? dto = null)
         {
+            if (deleteAll)
+            {
+                if (!IsCurrentUserAdmin)
+                {
+                    return Forbid();
+                }
+
+                var deleteAllResult = await _enrollmentService.DeleteAllEnrollmentsFromSubjectAsync(subjectId, GetUserRoleFromClaims());
+                return HandleServiceResult(deleteAllResult);
+            }
+
+            if (dto == null)
+            {
+                return BadRequest(new { error = "Student ids are required unless deleteAll is true." });
+            }
+
             if (!IsCurrentUserAdmin)
             {
                 var accessResult = await EnsureTeacherOwnsSubjectAsync(subjectId);
@@ -152,6 +171,23 @@ namespace Sqeez.Api.Controllers
         {
             filter.SubjectId = subjectId; // Force the filter to this subject
             var result = await _quizService.GetAllQuizzesAsync(filter);
+            return HandleServiceResult(result);
+        }
+
+        /// <summary>
+        /// DELETE /api/subjects/5/quizzes?deleteAll=true
+        /// Removes all quizzes and quiz content for the subject after enrollment history has been removed. Admin-only.
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{subjectId}/quizzes")]
+        public async Task<ActionResult<bool>> DeleteQuizzesForSubject(long subjectId, [FromQuery] bool deleteAll = false)
+        {
+            if (!deleteAll)
+            {
+                return BadRequest(new { error = "deleteAll must be true to delete all quizzes for a subject." });
+            }
+
+            var result = await _quizService.DeleteAllQuizzesFromSubjectAsync(subjectId, IsCurrentUserAdmin);
             return HandleServiceResult(result);
         }
 

@@ -76,5 +76,17 @@ namespace Sqeez.Api.Services.Interfaces
         /// <param name="dto">Student ids to unenroll.</param>
         /// <returns>A successful result. Missing matching active enrollments are treated as a no-op.</returns>
         Task<ServiceResult<bool>> UnenrollStudentsFromSubjectAsync(long subjectId, RemoveStudentsDto dto);
+
+        /// <summary>
+        /// Permanently removes all enrollments for a subject together with their quiz attempts and responses.
+        /// Intended for the first admin-only step of destructive subject deletion.
+        /// </summary>
+        /// <param name="subjectId">The subject id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
+        /// <returns>
+        /// A successful result when cleanup completes, not found for a missing subject, forbidden for non-admins,
+        /// or internal error on failure.
+        /// </returns>
+        Task<ServiceResult<bool>> DeleteAllEnrollmentsFromSubjectAsync(long subjectId, string? currentUserRole);
     }
 }

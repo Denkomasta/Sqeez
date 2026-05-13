@@ -41,6 +41,74 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
+        public async Task DeleteSubjectEnrollments_WithDeleteAllAsAdmin_CallsEnrollmentService()
+        {
+            _factory.EnrollmentServiceMock
+                .Setup(service => service.DeleteAllEnrollmentsFromSubjectAsync(5, "Admin"))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.DeleteAsync("/api/subjects/5/enrollments?deleteAll=true");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.EnrollmentServiceMock.Verify(
+                service => service.DeleteAllEnrollmentsFromSubjectAsync(5, "Admin"),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteSubjectEnrollments_WithDeleteAllAsTeacher_ReturnsForbiddenBeforeServiceCall()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "42");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Teacher");
+
+            var response = await client.DeleteAsync("/api/subjects/5/enrollments?deleteAll=true");
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            _factory.EnrollmentServiceMock.Verify(
+                service => service.DeleteAllEnrollmentsFromSubjectAsync(It.IsAny<long>(), It.IsAny<string?>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task DeleteSubjectQuizzes_WithDeleteAllAsAdmin_CallsQuizService()
+        {
+            _factory.QuizServiceMock
+                .Setup(service => service.DeleteAllQuizzesFromSubjectAsync(5, true))
+                .ReturnsAsync(ServiceResult<bool>.Ok(true));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.DeleteAsync("/api/subjects/5/quizzes?deleteAll=true");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.QuizServiceMock.Verify(
+                service => service.DeleteAllQuizzesFromSubjectAsync(5, true),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteSubjectQuizzes_WithoutDeleteAll_ReturnsBadRequestBeforeServiceCall()
+        {
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.DeleteAsync("/api/subjects/5/quizzes");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            _factory.QuizServiceMock.Verify(
+                service => service.DeleteAllQuizzesFromSubjectAsync(It.IsAny<long>(), It.IsAny<bool>()),
+                Times.Never);
+        }
+
+        [Fact]
         public async Task EnrollStudents_AsStudentForAnotherStudent_ReturnsForbiddenBeforeCallingService()
         {
             var client = _factory.CreateClient();

@@ -51,7 +51,7 @@ namespace Sqeez.Api.Services.Interfaces
         Task<ServiceResult<SubjectDto>> PatchSubjectAsync(long id, PatchSubjectDto dto);
 
         /// <summary>
-        /// Deletes an empty subject or archives it when enrollments or quizzes must be preserved.
+        /// Deletes an empty subject or archives it when enrollments or quizzes are present.
         /// </summary>
         /// <param name="id">The subject id.</param>
         /// <returns>A successful result when deleted or archived, not found for a missing subject, or internal error on failure.</returns>
