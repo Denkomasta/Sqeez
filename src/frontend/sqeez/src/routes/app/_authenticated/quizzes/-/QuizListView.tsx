@@ -216,16 +216,16 @@ export function QuizListView({
                     </div>
                   </CardContent>
 
-                  <CardFooter className="border-t bg-muted/10 pt-3">
+                  <CardFooter className="border-t bg-muted/10 p-3">
                     {role === 'Teacher' ? (
-                      <div className="flex w-full gap-2">
+                      <div className="grid w-full grid-cols-2 gap-2">
                         <Link
                           to="/app/quizzes/$quizId/builder"
                           params={{ quizId: quiz.id.toString() }}
-                          className="group flex flex-1 items-center justify-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+                          className="group flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
                         >
-                          <Edit className="h-4 w-4" />
-                          <span className="hidden sm:inline">
+                          <Edit className="h-4 w-4 shrink-0" />
+                          <span className="hidden min-w-0 truncate whitespace-nowrap sm:inline">
                             {t('dashboard.editQuiz')}
                           </span>
                         </Link>
@@ -236,10 +236,10 @@ export function QuizListView({
                             subjectId: String(targetSubjectId),
                             quizId: quiz.id.toString(),
                           }}
-                          className="group flex flex-1 items-center justify-center gap-2 rounded-md bg-nav-purple px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-nav-purple/90"
+                          className="group flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-md bg-nav-purple px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-nav-purple/90"
                         >
-                          <BarChart className="h-4 w-4" />
-                          <span className="hidden sm:inline">
+                          <BarChart className="h-4 w-4 shrink-0" />
+                          <span className="hidden min-w-0 truncate whitespace-nowrap sm:inline">
                             {t('quiz.viewStats')}
                           </span>
                         </Link>
