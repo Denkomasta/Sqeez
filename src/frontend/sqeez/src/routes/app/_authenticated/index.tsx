@@ -13,6 +13,7 @@ import {
   BookCopy,
   Award,
   FileUp,
+  Images,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
@@ -162,6 +163,15 @@ function DashboardLaunchpad() {
       iconPanelClassName:
         'bg-nav-emerald/20 text-nav-emerald ring-1 ring-nav-emerald/30',
       accentClassName: 'bg-nav-emerald',
+    },
+    {
+      title: t('dashboard.adminMediaAssets'),
+      description: t('dashboard.adminMediaAssetsDescription'),
+      icon: <Images className="h-8 w-8" />,
+      href: '/app/admin/media-assets',
+      iconPanelClassName:
+        'bg-nav-purple/20 text-nav-purple ring-1 ring-nav-purple/30',
+      accentClassName: 'bg-nav-purple',
     },
     {
       title: t('dashboard.systemSettings'),

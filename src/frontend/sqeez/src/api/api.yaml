@@ -637,6 +637,10 @@ paths:
               - integer
               - string
             format: int64
+        - name: UnassignedOnly
+          in: query
+          schema:
+            type: boolean
         - name: PageNumber
           in: query
           schema:
@@ -698,6 +702,81 @@ paths:
             text/json:
               schema:
                 $ref: "#/components/schemas/MediaAssetDto"
+    delete:
+      tags:
+        - MediaAssets
+      parameters:
+        - name: SearchTerm
+          in: query
+          schema:
+            maxLength: 100
+            minLength: 0
+            type: string
+        - name: MimeType
+          in: query
+          schema:
+            $ref: "#/components/schemas/MediaType"
+        - name: IsPrivate
+          in: query
+          schema:
+            type: boolean
+        - name: OwnerId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
+        - name: UnassignedOnly
+          in: query
+          schema:
+            type: boolean
+        - name: PageNumber
+          in: query
+          schema:
+            maximum: 2147483647
+            minimum: 1
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            maximum: 100
+            minimum: 1
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                pattern: ^-?(?:0|[1-9]\d*)$
+                type:
+                  - integer
+                  - string
+                format: int32
+            application/json:
+              schema:
+                pattern: ^-?(?:0|[1-9]\d*)$
+                type:
+                  - integer
+                  - string
+                format: int32
+            text/json:
+              schema:
+                pattern: ^-?(?:0|[1-9]\d*)$
+                type:
+                  - integer
+                  - string
+                format: int32
   /api/media-assets/{id}:
     get:
       tags:

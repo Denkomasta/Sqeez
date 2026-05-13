@@ -39,6 +39,7 @@ import { Route as AppAuthenticatedQuizzesQuizIdIndexRouteImport } from './routes
 import { Route as AppAuthenticatedAdminUsersIndexRouteImport } from './routes/app/_authenticated/admin/users/index'
 import { Route as AppAuthenticatedAdminSubjectsIndexRouteImport } from './routes/app/_authenticated/admin/subjects/index'
 import { Route as AppAuthenticatedAdminSettingsIndexRouteImport } from './routes/app/_authenticated/admin/settings/index'
+import { Route as AppAuthenticatedAdminMediaAssetsIndexRouteImport } from './routes/app/_authenticated/admin/media-assets/index'
 import { Route as AppAuthenticatedAdminImportsIndexRouteImport } from './routes/app/_authenticated/admin/imports/index'
 import { Route as AppAuthenticatedAdminClassesIndexRouteImport } from './routes/app/_authenticated/admin/classes/index'
 import { Route as AppAuthenticatedAdminBadgesIndexRouteImport } from './routes/app/_authenticated/admin/badges/index'
@@ -219,6 +220,12 @@ const AppAuthenticatedAdminSettingsIndexRoute =
     path: '/settings/',
     getParentRoute: () => AppAuthenticatedAdminRoute,
   } as any)
+const AppAuthenticatedAdminMediaAssetsIndexRoute =
+  AppAuthenticatedAdminMediaAssetsIndexRouteImport.update({
+    id: '/media-assets/',
+    path: '/media-assets/',
+    getParentRoute: () => AppAuthenticatedAdminRoute,
+  } as any)
 const AppAuthenticatedAdminImportsIndexRoute =
   AppAuthenticatedAdminImportsIndexRouteImport.update({
     id: '/imports/',
@@ -332,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/badges/': typeof AppAuthenticatedAdminBadgesIndexRoute
   '/app/admin/classes/': typeof AppAuthenticatedAdminClassesIndexRoute
   '/app/admin/imports/': typeof AppAuthenticatedAdminImportsIndexRoute
+  '/app/admin/media-assets/': typeof AppAuthenticatedAdminMediaAssetsIndexRoute
   '/app/admin/settings/': typeof AppAuthenticatedAdminSettingsIndexRoute
   '/app/admin/subjects/': typeof AppAuthenticatedAdminSubjectsIndexRoute
   '/app/admin/users/': typeof AppAuthenticatedAdminUsersIndexRoute
@@ -377,6 +385,7 @@ export interface FileRoutesByTo {
   '/app/admin/badges': typeof AppAuthenticatedAdminBadgesIndexRoute
   '/app/admin/classes': typeof AppAuthenticatedAdminClassesIndexRoute
   '/app/admin/imports': typeof AppAuthenticatedAdminImportsIndexRoute
+  '/app/admin/media-assets': typeof AppAuthenticatedAdminMediaAssetsIndexRoute
   '/app/admin/settings': typeof AppAuthenticatedAdminSettingsIndexRoute
   '/app/admin/subjects': typeof AppAuthenticatedAdminSubjectsIndexRoute
   '/app/admin/users': typeof AppAuthenticatedAdminUsersIndexRoute
@@ -424,6 +433,7 @@ export interface FileRoutesById {
   '/app/_authenticated/admin/badges/': typeof AppAuthenticatedAdminBadgesIndexRoute
   '/app/_authenticated/admin/classes/': typeof AppAuthenticatedAdminClassesIndexRoute
   '/app/_authenticated/admin/imports/': typeof AppAuthenticatedAdminImportsIndexRoute
+  '/app/_authenticated/admin/media-assets/': typeof AppAuthenticatedAdminMediaAssetsIndexRoute
   '/app/_authenticated/admin/settings/': typeof AppAuthenticatedAdminSettingsIndexRoute
   '/app/_authenticated/admin/subjects/': typeof AppAuthenticatedAdminSubjectsIndexRoute
   '/app/_authenticated/admin/users/': typeof AppAuthenticatedAdminUsersIndexRoute
@@ -472,6 +482,7 @@ export interface FileRouteTypes {
     | '/app/admin/badges/'
     | '/app/admin/classes/'
     | '/app/admin/imports/'
+    | '/app/admin/media-assets/'
     | '/app/admin/settings/'
     | '/app/admin/subjects/'
     | '/app/admin/users/'
@@ -517,6 +528,7 @@ export interface FileRouteTypes {
     | '/app/admin/badges'
     | '/app/admin/classes'
     | '/app/admin/imports'
+    | '/app/admin/media-assets'
     | '/app/admin/settings'
     | '/app/admin/subjects'
     | '/app/admin/users'
@@ -563,6 +575,7 @@ export interface FileRouteTypes {
     | '/app/_authenticated/admin/badges/'
     | '/app/_authenticated/admin/classes/'
     | '/app/_authenticated/admin/imports/'
+    | '/app/_authenticated/admin/media-assets/'
     | '/app/_authenticated/admin/settings/'
     | '/app/_authenticated/admin/subjects/'
     | '/app/_authenticated/admin/users/'
@@ -809,6 +822,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAuthenticatedAdminSettingsIndexRouteImport
       parentRoute: typeof AppAuthenticatedAdminRoute
     }
+    '/app/_authenticated/admin/media-assets/': {
+      id: '/app/_authenticated/admin/media-assets/'
+      path: '/media-assets'
+      fullPath: '/app/admin/media-assets/'
+      preLoaderRoute: typeof AppAuthenticatedAdminMediaAssetsIndexRouteImport
+      parentRoute: typeof AppAuthenticatedAdminRoute
+    }
     '/app/_authenticated/admin/imports/': {
       id: '/app/_authenticated/admin/imports/'
       path: '/imports'
@@ -915,6 +935,7 @@ interface AppAuthenticatedAdminRouteChildren {
   AppAuthenticatedAdminBadgesIndexRoute: typeof AppAuthenticatedAdminBadgesIndexRoute
   AppAuthenticatedAdminClassesIndexRoute: typeof AppAuthenticatedAdminClassesIndexRoute
   AppAuthenticatedAdminImportsIndexRoute: typeof AppAuthenticatedAdminImportsIndexRoute
+  AppAuthenticatedAdminMediaAssetsIndexRoute: typeof AppAuthenticatedAdminMediaAssetsIndexRoute
   AppAuthenticatedAdminSettingsIndexRoute: typeof AppAuthenticatedAdminSettingsIndexRoute
   AppAuthenticatedAdminSubjectsIndexRoute: typeof AppAuthenticatedAdminSubjectsIndexRoute
   AppAuthenticatedAdminUsersIndexRoute: typeof AppAuthenticatedAdminUsersIndexRoute
@@ -928,6 +949,8 @@ const AppAuthenticatedAdminRouteChildren: AppAuthenticatedAdminRouteChildren = {
     AppAuthenticatedAdminClassesIndexRoute,
   AppAuthenticatedAdminImportsIndexRoute:
     AppAuthenticatedAdminImportsIndexRoute,
+  AppAuthenticatedAdminMediaAssetsIndexRoute:
+    AppAuthenticatedAdminMediaAssetsIndexRoute,
   AppAuthenticatedAdminSettingsIndexRoute:
     AppAuthenticatedAdminSettingsIndexRoute,
   AppAuthenticatedAdminSubjectsIndexRoute:
