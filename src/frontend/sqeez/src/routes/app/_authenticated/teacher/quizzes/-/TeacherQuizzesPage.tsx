@@ -1,19 +1,30 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Filter } from 'lucide-react'
-import { useGetApiQuizzes } from '@/api/generated/endpoints/quizzes/quizzes'
+import { isAxiosError } from 'axios'
+import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  getGetApiQuizzesQueryKey,
+  useDeleteApiQuizzesQuizId,
+  useGetApiQuizzes,
+} from '@/api/generated/endpoints/quizzes/quizzes'
 import { useGetApiSubjects } from '@/api/generated/endpoints/subjects/subjects'
 import { Button } from '@/components/ui/Button'
+import { ConfirmModal } from '@/components/ui'
 import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import { QuizListView } from '../../../quizzes/-/QuizListView'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CreateQuizModal } from './CreateQuizModal'
 import { CollapsibleSidebar } from '@/components/ui/CollapsibleSidebar'
+import type { QuizDto } from '@/api/generated/model'
+import type { AspNetProblemDetails } from '@/api/custom-axios'
 
 import { Route } from '../index'
 
 export function TeacherQuizzesPage() {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const { user } = useAuthStore()
 
   const userId = user?.id
@@ -24,6 +35,7 @@ export function TeacherQuizzesPage() {
   const showActiveOnly = search.activeOnly ?? true
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [quizToDelete, setQuizToDelete] = useState<QuizDto | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
 
@@ -64,6 +76,59 @@ export function TeacherQuizzesPage() {
   ]
 
   const isAllSubjects = selectedSubjectId === 'all'
+  const selectedQuizHasAttempts = Number(quizToDelete?.quizAttempts ?? 0) > 0
+  const selectedQuizWillBeClosed = showActiveOnly && selectedQuizHasAttempts
+
+  const isClosedSubjectDeleteError = (error: unknown) => {
+    if (!isAxiosError<AspNetProblemDetails>(error)) return false
+
+    const message =
+      error.response?.data?.detail ||
+      error.response?.data?.title ||
+      error.response?.data?.error ||
+      ''
+
+    return (
+      error.response?.status === 403 &&
+      message.includes(
+        'Cannot delete a quiz that belongs to a subject that has already ended.',
+      )
+    )
+  }
+
+  const deleteQuizMutation = useDeleteApiQuizzesQuizId({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetApiQuizzesQueryKey(),
+        })
+        if (selectedQuizWillBeClosed) {
+          toast.info(t('quiz.quizClosed'))
+          return
+        }
+
+        toast.success(t('quiz.quizDeleted'))
+      },
+      onError: (error) => {
+        toast.error(
+          isClosedSubjectDeleteError(error)
+            ? t('quiz.closedSubjectDeleteFailed')
+            : t('quiz.quizDeleteFailed'),
+        )
+      },
+    },
+  })
+
+  const handleDeleteQuizConfirm = async () => {
+    if (!quizToDelete) return
+
+    try {
+      await deleteQuizMutation.mutateAsync({ quizId: quizToDelete.id })
+      setQuizToDelete(null)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const createQuizAction = isAllSubjects ? (
     <div
@@ -139,12 +204,33 @@ export function TeacherQuizzesPage() {
           showActiveToggle={true}
           showActiveOnly={showActiveOnly}
           setShowActiveOnly={setShowActiveOnly}
+          onDeleteQuiz={setQuizToDelete}
+          pendingDeleteQuizId={deleteQuizMutation.variables?.quizId}
         />
       </section>
       <CreateQuizModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         subjectId={selectedSubjectId}
+      />
+
+      <ConfirmModal
+        isOpen={!!quizToDelete}
+        onClose={() => setQuizToDelete(null)}
+        onConfirm={handleDeleteQuizConfirm}
+        title={t('quiz.deleteQuizTitle')}
+        description={
+          selectedQuizHasAttempts
+            ? t('quiz.deleteQuizWithAttemptsConfirm', {
+                title: quizToDelete?.title,
+              })
+            : t('quiz.deleteQuizWithoutAttemptsConfirm', {
+                title: quizToDelete?.title,
+              })
+        }
+        confirmText={t('quiz.deleteQuiz')}
+        isDestructive
+        isLoading={deleteQuizMutation.isPending}
       />
     </div>
   )
