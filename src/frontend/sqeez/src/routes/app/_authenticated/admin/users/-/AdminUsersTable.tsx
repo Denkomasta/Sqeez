@@ -7,6 +7,7 @@ import {
   GraduationCap,
   RotateCcw,
   ShieldAlert,
+  Trash2,
 } from 'lucide-react'
 
 import { SimpleAvatar } from '@/components/ui/Avatar'
@@ -29,8 +30,10 @@ interface AdminUsersTableProps {
   isLoading: boolean
   onEditRole: (user: SelectedUserForRole) => void
   archiveAction?: 'archive' | 'restore' | null
+  canDeleteArchivedUsers?: boolean
   onArchiveUser?: (user: SelectedUserForRole) => void
   onRestoreUser?: (user: SelectedUserForRole) => void
+  onDeleteUser?: (user: SelectedUserForRole) => void
   pendingUserId?: string | number
 }
 
@@ -39,8 +42,10 @@ export function AdminUsersTable({
   isLoading,
   onEditRole,
   archiveAction,
+  canDeleteArchivedUsers = false,
   onArchiveUser,
   onRestoreUser,
+  onDeleteUser,
   pendingUserId,
 }: AdminUsersTableProps) {
   const { t } = useTranslation()
@@ -125,7 +130,7 @@ export function AdminUsersTable({
     },
   ]
 
-  if (archiveAction) {
+  if (archiveAction || canDeleteArchivedUsers) {
     columns.push({
       header: t('common.actions'),
       className: 'text-right',
@@ -139,25 +144,43 @@ export function AdminUsersTable({
         const isPending = pendingUserId === user.id
         const isArchiveAction = archiveAction === 'archive'
         const Icon = isArchiveAction ? Archive : RotateCcw
+        const canDeleteUser =
+          canDeleteArchivedUsers &&
+          (user.role === 'Student' || user.role === 'Teacher')
 
         return (
-          <div className="flex justify-end">
-            <Button
-              size="sm"
-              variant={isArchiveAction ? 'outline' : 'secondary'}
-              className="gap-2"
-              disabled={isPending}
-              onClick={() =>
-                isArchiveAction
-                  ? onArchiveUser?.(selectedUser)
-                  : onRestoreUser?.(selectedUser)
-              }
-            >
-              <Icon className="h-4 w-4" />
-              {isArchiveAction
-                ? t('admin.archiveUser')
-                : t('admin.restoreUser')}
-            </Button>
+          <div className="flex justify-end gap-2">
+            {archiveAction && (
+              <Button
+                size="sm"
+                variant={isArchiveAction ? 'outline' : 'secondary'}
+                className="gap-2"
+                disabled={isPending}
+                onClick={() =>
+                  isArchiveAction
+                    ? onArchiveUser?.(selectedUser)
+                    : onRestoreUser?.(selectedUser)
+                }
+              >
+                <Icon className="h-4 w-4" />
+                {isArchiveAction
+                  ? t('admin.archiveUser')
+                  : t('admin.restoreUser')}
+              </Button>
+            )}
+
+            {canDeleteUser && (
+              <Button
+                size="sm"
+                variant="destructive"
+                className="gap-2"
+                disabled={isPending}
+                onClick={() => onDeleteUser?.(selectedUser)}
+              >
+                <Trash2 className="h-4 w-4" />
+                {t('admin.deleteUser')}
+              </Button>
+            )}
           </div>
         )
       },
