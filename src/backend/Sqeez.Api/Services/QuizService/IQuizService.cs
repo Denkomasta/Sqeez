@@ -57,5 +57,17 @@ namespace Sqeez.Api.Services.Interfaces
         /// forbidden for non-owner non-admin users, or forbidden when the subject has already ended.
         /// </returns>
         Task<ServiceResult<bool>> DeleteQuizAsync(long id, long currentUserId, bool isAdmin);
+
+        /// <summary>
+        /// Deletes all quizzes and quiz content for a subject after enrollments and attempts have been removed.
+        /// Intended for the second admin-only step of destructive subject deletion.
+        /// </summary>
+        /// <param name="subjectId">The subject id.</param>
+        /// <param name="isAdmin">Whether the requester is an admin.</param>
+        /// <returns>
+        /// A successful result when cleanup completes, not found for a missing subject, forbidden for non-admins,
+        /// conflict when enrollments or attempts still exist, or internal error on failure.
+        /// </returns>
+        Task<ServiceResult<bool>> DeleteAllQuizzesFromSubjectAsync(long subjectId, bool isAdmin);
     }
 }

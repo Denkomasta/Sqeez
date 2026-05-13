@@ -269,5 +269,77 @@ namespace Sqeez.Api.Services
             await _context.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true);
         }
+
+        public async Task<ServiceResult<bool>> DeleteAllQuizzesFromSubjectAsync(long subjectId, bool isAdmin)
+        {
+            if (!isAdmin)
+            {
+                return ServiceResult<bool>.Failure("Only admins can delete all quizzes from a subject.", ServiceError.Forbidden);
+            }
+
+            var subjectExists = await _context.Subjects.AnyAsync(subject => subject.Id == subjectId);
+            if (!subjectExists)
+            {
+                return ServiceResult<bool>.Failure("Subject not found.", ServiceError.NotFound);
+            }
+
+            try
+            {
+                var hasEnrollments = await _context.Enrollments.AnyAsync(enrollment => enrollment.SubjectId == subjectId);
+                if (hasEnrollments)
+                {
+                    return ServiceResult<bool>.Failure(
+                        "Subject enrollments and quiz attempts must be removed before deleting quizzes.",
+                        ServiceError.Conflict);
+                }
+
+                var quizIds = await _context.Quizzes
+                    .Where(quiz => quiz.SubjectId == subjectId)
+                    .Select(quiz => quiz.Id)
+                    .ToListAsync();
+
+                var hasAttempts = await _context.QuizAttempts.AnyAsync(attempt => quizIds.Contains(attempt.QuizId));
+                if (hasAttempts)
+                {
+                    return ServiceResult<bool>.Failure(
+                        "Quiz attempts must be removed before deleting quizzes.",
+                        ServiceError.Conflict);
+                }
+
+                var quizzes = await _context.Quizzes
+                    .Where(quiz => quiz.SubjectId == subjectId)
+                    .ToListAsync();
+
+                var questions = await _context.QuizQuestions
+                    .Where(question => quizIds.Contains(question.QuizId))
+                    .ToListAsync();
+                var questionIds = questions.Select(question => question.Id).ToList();
+
+                var hasResponses = await _context.QuizQuestionResponses
+                    .AnyAsync(response => questionIds.Contains(response.QuizQuestionId));
+                if (hasResponses)
+                {
+                    return ServiceResult<bool>.Failure(
+                        "Quiz responses must be removed before deleting quizzes.",
+                        ServiceError.Conflict);
+                }
+
+                var options = await _context.QuizOptions
+                    .Where(option => questionIds.Contains(option.QuizQuestionId))
+                    .ToListAsync();
+
+                _context.QuizOptions.RemoveRange(options);
+                _context.QuizQuestions.RemoveRange(questions);
+                _context.Quizzes.RemoveRange(quizzes);
+
+                await _context.SaveChangesAsync();
+                return ServiceResult<bool>.Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting quizzes for subject {SubjectId}", subjectId);
+                return ServiceResult<bool>.Failure("Internal error occurred while deleting subject quizzes.", ServiceError.InternalError);
+            }
+        }
     }
 }

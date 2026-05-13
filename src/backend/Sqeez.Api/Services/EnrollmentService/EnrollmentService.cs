@@ -285,5 +285,63 @@ namespace Sqeez.Api.Services
             await _context.SaveChangesAsync();
             return ServiceResult<bool>.Ok(true);
         }
+
+        public async Task<ServiceResult<bool>> DeleteAllEnrollmentsFromSubjectAsync(long subjectId, string? currentUserRole)
+        {
+            if (currentUserRole != "Admin")
+            {
+                return ServiceResult<bool>.Failure("Only admins can delete all subject enrollments.", ServiceError.Forbidden);
+            }
+
+            var subjectExists = await _context.Subjects.AnyAsync(subject => subject.Id == subjectId);
+            if (!subjectExists)
+            {
+                return ServiceResult<bool>.Failure("Subject not found.", ServiceError.NotFound);
+            }
+
+            try
+            {
+                var enrollmentIds = await _context.Enrollments
+                    .Where(enrollment => enrollment.SubjectId == subjectId)
+                    .Select(enrollment => enrollment.Id)
+                    .ToListAsync();
+
+                var quizIds = await _context.Quizzes
+                    .Where(quiz => quiz.SubjectId == subjectId)
+                    .Select(quiz => quiz.Id)
+                    .ToListAsync();
+
+                var attempts = await _context.QuizAttempts
+                    .Where(attempt => enrollmentIds.Contains(attempt.EnrollmentId) || quizIds.Contains(attempt.QuizId))
+                    .ToListAsync();
+                var attemptIds = attempts.Select(attempt => attempt.Id).ToList();
+
+                var responses = await _context.QuizQuestionResponses
+                    .Include(response => response.Options)
+                    .Where(response => attemptIds.Contains(response.QuizAttemptId))
+                    .ToListAsync();
+
+                foreach (var response in responses)
+                {
+                    response.Options.Clear();
+                }
+
+                var enrollments = await _context.Enrollments
+                    .Where(enrollment => enrollment.SubjectId == subjectId)
+                    .ToListAsync();
+
+                _context.QuizQuestionResponses.RemoveRange(responses);
+                _context.QuizAttempts.RemoveRange(attempts);
+                _context.Enrollments.RemoveRange(enrollments);
+
+                await _context.SaveChangesAsync();
+                return ServiceResult<bool>.Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting all enrollments from subject {SubjectId}", subjectId);
+                return ServiceResult<bool>.Failure("Internal error occurred while deleting subject enrollments and attempts.", ServiceError.InternalError);
+            }
+        }
     }
 }
