@@ -1,11 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useAuthStore } from '@/store/useAuthStore'
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/Card'
 import {
   BookOpen,
   GraduationCap,
@@ -24,46 +18,14 @@ import { useTranslation } from 'react-i18next'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
 import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import type { StudentDtoTeacherDto } from '@/api/generated/model'
+import {
+  DashboardNavCardGrid,
+  type DashboardNavCardItem,
+} from '@/components/layouting/DashboardNavCardGrid'
 
 export const Route = createFileRoute('/app/_authenticated/')({
   component: DashboardLaunchpad,
 })
-
-type NavCard = {
-  title: string
-  description: string
-  icon: React.ReactNode
-  href: string
-  params?: Record<string, string | number>
-  colorClass: string
-}
-
-const NavCardGrid = ({ items }: { items: NavCard[] }) => (
-  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    {items.map((item) => (
-      <Link
-        key={item.href}
-        to={item.href}
-        params={item.params}
-        className="block rounded-xl ring-primary outline-none focus-visible:ring-2"
-      >
-        <Card className="group h-full cursor-pointer transition-all hover:border-primary hover:shadow-md">
-          <CardHeader>
-            <div
-              className={`mb-4 inline-flex rounded-lg p-3 transition-transform group-hover:scale-110 ${item.colorClass}`}
-            >
-              {item.icon}
-            </div>
-            <CardTitle className="text-xl">{item.title}</CardTitle>
-            <CardDescription className="line-clamp-2">
-              {item.description}
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </Link>
-    ))}
-  </div>
-)
 
 function DashboardLaunchpad() {
   const { t } = useTranslation()
@@ -81,51 +43,57 @@ function DashboardLaunchpad() {
 
   const teacherData = data as StudentDtoTeacherDto | undefined
 
-  const studentLinks: NavCard[] = [
+  const studentLinks: DashboardNavCardItem[] = [
     {
       title: t('dashboard.subjects'),
       description: t('dashboard.subjectDescription'),
       icon: <Library className="h-8 w-8" />,
       href: '/app/subjects',
-      colorClass: 'bg-nav-blue/10 text-nav-blue',
+      iconPanelClassName:
+        'bg-nav-blue/20 text-nav-blue ring-1 ring-nav-blue/30',
     },
     {
       title: t('dashboard.myClass'),
       description: t('dashboard.myClassDescripiton'),
       icon: <Users className="h-8 w-8" />,
       href: '/app/class',
-      colorClass: 'bg-nav-green/10 text-nav-green',
+      iconPanelClassName:
+        'bg-nav-green/20 text-nav-green ring-1 ring-nav-green/30',
     },
     {
       title: t('dashboard.quizzes'),
       description: t('dashboard.quizzesDescription'),
       icon: <FileSignature className="h-8 w-8" />,
       href: '/app/quizzes',
-      colorClass: 'bg-nav-purple/10 text-nav-purple',
+      iconPanelClassName:
+        'bg-nav-purple/20 text-nav-purple ring-1 ring-nav-purple/30',
     },
     {
       title: t('dashboard.leaderboards'),
       description: t('dashboard.leaderboardsDescription'),
       icon: <Trophy className="h-8 w-8" />,
       href: '/app/leaderboards',
-      colorClass: 'bg-nav-yellow/10 text-nav-yellow',
+      iconPanelClassName:
+        'bg-nav-yellow/20 text-nav-yellow ring-1 ring-nav-yellow/35',
     },
   ]
 
-  const teacherLinks: NavCard[] = [
+  const teacherLinks: DashboardNavCardItem[] = [
     {
       title: t('dashboard.teacherSubjects'),
       description: t('dashboard.teacherSubjectsDescription'),
       icon: <Library className="h-8 w-8" />,
       href: '/app/teacher/subjects',
-      colorClass: 'bg-nav-blue/10 text-nav-blue',
+      iconPanelClassName:
+        'bg-nav-blue/20 text-nav-blue ring-1 ring-nav-blue/30',
     },
     {
       title: t('dashboard.manageQuizzes'),
       description: t('dashboard.manageQuizzesDescription'),
       icon: <GraduationCap className="h-8 w-8" />,
       href: '/app/teacher/quizzes',
-      colorClass: 'bg-nav-orange/10 text-nav-orange',
+      iconPanelClassName:
+        'bg-nav-orange/20 text-nav-orange ring-1 ring-nav-orange/30',
     },
     ...(teacherData?.managedClassId
       ? [
@@ -135,54 +103,60 @@ function DashboardLaunchpad() {
             icon: <BookOpen className="h-8 w-8" />,
             href: '/app/class/$classId',
             params: { classId: String(teacherData.managedClassId) },
-            colorClass: 'bg-nav-teal/10 text-nav-teal',
+            iconPanelClassName:
+              'bg-nav-teal/20 text-nav-teal ring-1 ring-nav-teal/30',
           },
         ]
       : []),
   ]
 
-  const adminLinks: NavCard[] = [
+  const adminLinks: DashboardNavCardItem[] = [
     {
       title: t('dashboard.userManagement'),
       description: t('dashboard.userManagementDescription'),
       icon: <ShieldAlert className="h-8 w-8" />,
       href: '/app/admin/users',
-      colorClass: 'bg-destructive/10 text-destructive',
+      iconPanelClassName:
+        'bg-destructive/20 text-destructive ring-1 ring-destructive/30',
     },
     {
       title: t('dashboard.adminClasses'),
       description: t('dashboard.adminClassesDescription'),
       icon: <School className="h-8 w-8" />,
       href: '/app/admin/classes',
-      colorClass: 'bg-nav-indigo/10 text-nav-indigo',
+      iconPanelClassName:
+        'bg-nav-indigo/20 text-nav-indigo ring-1 ring-nav-indigo/30',
     },
     {
       title: t('dashboard.adminSubjects'),
       description: t('dashboard.adminSubjectsDescription'),
       icon: <BookCopy className="h-8 w-8" />,
       href: '/app/admin/subjects',
-      colorClass: 'bg-nav-cyan/10 text-nav-cyan',
+      iconPanelClassName:
+        'bg-nav-cyan/20 text-nav-cyan ring-1 ring-nav-cyan/30',
     },
     {
       title: t('dashboard.adminBadges'),
       description: t('dashboard.adminBadgesDescription'),
       icon: <Award className="h-8 w-8" />,
       href: '/app/admin/badges',
-      colorClass: 'bg-nav-amber/10 text-nav-amber',
+      iconPanelClassName:
+        'bg-nav-amber/20 text-nav-amber ring-1 ring-nav-amber/35',
     },
     {
       title: t('dashboard.adminImport'),
       description: t('dashboard.adminImportDescription'),
       icon: <FileUp className="h-8 w-8" />,
       href: '/app/admin/imports',
-      colorClass: 'bg-nav-emerald/10 text-nav-emerald',
+      iconPanelClassName:
+        'bg-nav-emerald/20 text-nav-emerald ring-1 ring-nav-emerald/30',
     },
     {
       title: t('dashboard.systemSettings'),
       description: t('dashboard.systemSettingsDescription'),
       icon: <Settings className="h-8 w-8" />,
       href: '/app/admin/settings',
-      colorClass: 'bg-foreground/10 text-foreground',
+      iconPanelClassName: 'bg-foreground/20 text-foreground ring-1 ring-border',
     },
   ]
 
@@ -198,7 +172,7 @@ function DashboardLaunchpad() {
           <h2 className="text-xl font-semibold tracking-tight">
             {t('dashboard.yourLearning')}
           </h2>
-          <NavCardGrid items={studentLinks} />
+          <DashboardNavCardGrid items={studentLinks} />
         </section>
 
         {isTeacher && (
@@ -206,7 +180,7 @@ function DashboardLaunchpad() {
             <h2 className="text-xl font-semibold tracking-tight">
               {t('dashboard.teachingTools')}
             </h2>
-            <NavCardGrid items={teacherLinks} />
+            <DashboardNavCardGrid items={teacherLinks} />
           </section>
         )}
 
@@ -215,7 +189,7 @@ function DashboardLaunchpad() {
             <h2 className="text-xl font-semibold tracking-tight">
               {t('dashboard.administration')}
             </h2>
-            <NavCardGrid items={adminLinks} />
+            <DashboardNavCardGrid items={adminLinks} />
           </section>
         )}
       </div>
