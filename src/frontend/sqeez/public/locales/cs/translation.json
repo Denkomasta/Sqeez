@@ -239,7 +239,13 @@
     "userTitle": "Odznaky uživatele {{name}}"
   },
   "brandingPanel": {
-    "description": "Proměňte každý kvíz v pokrok. Stoupejte v žebříčcích, odemykejte úspěchy a udržujte svoji sérii přihlášení.",
+    "badges": {
+      "perfectScore": "Perfektní výsledek",
+      "quizExplorer": "Průzkumník kvízů",
+      "quizMaster": "Mistr kvízů",
+      "speedDemon": "Rychlé řešení"
+    },
+    "description": "Proměňte každý kvíz v pokrok. Stoupejte v žebříčcích, odemykejte úspěchy a učte se s jasnou zpětnou vazbou.",
     "learningLoop": {
       "badge": "Odemkněte odznaky",
       "quiz": "Řešte kvízy",
@@ -247,6 +253,24 @@
       "xp": "Získejte XP"
     },
     "recentBadges": "Nedávno odemčené odznaky",
+    "stats": {
+      "accuracy": {
+        "label": "Úspěšnost odpovědí",
+        "value": "87 %"
+      },
+      "badges": {
+        "label": "Za milníky",
+        "value": "Odznaky"
+      },
+      "leaderboard": {
+        "label": "Žebříček",
+        "value": "#3"
+      },
+      "xp": {
+        "label": "Získáno týdně",
+        "value": "4 200 XP"
+      }
+    },
     "title": "Učte se zábavně, soutěžte s přáteli",
     "welcomeTo": "Vítejte v"
   },
