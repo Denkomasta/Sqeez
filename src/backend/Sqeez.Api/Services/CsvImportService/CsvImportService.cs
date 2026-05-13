@@ -227,12 +227,6 @@ namespace Sqeez.Api.Services
                 if (!validRecords.Any())
                     return ServiceResult<ImportResultDto>.Ok(result);
 
-                var existingQuizTitles = await _context.Quizzes
-                    .AsNoTracking()
-                    .Where(q => q.SubjectId == subjectId)
-                    .Select(q => q.Title.ToLower())
-                    .ToHashSetAsync();
-
                 var quizzesToCreate = new List<Quiz>();
 
                 foreach (var quizGroup in validRecords.GroupBy(r => r.QuizTitle, StringComparer.OrdinalIgnoreCase))
@@ -241,12 +235,6 @@ namespace Sqeez.Api.Services
                     var firstQuizRow = quizRows.First();
                     var quizLabel = firstQuizRow.QuizTitle;
                     var groupErrors = new List<string>();
-
-                    if (existingQuizTitles.Contains(quizLabel.ToLower()))
-                    {
-                        result.Errors.Add($"Quiz '{quizLabel}' skipped: a quiz with this title already exists in the subject.");
-                        continue;
-                    }
 
                     if (quizRows.Any(r =>
                         r.QuizDescription != firstQuizRow.QuizDescription ||
@@ -377,7 +365,6 @@ namespace Sqeez.Api.Services
                     }
 
                     quizzesToCreate.Add(quiz);
-                    existingQuizTitles.Add(quizLabel.ToLower());
                 }
 
                 if (!quizzesToCreate.Any())
