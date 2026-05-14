@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { Images, Search, Trash2 } from 'lucide-react'
+import { ChevronDown, Images, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/Button'
@@ -9,13 +9,7 @@ import { ConfirmModal } from '@/components/ui/Modal'
 import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { Pagination } from '@/components/ui/Pagination'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select/Select'
+import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/ScrollableSelectList'
 import {
   getGetApiMediaAssetsQueryKey,
   useDeleteApiMediaAssets,
@@ -24,12 +18,17 @@ import {
 import type {
   GetApiMediaAssetsParams,
   MediaAssetDto,
+  MediaType,
 } from '@/api/generated/model'
 
 import { AdminMediaAssetsTable } from './AdminMediaAssetsTable'
 import { AdminMediaAssetPreviewModal } from './AdminMediaAssetPreviewModal'
 
 type UnassignedFilter = 'all' | 'unassigned'
+type MediaTypeFilter = 'all' | MediaType
+type MediaAssetsFilterDropdown = 'assignment' | 'type'
+
+const mediaTypeOptions: MediaType[] = ['Image', 'Video', 'Audio', 'Document']
 
 export function AdminMediaAssetsPage() {
   const { t } = useTranslation()
@@ -38,14 +37,68 @@ export function AdminMediaAssetsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [unassignedFilter, setUnassignedFilter] =
     useState<UnassignedFilter>('all')
+  const [mediaTypeFilter, setMediaTypeFilter] = useState<MediaTypeFilter>('all')
   const [pageNumber, setPageNumber] = useState(1)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [previewedMediaAsset, setPreviewedMediaAsset] =
     useState<MediaAssetDto | null>(null)
+  const [openDropdown, setOpenDropdown] =
+    useState<MediaAssetsFilterDropdown | null>(null)
   const pageSize = 15
+
+  const assignmentFilterRef = useRef<HTMLDivElement>(null)
+  const mediaTypeFilterRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node
+
+      if (
+        openDropdown === 'assignment' &&
+        assignmentFilterRef.current &&
+        !assignmentFilterRef.current.contains(target)
+      ) {
+        setOpenDropdown(null)
+      } else if (
+        openDropdown === 'type' &&
+        mediaTypeFilterRef.current &&
+        !mediaTypeFilterRef.current.contains(target)
+      ) {
+        setOpenDropdown(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [openDropdown])
+
+  const assignmentFilterOptions = useMemo(
+    () => [
+      { id: 'all', title: t('admin.mediaAssets.filterAll') },
+      { id: 'unassigned', title: t('admin.mediaAssets.filterUnassigned') },
+    ],
+    [t],
+  )
+
+  const mediaTypeFilterOptions = useMemo(
+    () => [
+      { id: 'all', title: t('admin.mediaAssets.filterAllTypes') },
+      ...mediaTypeOptions.map((mediaType) => ({
+        id: mediaType,
+        title: t(`admin.mediaAssets.mediaTypes.${mediaType}`),
+      })),
+    ],
+    [t],
+  )
+
+  const filterDropdownWrapperClassName =
+    'absolute top-full left-0 z-50 mt-1 w-full min-w-56 rounded-md border border-border bg-card shadow-lg sm:w-64'
+  const filterDropdownButtonClassName =
+    'flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-left text-sm shadow-sm transition-colors hover:bg-muted focus:border-primary focus:outline-none sm:w-56'
 
   const mediaAssetsQueryParams: GetApiMediaAssetsParams = {
     SearchTerm: searchQuery || undefined,
+    MimeType: mediaTypeFilter === 'all' ? undefined : mediaTypeFilter,
     UnassignedOnly: unassignedFilter === 'unassigned' ? true : undefined,
     PageNumber: pageNumber,
     PageSize: pageSize,
@@ -131,25 +184,74 @@ export function AdminMediaAssetsPage() {
               hideErrors
             />
 
-            <Select
-              value={unassignedFilter}
-              onValueChange={(value) => {
-                setUnassignedFilter(value as UnassignedFilter)
-                setPageNumber(1)
-              }}
+            <div
+              ref={assignmentFilterRef}
+              className="relative w-full sm:w-auto"
             >
-              <SelectTrigger className="w-full bg-background sm:w-56">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  {t('admin.mediaAssets.filterAll')}
-                </SelectItem>
-                <SelectItem value="unassigned">
-                  {t('admin.mediaAssets.filterUnassigned')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenDropdown(
+                    openDropdown === 'assignment' ? null : 'assignment',
+                  )
+                }
+                className={filterDropdownButtonClassName}
+              >
+                <span className="truncate">
+                  {assignmentFilterOptions.find(
+                    (option) => option.id === unassignedFilter,
+                  )?.title ?? t('admin.mediaAssets.filterAll')}
+                </span>
+                <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </button>
+
+              {openDropdown === 'assignment' && (
+                <div className={filterDropdownWrapperClassName}>
+                  <ScrollableSelectList
+                    options={assignmentFilterOptions}
+                    selectedId={unassignedFilter}
+                    onSelect={(id) => {
+                      setUnassignedFilter(id as UnassignedFilter)
+                      setPageNumber(1)
+                      setOpenDropdown(null)
+                    }}
+                    maxHeight="max-h-[220px]"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div ref={mediaTypeFilterRef} className="relative w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenDropdown(openDropdown === 'type' ? null : 'type')
+                }
+                className={filterDropdownButtonClassName}
+              >
+                <span className="truncate">
+                  {mediaTypeFilterOptions.find(
+                    (option) => option.id === mediaTypeFilter,
+                  )?.title ?? t('admin.mediaAssets.filterAllTypes')}
+                </span>
+                <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </button>
+
+              {openDropdown === 'type' && (
+                <div className={filterDropdownWrapperClassName}>
+                  <ScrollableSelectList
+                    options={mediaTypeFilterOptions}
+                    selectedId={mediaTypeFilter}
+                    onSelect={(id) => {
+                      setMediaTypeFilter(id as MediaTypeFilter)
+                      setPageNumber(1)
+                      setOpenDropdown(null)
+                    }}
+                    maxHeight="max-h-[220px]"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         }
       >

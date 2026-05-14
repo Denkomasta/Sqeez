@@ -178,9 +178,16 @@
       "deleteUnassignedFailed": "Nepřiřazená média se nepodařilo smazat.",
       "deleteUnassignedTitle": "Smazat nepřiřazená média",
       "filterAll": "Všechna média",
+      "filterAllTypes": "Všechny typy",
       "filterUnassigned": "Pouze nepřiřazená",
       "id": "ID",
       "mediaDeleted": "Smazáno nepřiřazených médií: {{count}}.",
+      "mediaTypes": {
+        "Audio": "Audio",
+        "Document": "Dokumenty",
+        "Image": "Obrázky",
+        "Video": "Videa"
+      },
       "noMediaAssetsFound": "Nebyla nalezena žádná média.",
       "owner": "Vlastník",
       "preview": "Zobrazit médium",
