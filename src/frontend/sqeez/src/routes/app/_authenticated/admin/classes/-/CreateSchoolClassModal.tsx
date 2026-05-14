@@ -203,25 +203,24 @@ export function CreateSchoolClassModal({
             hideErrors
           />
 
-          <div className="h-50 overflow-hidden rounded-md border border-border">
-            <Controller
-              name="teacherId"
-              control={control}
-              render={({ field }) => (
-                <ScrollableSelectList
-                  options={teacherOptions}
-                  selectedId={field.value ?? ''}
-                  onSelect={(id) => field.onChange(id === '' ? '' : Number(id))}
-                  isLoading={isLoadingTeachers}
-                  loadingText={`${t('common.loading')}...`}
-                  emptyText={t('common.noResults')}
-                  hasMore={!!hasNextPage}
-                  isFetchingNextPage={isFetchingNextPage}
-                  onLoadMore={() => fetchNextPage()}
-                />
-              )}
-            />
-          </div>
+          <Controller
+            name="teacherId"
+            control={control}
+            render={({ field }) => (
+              <ScrollableSelectList
+                options={teacherOptions}
+                selectedId={field.value ?? ''}
+                onSelect={(id) => field.onChange(id === '' ? '' : Number(id))}
+                isLoading={isLoadingTeachers}
+                loadingText={`${t('common.loading')}...`}
+                emptyText={t('common.noResults')}
+                hasMore={!!hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                onLoadMore={() => fetchNextPage()}
+                maxHeight="max-h-60"
+              />
+            )}
+          />
         </div>
       </div>
     </BaseModal>
