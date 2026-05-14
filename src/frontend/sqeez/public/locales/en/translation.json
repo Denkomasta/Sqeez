@@ -178,9 +178,16 @@
       "deleteUnassignedFailed": "Unassigned media assets could not be deleted.",
       "deleteUnassignedTitle": "Delete unassigned media assets",
       "filterAll": "All media assets",
+      "filterAllTypes": "All types",
       "filterUnassigned": "Unassigned only",
       "id": "ID",
       "mediaDeleted": "{{count}} unassigned media assets deleted.",
+      "mediaTypes": {
+        "Audio": "Audio",
+        "Document": "Documents",
+        "Image": "Images",
+        "Video": "Videos"
+      },
       "noMediaAssetsFound": "No media assets found.",
       "owner": "Owner",
       "preview": "Show media",
