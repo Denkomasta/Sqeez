@@ -145,21 +145,18 @@ export function AddStudentToClassModal({
           <label className="mb-2 block text-sm font-medium">
             {t('admin.classes.selectStudent')}
           </label>
-          <div className="h-62.5 overflow-hidden rounded-md border border-border">
-            <ScrollableSelectList
-              options={studentOptions}
-              selectedId={selectedStudentId}
-              onSelect={(id) =>
-                setSelectedStudentId(id === '' ? '' : Number(id))
-              }
-              isLoading={isLoadingStudents}
-              loadingText={`${t('common.loading')}...`}
-              emptyText={t('common.noResults')}
-              hasMore={!!hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              onLoadMore={() => fetchNextPage()}
-            />
-          </div>
+          <ScrollableSelectList
+            options={studentOptions}
+            selectedId={selectedStudentId}
+            onSelect={(id) => setSelectedStudentId(id === '' ? '' : Number(id))}
+            isLoading={isLoadingStudents}
+            loadingText={`${t('common.loading')}...`}
+            emptyText={t('common.noResults')}
+            hasMore={!!hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            onLoadMore={() => fetchNextPage()}
+            maxHeight="max-h-65"
+          />
         </div>
       </div>
     </BaseModal>

@@ -158,15 +158,13 @@ export function AdminBadgesPage() {
         }
       >
         <div className="space-y-4">
-          <div className="rounded-md border border-border bg-card">
-            <DataTable
-              data={badges}
-              columns={columns}
-              isLoading={isLoading}
-              emptyMessage={t('admin.badges.noBadgesFound')}
-              keyExtractor={(b) => b.id.toString()}
-            />
-          </div>
+          <DataTable
+            data={badges}
+            columns={columns}
+            isLoading={isLoading}
+            emptyMessage={t('admin.badges.noBadgesFound')}
+            keyExtractor={(b) => b.id.toString()}
+          />
 
           {!isLoading && totalPages > 1 && (
             <div className="mt-6 flex justify-center">

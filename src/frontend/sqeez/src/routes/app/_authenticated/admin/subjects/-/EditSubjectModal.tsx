@@ -294,27 +294,24 @@ export function EditSubjectModal({
               icon={<Search className="size-4" />}
               hideErrors
             />
-            <div className="h-50 overflow-hidden rounded-md border border-border">
-              <Controller
-                name="teacherId"
-                control={control}
-                render={({ field }) => (
-                  <ScrollableSelectList
-                    options={teacherOptions}
-                    selectedId={field.value ?? ''}
-                    onSelect={(id) =>
-                      field.onChange(id === '' ? '' : Number(id))
-                    }
-                    isLoading={isLoadingTeachers}
-                    loadingText={`${t('common.loading')}...`}
-                    emptyText={t('common.noResults')}
-                    hasMore={!!hasTeacherNext}
-                    isFetchingNextPage={isFetchingTeachersNext}
-                    onLoadMore={() => fetchTeachersNext()}
-                  />
-                )}
-              />
-            </div>
+            <Controller
+              name="teacherId"
+              control={control}
+              render={({ field }) => (
+                <ScrollableSelectList
+                  options={teacherOptions}
+                  selectedId={field.value ?? ''}
+                  onSelect={(id) => field.onChange(id === '' ? '' : Number(id))}
+                  isLoading={isLoadingTeachers}
+                  loadingText={`${t('common.loading')}...`}
+                  emptyText={t('common.noResults')}
+                  hasMore={!!hasTeacherNext}
+                  isFetchingNextPage={isFetchingTeachersNext}
+                  onLoadMore={() => fetchTeachersNext()}
+                  maxHeight="max-h-50"
+                />
+              )}
+            />
           </div>
 
           <div className="flex flex-col gap-3">
@@ -327,27 +324,24 @@ export function EditSubjectModal({
               icon={<Search className="size-4" />}
               hideErrors
             />
-            <div className="h-50 overflow-hidden rounded-md border border-border">
-              <Controller
-                name="schoolClassId"
-                control={control}
-                render={({ field }) => (
-                  <ScrollableSelectList
-                    options={classOptions}
-                    selectedId={field.value ?? ''}
-                    onSelect={(id) =>
-                      field.onChange(id === '' ? '' : Number(id))
-                    }
-                    isLoading={isLoadingClasses}
-                    loadingText={`${t('common.loading')}...`}
-                    emptyText={t('common.noResults')}
-                    hasMore={!!hasClassNext}
-                    isFetchingNextPage={isFetchingClassesNext}
-                    onLoadMore={() => fetchClassesNext()}
-                  />
-                )}
-              />
-            </div>
+            <Controller
+              name="schoolClassId"
+              control={control}
+              render={({ field }) => (
+                <ScrollableSelectList
+                  options={classOptions}
+                  selectedId={field.value ?? ''}
+                  onSelect={(id) => field.onChange(id === '' ? '' : Number(id))}
+                  isLoading={isLoadingClasses}
+                  loadingText={`${t('common.loading')}...`}
+                  emptyText={t('common.noResults')}
+                  hasMore={!!hasClassNext}
+                  isFetchingNextPage={isFetchingClassesNext}
+                  onLoadMore={() => fetchClassesNext()}
+                  maxHeight="max-h-50"
+                />
+              )}
+            />
           </div>
         </div>
       </div>
