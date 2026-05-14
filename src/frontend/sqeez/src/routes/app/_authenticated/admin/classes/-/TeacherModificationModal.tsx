@@ -152,21 +152,18 @@ export function TeacherModificationModal({
             {t('admin.classes.selectTeacher')}
           </label>
 
-          <div className="h-fit overflow-hidden rounded-md border border-border">
-            <ScrollableSelectList
-              options={teacherOptions}
-              selectedId={selectedTeacherId}
-              onSelect={(id) =>
-                setSelectedTeacherId(id === '' ? '' : Number(id))
-              }
-              isLoading={isLoadingTeachers}
-              loadingText={`${t('common.loading')}...`}
-              emptyText={t('common.noResults')}
-              hasMore={!!hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              onLoadMore={() => fetchNextPage()}
-            />
-          </div>
+          <ScrollableSelectList
+            options={teacherOptions}
+            selectedId={selectedTeacherId}
+            onSelect={(id) => setSelectedTeacherId(id === '' ? '' : Number(id))}
+            isLoading={isLoadingTeachers}
+            loadingText={`${t('common.loading')}...`}
+            emptyText={t('common.noResults')}
+            hasMore={!!hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            onLoadMore={() => fetchNextPage()}
+            maxHeight="max-h-60"
+          />
         </div>
       </div>
     </BaseModal>
