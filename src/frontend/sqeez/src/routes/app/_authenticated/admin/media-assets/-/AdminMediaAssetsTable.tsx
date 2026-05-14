@@ -9,15 +9,18 @@ import {
   Unlock,
   User,
   Video,
+  Eye,
 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/Badge/Badge'
 import { DataTable, type ColumnDef } from '@/components/ui/Table/DataTable'
 import type { MediaAssetDto, MediaType } from '@/api/generated/model'
+import { getMediaAssetName } from '@/lib/mediaAssetHelpers'
 
 interface AdminMediaAssetsTableProps {
   mediaAssets: MediaAssetDto[]
   isLoading: boolean
+  onPreviewMediaAsset: (mediaAsset: MediaAssetDto) => void
 }
 
 const mediaTypeIcons: Record<MediaType, typeof File> = {
@@ -27,19 +30,10 @@ const mediaTypeIcons: Record<MediaType, typeof File> = {
   Video: Video,
 }
 
-function getAssetName(locationUrl: string) {
-  const name = locationUrl.split('/').pop() || locationUrl
-
-  try {
-    return decodeURIComponent(name)
-  } catch {
-    return name
-  }
-}
-
 export function AdminMediaAssetsTable({
   mediaAssets,
   isLoading,
+  onPreviewMediaAsset,
 }: AdminMediaAssetsTableProps) {
   const { t } = useTranslation()
 
@@ -57,7 +51,7 @@ export function AdminMediaAssetsTable({
               </div>
               <div className="min-w-0">
                 <p className="line-clamp-1 font-semibold text-foreground">
-                  {getAssetName(asset.locationUrl)}
+                  {getMediaAssetName(asset.locationUrl)}
                 </p>
                 {asset.description && (
                   <p className="line-clamp-1 max-w-72 text-xs text-muted-foreground">
@@ -118,16 +112,22 @@ export function AdminMediaAssetsTable({
           ),
       },
       {
-        header: t('admin.mediaAssets.id'),
-        className: 'text-right',
+        header: '',
+        className: 'text-right w-[80px]',
         cell: (asset) => (
-          <span className="font-mono text-xs text-muted-foreground">
-            {asset.id}
-          </span>
+          <button
+            type="button"
+            onClick={() => onPreviewMediaAsset(asset)}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+            title={t('admin.mediaAssets.preview')}
+            aria-label={t('admin.mediaAssets.preview')}
+          >
+            <Eye className="h-4 w-4" />
+          </button>
         ),
       },
     ],
-    [t],
+    [onPreviewMediaAsset, t],
   )
 
   return (

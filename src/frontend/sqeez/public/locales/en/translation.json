@@ -183,6 +183,8 @@
       "mediaDeleted": "{{count}} unassigned media assets deleted.",
       "noMediaAssetsFound": "No media assets found.",
       "owner": "Owner",
+      "preview": "Show media",
+      "previewTitle": "Media preview",
       "private": "Private",
       "public": "Public",
       "searchPlaceholder": "Search media assets...",

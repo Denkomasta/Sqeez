@@ -21,9 +21,13 @@ import {
   useDeleteApiMediaAssets,
   useGetApiMediaAssets,
 } from '@/api/generated/endpoints/media-assets/media-assets'
-import type { GetApiMediaAssetsParams } from '@/api/generated/model'
+import type {
+  GetApiMediaAssetsParams,
+  MediaAssetDto,
+} from '@/api/generated/model'
 
 import { AdminMediaAssetsTable } from './AdminMediaAssetsTable'
+import { AdminMediaAssetPreviewModal } from './AdminMediaAssetPreviewModal'
 
 type UnassignedFilter = 'all' | 'unassigned'
 
@@ -36,6 +40,8 @@ export function AdminMediaAssetsPage() {
     useState<UnassignedFilter>('all')
   const [pageNumber, setPageNumber] = useState(1)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [previewedMediaAsset, setPreviewedMediaAsset] =
+    useState<MediaAssetDto | null>(null)
   const pageSize = 15
 
   const mediaAssetsQueryParams: GetApiMediaAssetsParams = {
@@ -150,6 +156,7 @@ export function AdminMediaAssetsPage() {
         <AdminMediaAssetsTable
           mediaAssets={mediaAssets}
           isLoading={isLoading}
+          onPreviewMediaAsset={setPreviewedMediaAsset}
         />
 
         {!isLoading && totalPages > 1 && (
@@ -172,6 +179,11 @@ export function AdminMediaAssetsPage() {
         confirmText={t('admin.mediaAssets.deleteUnassigned')}
         isDestructive
         isLoading={deleteUnassignedMutation.isPending}
+      />
+
+      <AdminMediaAssetPreviewModal
+        mediaAsset={previewedMediaAsset}
+        onClose={() => setPreviewedMediaAsset(null)}
       />
     </>
   )
