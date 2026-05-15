@@ -10,6 +10,15 @@ export const OPERATOR_MAP: Record<BadgeOperator, string> = {
   NotEquals: '!=',
 }
 
+export const OPERATOR_TRANSLATIONS: Record<BadgeOperator, TranslationKey> = {
+  Equals: 'badges.operators.equals',
+  GreaterThan: 'badges.operators.greaterThan',
+  GreaterThanOrEqual: 'badges.operators.greaterThanOrEqual',
+  LessThan: 'badges.operators.lessThan',
+  LessThanOrEqual: 'badges.operators.lessThanOrEqual',
+  NotEquals: 'badges.operators.notEquals',
+}
+
 export const METRIC_TRANSLATIONS: Record<BadgeMetric, TranslationKey> = {
   ScorePercentage: 'badges.metrics.scorePercentage',
   TotalScore: 'badges.metrics.totalScore',
