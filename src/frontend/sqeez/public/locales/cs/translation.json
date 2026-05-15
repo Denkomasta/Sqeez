@@ -58,15 +58,20 @@
       "editDesc": "Upravte detaily a pravidla pro tento odznak.",
       "changeIcon": "Změnit ikonu",
       "iconRequired": "Je vyžadována ikona.",
+      "metric": "Metrika",
       "namePlaceholder": "např. Matematický mág",
       "noBadgesFound": "Nebyly nalezeny žádné odznaky.",
+      "operator": "Operátor",
       "rulesDesc": "Studenti musí splnit všechna pravidla pro získání odznaku.",
       "rulesTitle": "Pravidla pro získání",
+      "scorePercentageRange": "Procentuální skóre musí být mezi 0 a 100.",
       "search": "Hledat odznaky...",
       "subtitle": "Vytvářejte a spravujte globální odznaky úspěchů.",
       "title": "Správa odznaků",
+      "uniqueMetricRule": "Každé pravidlo odznaku musí používat jinou metriku.",
       "updatedSuccessfully": "Odznak byl úspěšně upraven!",
       "uploadIcon": "Nahrát ikonu",
+      "value": "Hodnota",
       "xpBonus": "XP Bonus"
     },
     "class": {
@@ -297,6 +302,14 @@
     },
     "noResults": "Odznaky nenalezeny",
     "notEarned": "Ještě nezískáno",
+    "operators": {
+      "equals": "Rovná se",
+      "greaterThan": "Větší než",
+      "greaterThanOrEqual": "Větší nebo rovno",
+      "lessThan": "Menší než",
+      "lessThanOrEqual": "Menší nebo rovno",
+      "notEquals": "Nerovná se"
+    },
     "requirements": "Požadavky",
     "title": "Všechny odznaky",
     "userTitle": "Odznaky uživatele {{name}}"

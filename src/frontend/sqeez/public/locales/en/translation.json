@@ -58,15 +58,20 @@
       "editDesc": "Update the details and rules for this badge.",
       "changeIcon": "Change Icon",
       "iconRequired": "An icon is required.",
+      "metric": "Metric",
       "namePlaceholder": "e.g., Math Wizard",
       "noBadgesFound": "No badges found.",
+      "operator": "Operator",
       "rulesDesc": "Students must complete all rules to earn this badge.",
       "rulesTitle": "Earning Rules",
+      "scorePercentageRange": "Score percentage must be between 0 and 100.",
       "search": "Search badges...",
       "subtitle": "Create and manage global achievement badges.",
       "title": "Badge Management",
+      "uniqueMetricRule": "Each badge rule must use a different metric.",
       "updatedSuccessfully": "Badge updated successfully!",
       "uploadIcon": "Upload Icon",
+      "value": "Value",
       "xpBonus": "XP Bonus"
     },
     "class": {
@@ -297,6 +302,14 @@
     },
     "noResults": "No badges found",
     "notEarned": "Not earned yet",
+    "operators": {
+      "equals": "Equals",
+      "greaterThan": "Greater than",
+      "greaterThanOrEqual": "Greater than or equal",
+      "lessThan": "Less than",
+      "lessThanOrEqual": "Less than or equal",
+      "notEquals": "Not equal"
+    },
     "requirements": "Requirements",
     "title": "All badges",
     "userTitle": "{{name}}'s Badges"
