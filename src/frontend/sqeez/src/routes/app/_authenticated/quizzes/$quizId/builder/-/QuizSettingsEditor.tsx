@@ -234,11 +234,13 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
           savingText={t('common.saving')}
           savedText={t('common.saved')}
           errorText={t('common.error')}
+          className="bg-card"
         />
 
         <div className="grid grid-cols-1 gap-8 rounded-xl border border-border bg-muted/5 p-6 md:grid-cols-2">
           <Input
             label={t('editor.maxRetries')}
+            id="max-retries-input"
             type="number"
             min="0"
             value={quiz?.maxRetries ?? 0}
@@ -250,6 +252,7 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
 
           <DateTimePicker
             label={t('editor.closingDate')}
+            id="closing-date-input"
             helpText={t('editor.closingDateHelp')}
             value={quiz?.closingDate}
             min={new Date().toISOString()}
@@ -262,12 +265,12 @@ export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
           />
         </div>
 
-        <div className="mt-12 rounded-xl border border-destructive/20 bg-destructive/5 p-6">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold text-destructive">
+        <div className="mt-12 rounded-xl border border-destructive/40 bg-destructive/20 p-6">
+          <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold text-foreground">
             <AlertTriangle className="h-5 w-5" />
             {t('editor.dangerZone')}
           </h2>
-          <p className="mb-4 text-sm text-muted-foreground">
+          <p className="mb-4 text-sm text-foreground">
             {t('editor.deleteAllAttemptsWarning')}
           </p>
           <Button

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Check, CloudUpload, AlertCircle } from 'lucide-react'
 import { TextArea } from '@/components/ui/TextArea'
+import { cn } from '@/lib/utils'
 
 interface DebouncedTextAreaProps {
   initialValue: string
@@ -10,6 +11,7 @@ interface DebouncedTextAreaProps {
   savedText?: string
   errorText?: string
   label?: string
+  className?: string
 }
 
 export function DebouncedTextArea({
@@ -20,6 +22,7 @@ export function DebouncedTextArea({
   savedText = 'Saved',
   errorText = 'Error',
   label,
+  className,
 }: DebouncedTextAreaProps) {
   const [value, setValue] = useState(initialValue)
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
@@ -54,7 +57,10 @@ export function DebouncedTextArea({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="min-h-30 resize-none p-4 text-lg font-medium transition-all focus:ring-2 focus:ring-primary/20"
+        className={cn(
+          'min-h-30 resize-none p-4 text-lg font-medium transition-all focus:ring-2 focus:ring-primary/20',
+          className,
+        )}
         hideErrors
       />
 
