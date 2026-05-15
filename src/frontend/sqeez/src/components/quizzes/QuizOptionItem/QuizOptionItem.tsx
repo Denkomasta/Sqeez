@@ -101,7 +101,7 @@ export function QuizOptionItem({
       </div>
 
       {mediaNode && (
-        <div className="mt-2 w-full shrink-0 overflow-hidden rounded-xl border-4 border-foreground/10 shadow-sm">
+        <div className="mt-2 w-full shrink-0 overflow-hidden rounded-xl">
           {mediaNode}
         </div>
       )}

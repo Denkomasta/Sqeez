@@ -67,7 +67,7 @@ export function MediaAssetViewer({
   if (mimeType?.startsWith('video/')) {
     return (
       <div
-        className={`relative flex w-full justify-center bg-black ${isOption ? 'rounded-md' : 'overflow-hidden rounded-xl'}`}
+        className={`relative flex w-full justify-center ${isOption ? 'rounded-md' : 'overflow-hidden rounded-xl'}`}
       >
         <video
           controls
@@ -81,7 +81,7 @@ export function MediaAssetViewer({
   if (mimeType?.startsWith('audio/')) {
     return (
       <div
-        className={`flex w-full items-center justify-center bg-muted/20 p-4 ${isOption ? 'rounded-md' : 'rounded-xl'}`}
+        className={`flex w-full items-center justify-center p-4 ${isOption ? 'rounded-md' : 'rounded-xl'}`}
       >
         <audio controls src={mediaUrl} className="w-full max-w-md" />
       </div>
@@ -90,7 +90,7 @@ export function MediaAssetViewer({
 
   return (
     <div
-      className={`flex w-full justify-center bg-muted/5 ${isOption ? 'rounded-md' : 'rounded-xl'}`}
+      className={`flex w-full justify-center ${isOption ? 'rounded-md' : 'rounded-xl'}`}
     >
       <img
         src={mediaUrl}
