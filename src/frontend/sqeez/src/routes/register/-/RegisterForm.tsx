@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Mail, Lock, BookOpen, Loader2, User as UserIcon } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
+import { PasswordInput } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
@@ -158,10 +159,9 @@ export function RegisterForm() {
           icon={<Mail className="h-4 w-4" />}
         />
 
-        <Input
+        <PasswordInput
           {...register('password')}
           id="password"
-          type="password"
           label={t('login.password')}
           placeholder="••••••••"
           error={errors.password?.message}
@@ -169,10 +169,9 @@ export function RegisterForm() {
           icon={<Lock className="h-4 w-4" />}
         />
 
-        <Input
+        <PasswordInput
           {...register('confirmPassword')}
           id="confirmPassword"
-          type="password"
           label={t('register.confirmPassword')}
           placeholder="••••••••"
           error={errors.confirmPassword?.message}

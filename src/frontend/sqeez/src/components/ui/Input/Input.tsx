@@ -5,6 +5,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
   icon?: React.ReactNode
+  rightElement?: React.ReactNode
   rightTopChip?: React.ReactNode
   containerClassName?: string
   ref?: React.Ref<HTMLInputElement>
@@ -16,6 +17,7 @@ const Input = ({
   label,
   error,
   icon,
+  rightElement,
   rightTopChip,
   containerClassName,
   className,
@@ -59,9 +61,15 @@ const Input = ({
             'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
             'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
             icon && 'pl-10',
+            rightElement && 'pr-10',
             className,
           )}
         />
+        {rightElement && (
+          <div className="absolute top-1/2 right-2 -translate-y-1/2">
+            {rightElement}
+          </div>
+        )}
       </div>
 
       {helpText && <p className="text-xs text-muted-foreground">{helpText}</p>}

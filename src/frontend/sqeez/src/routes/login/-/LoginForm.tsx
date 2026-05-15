@@ -1,6 +1,7 @@
 import { Mail, Lock, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui/Input'
+import { PasswordInput } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { useTranslation } from 'react-i18next'
@@ -162,10 +163,9 @@ export function LoginForm() {
           icon={<Mail className="h-4 w-4" />}
         />
 
-        <Input
+        <PasswordInput
           {...register('password')}
           id="password"
-          type="password"
           label={t('login.password')}
           placeholder={t('login.password')}
           error={errors.password?.message}
