@@ -440,6 +440,7 @@
     "themes": "Motivy",
     "total": "Celkem",
     "totalCount": "Celkem: {{count}}",
+    "tryAgain": "Zkusit znovu",
     "unknown": "Neznámé",
     "unknownUser": "Neznámý uživatel",
     "unsuccessfulChange": "Nastala chyba, změna se nepodařila.",
