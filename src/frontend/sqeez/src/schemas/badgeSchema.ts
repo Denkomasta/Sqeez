@@ -29,7 +29,31 @@ export const getBadgeSchema = (t: TFunction) =>
           targetValue: z.number().min(0, t('common.required')),
         }),
       )
-      .min(1, t('admin.badges.atLeastOneRule')),
+      .min(1, t('admin.badges.atLeastOneRule'))
+      .superRefine((rules, ctx) => {
+        const seenMetrics = new Set<BadgeMetric>()
+
+        rules.forEach((rule) => {
+          if (seenMetrics.has(rule.metric)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('admin.badges.uniqueMetricRule'),
+              path: ['root'],
+            })
+            return
+          }
+
+          if (rule.metric === 'ScorePercentage' && rule.targetValue > 100) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('admin.badges.scorePercentageRange'),
+              path: ['root'],
+            })
+          }
+
+          seenMetrics.add(rule.metric)
+        })
+      }),
   })
 
 export type BadgeFormValues = z.infer<ReturnType<typeof getBadgeSchema>>

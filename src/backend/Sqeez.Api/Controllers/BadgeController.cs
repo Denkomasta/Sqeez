@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Services.Interfaces;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Sqeez.Api.Controllers
 {
@@ -12,6 +14,7 @@ namespace Sqeez.Api.Controllers
     [Route("api/badges")]
     public class BadgesController : ApiBaseController
     {
+        private static readonly JsonSerializerOptions BadgeRuleJsonOptions = CreateBadgeRuleJsonOptions();
         private readonly IBadgeService _badgeService;
 
         public BadgesController(IBadgeService badgeService)
@@ -27,6 +30,17 @@ namespace Sqeez.Api.Controllers
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<BadgeDto>> CreateBadge([FromForm] CreateBadgeDto dto)
         {
+            var ruleBindingResult = TryBindJsonRulesFromForm<CreateBadgeRuleDto>();
+            if (!ruleBindingResult.Success)
+            {
+                return BadRequest(new { error = ruleBindingResult.ErrorMessage });
+            }
+
+            if (ruleBindingResult.Rules != null)
+            {
+                dto.Rules = ruleBindingResult.Rules;
+            }
+
             var result = await _badgeService.CreateBadgeAsync(dto);
             return HandleServiceResult(result);
         }
@@ -39,6 +53,17 @@ namespace Sqeez.Api.Controllers
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<BadgeDto>> PatchBadge(long id, [FromForm] UpdateBadgeDto dto)
         {
+            var ruleBindingResult = TryBindJsonRulesFromForm<UpdateBadgeRuleDto>();
+            if (!ruleBindingResult.Success)
+            {
+                return BadRequest(new { error = ruleBindingResult.ErrorMessage });
+            }
+
+            if (ruleBindingResult.Rules != null)
+            {
+                dto.Rules = ruleBindingResult.Rules;
+            }
+
             var result = await _badgeService.UpdateBadgeAsync(id, dto);
             return HandleServiceResult(result);
         }
@@ -83,6 +108,68 @@ namespace Sqeez.Api.Controllers
         {
             var result = await _badgeService.GetStudentBadgesAsync(studentId);
             return HandleServiceResult(result);
+        }
+
+        private (bool Success, List<T>? Rules, string? ErrorMessage) TryBindJsonRulesFromForm<T>()
+        {
+            if (!Request.HasFormContentType || !Request.Form.TryGetValue("Rules", out var rawRules) || rawRules.Count == 0)
+            {
+                return (true, null, null);
+            }
+
+            try
+            {
+                var parsedRules = new List<T>();
+                var foundJsonRuleField = false;
+
+                foreach (var rawRule in rawRules)
+                {
+                    if (string.IsNullOrWhiteSpace(rawRule))
+                    {
+                        continue;
+                    }
+
+                    var rawRuleJson = rawRule.Trim();
+                    if (!rawRuleJson.StartsWith("{") && !rawRuleJson.StartsWith("["))
+                    {
+                        continue;
+                    }
+
+                    foundJsonRuleField = true;
+
+                    if (rawRuleJson.StartsWith("["))
+                    {
+                        var rules = JsonSerializer.Deserialize<List<T>>(rawRuleJson, BadgeRuleJsonOptions);
+                        if (rules != null)
+                        {
+                            parsedRules.AddRange(rules);
+                        }
+                    }
+                    else
+                    {
+                        var rule = JsonSerializer.Deserialize<T>(rawRuleJson, BadgeRuleJsonOptions);
+                        if (rule != null)
+                        {
+                            parsedRules.Add(rule);
+                        }
+                    }
+                }
+
+                return foundJsonRuleField
+                    ? (true, parsedRules, null)
+                    : (true, null, null);
+            }
+            catch (JsonException)
+            {
+                return (false, null, "Rules must be valid JSON matching badge rule fields.");
+            }
+        }
+
+        private static JsonSerializerOptions CreateBadgeRuleJsonOptions()
+        {
+            var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            options.Converters.Add(new JsonStringEnumConverter());
+            return options;
         }
     }
 }

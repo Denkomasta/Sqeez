@@ -70,14 +70,7 @@ export function EditBadgeModal({
                 operator: r.operator as BadgeOperator,
                 targetValue: Number(r.targetValue),
               }))
-            : [
-                {
-                  id: null,
-                  metric: 'ScorePercentage' as BadgeMetric,
-                  operator: 'GreaterThanOrEqual' as BadgeOperator,
-                  targetValue: 80,
-                },
-              ],
+            : [],
         }
       : undefined,
   })
