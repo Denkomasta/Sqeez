@@ -1,4 +1,5 @@
 import { useGetApiAuthMe } from '@/api/generated/endpoints/auth/auth'
+import { AppErrorPage, AppNotFoundPage } from '@/components/layouting/ErrorPage'
 import { Footer } from '@/components/layouting/Footer/Footer'
 import { Navbar } from '@/components/layouting/Navbar/Navbar'
 import { Toaster } from '@/components/ui/Sonner'
@@ -126,4 +127,8 @@ const RootLayout = () => {
   )
 }
 
-export const Route = createRootRoute({ component: RootLayout })
+export const Route = createRootRoute({
+  component: RootLayout,
+  errorComponent: AppErrorPage,
+  notFoundComponent: AppNotFoundPage,
+})

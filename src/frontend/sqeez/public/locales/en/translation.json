@@ -440,6 +440,7 @@
     "themes": "Themes",
     "total": "Total",
     "totalCount": "Total: {{count}}",
+    "tryAgain": "Try again",
     "unknown": "Unknown",
     "unknownUser": "Unknown User",
     "unsuccessfulChange": "An error occurred, the change was not successful.",
