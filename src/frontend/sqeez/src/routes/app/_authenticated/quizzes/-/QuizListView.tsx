@@ -259,7 +259,7 @@ export function QuizListView({
                         <Link
                           to="/app/teacher/subjects/$subjectId/$quizId"
                           params={{
-                            subjectId: String(targetSubjectId),
+                            subjectId: quiz.subjectId.toString(),
                             quizId: quiz.id.toString(),
                           }}
                           className="group flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-md bg-nav-purple px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-nav-purple/90"

@@ -15,6 +15,7 @@ import {
   usePatchApiQuizAttemptsResponsesResponseIdGrade,
 } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed } from '@/api/generated/endpoints/quizzes/quizzes'
+import { MediaAssetViewer } from '../../play/-/MediaAssetViewer'
 
 interface QuestionResultCardProps {
   quizId: number | string
@@ -80,6 +81,9 @@ export function QuestionResultCard({
   }
 
   const isFreeText = questionDef.options.some((opt) => opt.isFreeText)
+  const optionMediaAssetIds = questionDef.options
+    .map((option) => option.mediaAssetId)
+    .filter((assetId): assetId is number | string => assetId !== null)
 
   const isNeedsGrading =
     isFreeText &&
@@ -115,44 +119,70 @@ export function QuestionResultCard({
             : 'border-l-destructive'
       }`}
     >
-      <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 pb-2">
-        <CardTitle className="text-lg leading-tight">
-          {questionDef.title}
-        </CardTitle>
-        <div className="flex shrink-0 items-center gap-1 text-sm font-medium">
-          {studentResponse.isLiked && (
-            <Heart className="mr-2 h-4 w-4 fill-destructive text-destructive" />
-          )}
+      <CardHeader className="space-y-4 pb-2">
+        <div className="flex flex-row items-start justify-between gap-4">
+          <CardTitle className="text-lg leading-tight">
+            {questionDef.title}
+          </CardTitle>
+          <div className="flex shrink-0 items-center gap-1 text-sm font-medium">
+            {studentResponse.isLiked && (
+              <Heart className="mr-2 h-4 w-4 fill-destructive text-destructive" />
+            )}
 
-          {isNeedsGrading ? (
-            <span className="flex items-center text-warning">
-              <AlertCircle className="mr-1 h-4 w-4" />
-              {t('grading.needsGrading')}
-            </span>
-          ) : (
-            <span
-              className={isPerfectScore ? 'text-success' : 'text-destructive'}
-            >
-              {awardedScore} / {maxPoints} {t('common.points')}
-            </span>
-          )}
+            {isNeedsGrading ? (
+              <span className="flex items-center text-warning">
+                <AlertCircle className="mr-1 h-4 w-4" />
+                {t('grading.needsGrading')}
+              </span>
+            ) : (
+              <span
+                className={isPerfectScore ? 'text-success' : 'text-destructive'}
+              >
+                {awardedScore} / {maxPoints} {t('common.points')}
+              </span>
+            )}
+          </div>
         </div>
+
+        {questionDef.mediaAssetId && (
+          <div className="w-full overflow-hidden rounded-xl">
+            <MediaAssetViewer
+              assetId={questionDef.mediaAssetId}
+              isOption={false}
+            />
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4 pt-4">
         {isFreeText && (
-          <div className="rounded-md bg-muted/50 p-4">
-            <p className="mb-1 text-sm font-semibold text-muted-foreground">
-              {t('grading.studentAnswer')}:
-            </p>
-            <p className="text-base whitespace-pre-wrap text-foreground">
-              {studentResponse.freeTextAnswer || (
-                <span className="text-muted-foreground italic">
-                  {t('grading.noAnswer')}
-                </span>
-              )}
-            </p>
-          </div>
+          <>
+            {optionMediaAssetIds.length > 0 && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {optionMediaAssetIds.map((assetId) => (
+                  <div
+                    key={assetId}
+                    className="overflow-hidden rounded-lg border border-border bg-card"
+                  >
+                    <MediaAssetViewer assetId={assetId} isOption />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="rounded-md bg-muted/50 p-4">
+              <p className="mb-1 text-sm font-semibold text-muted-foreground">
+                {t('grading.studentAnswer')}:
+              </p>
+              <p className="text-base whitespace-pre-wrap text-foreground">
+                {studentResponse.freeTextAnswer || (
+                  <span className="text-muted-foreground italic">
+                    {t('grading.noAnswer')}
+                  </span>
+                )}
+              </p>
+            </div>
+          </>
         )}
 
         {!isFreeText && (
@@ -169,18 +199,29 @@ export function QuestionResultCard({
                 return (
                   <div
                     key={option.id}
-                    className={`flex items-center gap-3 rounded-lg border p-3 ${
+                    className={`flex flex-col gap-3 rounded-lg border p-3 ${
                       isSelected
                         ? 'border-primary bg-primary/5 text-foreground'
                         : 'border-border bg-card text-muted-foreground opacity-60'
                     }`}
                   >
-                    {isSelected ? (
-                      <CheckSquare className="h-5 w-5 text-primary" />
-                    ) : (
-                      <Square className="h-5 w-5" />
+                    {option.mediaAssetId && (
+                      <div className="overflow-hidden rounded-md">
+                        <MediaAssetViewer
+                          assetId={option.mediaAssetId}
+                          isOption
+                        />
+                      </div>
                     )}
-                    <span className="text-sm font-medium">{option.text}</span>
+
+                    <div className="flex items-center gap-3">
+                      {isSelected ? (
+                        <CheckSquare className="h-5 w-5 text-primary" />
+                      ) : (
+                        <Square className="h-5 w-5" />
+                      )}
+                      <span className="text-sm font-medium">{option.text}</span>
+                    </div>
                   </div>
                 )
               })}
