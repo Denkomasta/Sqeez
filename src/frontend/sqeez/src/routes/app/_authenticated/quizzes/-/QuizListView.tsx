@@ -154,8 +154,6 @@ export function QuizListView({
                 ? t('quiz.deleteDisabledHasAttempts')
                 : t('quiz.deleteQuiz')
 
-              const targetSubjectId = subject?.id || 0
-
               return (
                 <Card
                   key={quiz.id}
