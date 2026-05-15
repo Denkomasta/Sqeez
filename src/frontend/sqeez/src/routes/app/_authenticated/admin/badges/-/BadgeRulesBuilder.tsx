@@ -19,9 +19,9 @@ import {
 } from '@/components/ui/Select'
 
 import {
-  METRIC_TRANSLATIONS,
   OPERATOR_MAP,
   OPERATOR_TRANSLATIONS,
+  SUPPORTED_METRICS_TRANSLATIONS,
 } from '@/constants/badgeRulesMappings'
 import type { BadgeFormValues } from '@/schemas/badgeSchema'
 
@@ -41,14 +41,14 @@ export function BadgeRulesBuilder() {
   const rules = useWatch({ control, name: 'rules' }) || []
   const nextAvailableMetric = (
     Object.keys(
-      METRIC_TRANSLATIONS,
+      SUPPORTED_METRICS_TRANSLATIONS,
     ) as BadgeFormValues['rules'][number]['metric'][]
   ).find((metric) => !rules.some((rule) => rule.metric === metric))
 
   const rulesRootError = errors.rules?.root as FieldError | undefined
   const rulesArrayError = errors.rules as FieldError | undefined
   const rulesErrorMessage = rulesRootError?.message || rulesArrayError?.message
-  const metricOptions = Object.entries(METRIC_TRANSLATIONS).map(
+  const metricOptions = Object.entries(SUPPORTED_METRICS_TRANSLATIONS).map(
     ([key, value]) => ({
       id: key,
       title: t(value, key),
