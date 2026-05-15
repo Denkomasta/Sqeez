@@ -193,6 +193,7 @@ export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
                     : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive',
                 )}
                 onClick={(e) => handleDeleteClick(e, q.id)}
+                aria-label={t('common.delete')}
                 disabled={deleteQuestion.isPending || isLocked}
               >
                 {deleteQuestion.isPending ? (
