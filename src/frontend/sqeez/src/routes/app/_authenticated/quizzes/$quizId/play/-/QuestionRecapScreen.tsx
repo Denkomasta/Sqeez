@@ -166,7 +166,7 @@ export function QuestionRecapScreen({
                     )}
 
                     {option.mediaAssetId && (
-                      <div className="w-full overflow-hidden rounded-xl border-4 border-black/10">
+                      <div className="w-full overflow-hidden rounded-xl">
                         <MediaAssetViewer
                           assetId={option.mediaAssetId}
                           isOption
