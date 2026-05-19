@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { AsyncButton } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { LongText } from '@/components/ui/LongText'
 import { Spinner } from '@/components/ui/Spinner'
 
 import type { QuestionResponseDto } from '@/api/generated/model'
@@ -42,11 +43,11 @@ function AnswerBlock({
       <p className="mb-2 text-sm font-semibold text-muted-foreground">
         {label}:
       </p>
-      <p className="max-w-full text-base leading-relaxed [overflow-wrap:anywhere] break-words whitespace-pre-wrap text-foreground">
+      <LongText as="p" className="text-base leading-relaxed text-foreground">
         {value || (
           <span className="text-muted-foreground italic">{emptyLabel}</span>
         )}
-      </p>
+      </LongText>
     </div>
   )
 }
