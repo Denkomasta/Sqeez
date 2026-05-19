@@ -10,6 +10,7 @@ import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { QuestionResultCard } from './QuestionResultCard'
 import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizzes'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
+import { getAttemptStatusLabel } from '@/lib/attemptStatusHelpers'
 
 export function AttemptViewerPage({
   attemptId,
@@ -78,7 +79,7 @@ export function AttemptViewerPage({
                 {t('attempts.status')}
               </p>
               <p className="text-lg font-bold text-foreground">
-                {attempt.status}
+                {getAttemptStatusLabel(t, attempt.status)}
               </p>
             </div>
           </div>

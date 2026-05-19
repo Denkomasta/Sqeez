@@ -25,6 +25,12 @@ import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useGetApiQuizAttemptsQuizQuizId } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { formatDateTime, formatDuration } from '@/lib/dateHelpers'
 import { useQuizStore } from '@/store/useQuizStore'
+import {
+  getAttemptStatusLabel,
+  isCompletedAttemptStatus,
+  isInProgressAttemptStatus,
+  isPendingCorrectionAttemptStatus,
+} from '@/lib/attemptStatusHelpers'
 
 export const Route = createFileRoute(
   '/app/_authenticated/quizzes/$quizId/results/',
@@ -52,28 +58,40 @@ function QuizResultsSummaryPage() {
   )
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return (
-          <Badge
-            variant="default"
-            className="bg-success text-success-foreground hover:bg-success/90"
-          >
-            {t('quiz.statusCompleted')}
-          </Badge>
-        )
-      case 'InProgress':
-        return (
-          <Badge
-            variant="secondary"
-            className="bg-warning text-warning-foreground hover:bg-warning/90"
-          >
-            {t('quiz.statusInProgress')}
-          </Badge>
-        )
-      default:
-        return <Badge variant="outline">{status}</Badge>
+    if (isCompletedAttemptStatus(status)) {
+      return (
+        <Badge
+          variant="default"
+          className="bg-success text-success-foreground hover:bg-success/90"
+        >
+          {getAttemptStatusLabel(t, status)}
+        </Badge>
+      )
     }
+
+    if (isInProgressAttemptStatus(status)) {
+      return (
+        <Badge
+          variant="secondary"
+          className="bg-warning text-warning-foreground hover:bg-warning/90"
+        >
+          {getAttemptStatusLabel(t, status)}
+        </Badge>
+      )
+    }
+
+    if (isPendingCorrectionAttemptStatus(status)) {
+      return (
+        <Badge
+          variant="secondary"
+          className="bg-warning/10 text-warning hover:bg-warning/20"
+        >
+          {getAttemptStatusLabel(t, status)}
+        </Badge>
+      )
+    }
+
+    return <Badge variant="outline">{getAttemptStatusLabel(t, status)}</Badge>
   }
 
   if (attempts.length === 0 && pageNumber === 1) {
@@ -159,8 +177,7 @@ function QuizResultsSummaryPage() {
                     </CardDescription>
                   </div>
 
-                  {(attempt.status === 'Started' ||
-                    attempt.status === 'Created') && (
+                  {isInProgressAttemptStatus(attempt.status) && (
                     <Button size="sm" asChild>
                       <Link
                         to={'/app/quizzes/$quizId/play'}
