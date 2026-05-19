@@ -4006,6 +4006,12 @@ components:
           minLength: 0
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           type: string
+        language:
+          maxLength: 10
+          minLength: 0
+          type:
+            - "null"
+            - string
     GradeQuestionResponseDto:
       type: object
       properties:
@@ -5380,6 +5386,12 @@ components:
           type: string
         rememberMe:
           type: boolean
+        language:
+          maxLength: 10
+          minLength: 0
+          type:
+            - "null"
+            - string
     RemoveStudentsDto:
       type: object
       properties:
@@ -5402,6 +5414,12 @@ components:
           type: string
         rememberMe:
           type: boolean
+        language:
+          maxLength: 10
+          minLength: 0
+          type:
+            - "null"
+            - string
     ResetPasswordDto:
       type: object
       properties:
