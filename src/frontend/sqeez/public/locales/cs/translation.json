@@ -282,6 +282,12 @@
     "responses": "Odpovědi studenta",
     "review": "Přehled pokusů",
     "status": "Stav",
+    "statusAbandoned": "Opuštěno",
+    "statusCompleted": "Dokončeno",
+    "statusCreated": "Vytvořeno",
+    "statusPendingCorrection": "Čeká na opravu",
+    "statusStarted": "Probíhá",
+    "statusUnknown": "Neznámý stav",
     "timeTaken": "Čas",
     "totalScore": "Celkové skóre"
   },

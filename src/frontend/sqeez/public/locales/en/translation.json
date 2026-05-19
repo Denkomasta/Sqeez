@@ -282,6 +282,12 @@
     "responses": "Student Responses",
     "review": "Attempt Review",
     "status": "Status",
+    "statusAbandoned": "Abandoned",
+    "statusCompleted": "Completed",
+    "statusCreated": "Created",
+    "statusPendingCorrection": "Pending Correction",
+    "statusStarted": "In Progress",
+    "statusUnknown": "Unknown",
     "timeTaken": "Time Taken",
     "totalScore": "Total Score"
   },

@@ -5,6 +5,11 @@ import { Eye, PenTool, CheckCircle2, Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { DataTable, type ColumnDef } from '@/components/ui/Table'
+import {
+  getAttemptStatusLabel,
+  isCompletedAttemptStatus,
+  isPendingCorrectionAttemptStatus,
+} from '@/lib/attemptStatusHelpers'
 
 export interface AttemptRowDto {
   id: number | string
@@ -62,9 +67,8 @@ export function AttemptsTable({
     {
       header: t('attempts.status'),
       cell: (item) => {
-        const isNeedsGrading =
-          item.status === 'PendingGrading' || item.status === 'NeedsGrading'
-        const isCompleted = item.status === 'Completed'
+        const isNeedsGrading = isPendingCorrectionAttemptStatus(item.status)
+        const isCompleted = isCompletedAttemptStatus(item.status)
 
         if (isNeedsGrading) {
           return (
@@ -73,7 +77,7 @@ export function AttemptsTable({
               className="border-warning/50 bg-warning/10 text-warning"
             >
               <Clock className="mr-1 h-3 w-3" />
-              {t('grading.needsGrading')}
+              {getAttemptStatusLabel(t, item.status)}
             </Badge>
           )
         }
@@ -84,11 +88,15 @@ export function AttemptsTable({
               className="border-success/50 bg-success/10 text-success"
             >
               <CheckCircle2 className="mr-1 h-3 w-3" />
-              {t('attempts.completed')}
+              {getAttemptStatusLabel(t, item.status)}
             </Badge>
           )
         }
-        return <Badge variant="secondary">{item.status}</Badge>
+        return (
+          <Badge variant="secondary">
+            {getAttemptStatusLabel(t, item.status)}
+          </Badge>
+        )
       },
     },
     {
@@ -104,8 +112,7 @@ export function AttemptsTable({
       header: t('common.actions'),
       className: 'w-[100px] text-center',
       cell: (item) => {
-        const isNeedsGrading =
-          item.status === 'PendingGrading' || item.status === 'NeedsGrading'
+        const isNeedsGrading = isPendingCorrectionAttemptStatus(item.status)
         const showGradeButton = isTeacherView && isNeedsGrading
         const isViewDisabled = !isTeacherView && isQuizActive
 

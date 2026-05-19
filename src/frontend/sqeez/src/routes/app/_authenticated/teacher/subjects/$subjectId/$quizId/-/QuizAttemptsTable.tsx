@@ -7,6 +7,11 @@ import { SimpleAvatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge/Badge'
 import { Button } from '@/components/ui/Button'
 import type { QuizAttemptDto } from '@/api/generated/model'
+import {
+  getAttemptStatusLabel,
+  isCompletedAttemptStatus,
+  isPendingCorrectionAttemptStatus,
+} from '@/lib/attemptStatusHelpers'
 
 interface QuizAttemptsTableProps {
   attempts: QuizAttemptDto[]
@@ -64,14 +69,13 @@ export function QuizAttemptsTable({
     {
       header: t('quiz.status'),
       cell: (attempt) => {
-        const statusStr = String(attempt.status)
-        const isCompleted = statusStr === 'Completed'
-        const isPending = statusStr === 'PendingCorrection'
+        const isCompleted = isCompletedAttemptStatus(attempt.status)
+        const isPending = isPendingCorrectionAttemptStatus(attempt.status)
 
         if (isCompleted) {
           return (
             <Badge variant="default" className="shadow-none">
-              {t('quiz.completed')}
+              {getAttemptStatusLabel(t, attempt.status)}
             </Badge>
           )
         }
@@ -83,14 +87,14 @@ export function QuizAttemptsTable({
               className="gap-1.5 bg-warning/10 text-warning shadow-none hover:bg-warning/20 dark:text-warning"
             >
               <AlertCircle className="h-3 w-3" />
-              {t('quiz.pendingCorrection')}
+              {getAttemptStatusLabel(t, attempt.status)}
             </Badge>
           )
         }
 
         return (
           <Badge variant="secondary" className="shadow-none">
-            {t('quiz.inProgress')}
+            {getAttemptStatusLabel(t, attempt.status)}
           </Badge>
         )
       },
@@ -104,8 +108,7 @@ export function QuizAttemptsTable({
 
         const score = Number(attempt.totalScore || 0)
 
-        const statusStr = String(attempt.status)
-        const isPending = statusStr === 'PendingCorrection'
+        const isPending = isPendingCorrectionAttemptStatus(attempt.status)
 
         return (
           <div className="flex items-center gap-2">
