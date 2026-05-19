@@ -9,6 +9,7 @@ import {
   Lightbulb,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { LongText } from '@/components/ui/LongText'
 import type { QuestionStatDto } from '@/api/generated/model'
 
 export function QuestionAnalysis({
@@ -46,13 +47,13 @@ export function QuestionAnalysis({
             (question.options || [])[0]
 
           return (
-            <Card key={question.id} className="border-border shadow-sm">
+            <Card key={question.id} className="min-w-0 border-border shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base leading-relaxed">
+                <CardTitle className="min-w-0 text-base leading-relaxed">
                   <span className="mr-2 text-muted-foreground">
                     {index + 1}.
                   </span>
-                  {question.questionText}
+                  <LongText>{question.questionText}</LongText>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -91,9 +92,9 @@ export function QuestionAnalysis({
                           <Lightbulb className="h-3.5 w-3.5" />
                           {t('quiz.expectedAnswer')}
                         </div>
-                        <span className="text-sm font-medium text-foreground">
+                        <LongText className="text-sm font-medium text-foreground">
                           {expectedOption.text}
-                        </span>
+                        </LongText>
                       </div>
                     )}
 
@@ -108,9 +109,9 @@ export function QuestionAnalysis({
                             (answer, i) => (
                               <div
                                 key={i}
-                                className="rounded-sm bg-muted/40 px-3 py-2 text-sm text-foreground"
+                                className="min-w-0 rounded-sm bg-muted/40 px-3 py-2 text-sm text-foreground"
                               >
-                                {answer}
+                                <LongText>{answer}</LongText>
                               </div>
                             ),
                           )}
@@ -135,7 +136,7 @@ export function QuestionAnalysis({
                       return (
                         <div key={option.id} className="flex flex-col gap-1.5">
                           <div className="flex items-start justify-between gap-4 text-sm">
-                            <div className="flex flex-1 items-start gap-2">
+                            <div className="flex min-w-0 flex-1 items-start gap-2">
                               {option.isCorrect ? (
                                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                               ) : (
@@ -148,7 +149,7 @@ export function QuestionAnalysis({
                                     : 'text-muted-foreground'
                                 }
                               >
-                                {option.text}
+                                <LongText>{option.text}</LongText>
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-right">
