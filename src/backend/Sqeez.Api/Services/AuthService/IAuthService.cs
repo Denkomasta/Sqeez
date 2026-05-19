@@ -49,6 +49,17 @@ namespace Sqeez.Api.Services.AuthService
         Task<ServiceResult<bool>> ForgotPasswordAsync(string email);
 
         /// <summary>
+        /// Starts the password-reset flow for an email address in the requested email language.
+        /// </summary>
+        /// <param name="email">The account email address.</param>
+        /// <param name="language">Requested language code, for example en, cs, or cs-CZ.</param>
+        /// <returns>
+        /// A successful result in all user-visible cases. Existing users receive a password-reset token unless
+        /// a recent token is still inside the resend throttle window.
+        /// </returns>
+        Task<ServiceResult<bool>> ForgotPasswordAsync(string email, string? language);
+
+        /// <summary>
         /// Replaces a user's password using a valid password-reset token.
         /// </summary>
         /// <param name="dto">Reset token and new password.</param>

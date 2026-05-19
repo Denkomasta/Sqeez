@@ -108,7 +108,11 @@ namespace Sqeez.Api.Tests.Integration.Postgres
     {
         public Task SendVerificationEmailAsync(string email, string verificationLink) => Task.CompletedTask;
 
+        public Task SendVerificationEmailAsync(string email, string verificationLink, string? language) => Task.CompletedTask;
+
         public Task SendPasswordResetEmailAsync(string email, string resetLink) => Task.CompletedTask;
+
+        public Task SendPasswordResetEmailAsync(string email, string resetLink, string? language) => Task.CompletedTask;
     }
 
     internal sealed class NoopFileStorageService : IFileStorageService
