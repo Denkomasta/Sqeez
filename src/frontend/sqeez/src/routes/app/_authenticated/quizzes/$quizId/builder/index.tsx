@@ -22,8 +22,8 @@ export function QuizEditorPage() {
   }, [actions])
 
   return (
-    <div className="flex w-full flex-1 flex-col overflow-hidden bg-background">
-      <div className="flex flex-1 overflow-hidden">
+    <div className="flex h-[calc(100svh-4rem)] max-h-[calc(100svh-4rem)] min-h-0 w-full flex-col bg-background">
+      <div className="flex min-h-0 flex-1">
         <QuizEditorSidebar quizId={quizId} />
 
         <QuizQuestionEditor quizId={quizId} />
