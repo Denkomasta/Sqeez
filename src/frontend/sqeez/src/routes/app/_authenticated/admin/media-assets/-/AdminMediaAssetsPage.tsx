@@ -30,6 +30,10 @@ type MediaAssetsFilterDropdown = 'assignment' | 'type'
 
 const mediaTypeOptions: MediaType[] = ['Image', 'Video', 'Audio', 'Document']
 
+/**
+ * Admin media asset overview.
+ * Filters request server-side media pages and bulk deletion is limited to unassigned assets.
+ */
 export function AdminMediaAssetsPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()

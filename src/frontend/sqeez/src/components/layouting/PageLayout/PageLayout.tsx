@@ -15,6 +15,10 @@ export interface PageLayoutProps {
   variant?: 'default' | 'app'
 }
 
+/**
+ * Standard page wrapper for authenticated screens.
+ * The `app` variant owns its own scroll area for editor/dashboard-style layouts.
+ */
 export function PageLayout({
   title,
   titleBadge,

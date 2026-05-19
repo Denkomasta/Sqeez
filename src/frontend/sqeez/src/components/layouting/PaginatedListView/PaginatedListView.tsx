@@ -28,6 +28,10 @@ interface PaginatedListViewProps<T> {
   layoutVariant?: 'default' | 'app'
 }
 
+/**
+ * Shared shell for searchable, filterable, paginated card/list pages.
+ * Search changes reset the page to 1 when pagination state is supplied.
+ */
 export function PaginatedListView<T>({
   titleNode,
   subtitleNode,

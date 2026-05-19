@@ -26,6 +26,10 @@ type ArchiveFilter = 'active' | 'archived' | 'all'
 type VerificationFilter = 'all' | 'verified' | 'unverified'
 type AdminUserFilterDropdown = 'role' | 'archive' | 'verification'
 
+/**
+ * Admin user management page.
+ * Filters become API query params, and destructive actions require confirmation.
+ */
 export function AdminUsersPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()

@@ -25,6 +25,10 @@ interface DeleteSubjectModalProps {
 type DeleteSubjectStepId = 'enrollments' | 'quizzes' | 'subject'
 type StepState = 'completed' | 'failed' | 'pending' | 'running'
 
+/**
+ * Three-step destructive subject deletion flow.
+ * Enrollments, quizzes, and the subject are confirmed and executed one step at a time.
+ */
 export function DeleteSubjectModal({
   isOpen,
   onClose,

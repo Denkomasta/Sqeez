@@ -25,6 +25,10 @@ import {
 } from '@/constants/badgeRulesMappings'
 import type { BadgeFormValues } from '@/schemas/badgeSchema'
 
+/**
+ * Dynamic editor for badge award rules.
+ * It prevents duplicate metrics by offering the next unused metric when adding rows.
+ */
 export function BadgeRulesBuilder() {
   const { t } = useTranslation()
 

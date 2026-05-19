@@ -15,6 +15,10 @@ const operatorKeys = Object.keys(OPERATOR_MAP) as [
   ...BadgeOperator[],
 ]
 
+/**
+ * Builds the localized badge form schema.
+ * Badge rules must use unique metrics, and ScorePercentage targets are capped at 100.
+ */
 export const getBadgeSchema = (t: TFunction) =>
   z.object({
     name: z.string().min(1, t('common.required')),

@@ -1,6 +1,10 @@
 import { type TFunction } from 'i18next'
 import * as z from 'zod'
 
+/**
+ * Builds the localized registration schema.
+ * Username and password rules intentionally match the backend DTO constraints.
+ */
 export const getRegisterSchema = (t: TFunction) =>
   z
     .object({

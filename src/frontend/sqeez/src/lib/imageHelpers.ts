@@ -1,3 +1,7 @@
+/**
+ * Builds an absolute API image URL when the backend returns a relative path.
+ * Already absolute HTTP(S) URLs are returned unchanged.
+ */
 export function getImageUrl(path?: string | null): string | undefined {
   if (!path) return undefined
 
@@ -25,6 +29,7 @@ const allowedImageUploadMimeTypeSet = new Set<string>(
   allowedImageUploadMimeTypes,
 )
 
+/** Checks the MIME types accepted by backend image upload endpoints. */
 export function isAllowedImageUploadFile(file: Pick<File, 'type'>): boolean {
   return allowedImageUploadMimeTypeSet.has(file.type)
 }
@@ -36,6 +41,10 @@ function hasUnsafeUrlCharacter(value: string): boolean {
   })
 }
 
+/**
+ * Allows only image URLs that are safe to place into a DOM `src` attribute.
+ * Rejects control characters, protocol-relative URLs, and non-HTTP schemes.
+ */
 export function getSafeImageSrc(src?: string | null): string | undefined {
   if (!src) return undefined
 
@@ -67,18 +76,24 @@ export type SafeLocalPreviewSrc = string & {
 
 const safeLocalPreviewSrcRegistry = new Set<SafeLocalPreviewSrc>()
 
+/**
+ * Checks that a blob preview URL was created by this module.
+ * This keeps local previews separate from arbitrary user-provided strings.
+ */
 export function isSafeLocalPreviewSrc(
   src?: string | null,
 ): src is SafeLocalPreviewSrc {
   return safeLocalPreviewSrcRegistry.has(src as SafeLocalPreviewSrc)
 }
 
+/** Creates and brands a local blob URL that can be rendered as a trusted preview. */
 export function createSafeLocalPreviewSrc(file: File): SafeLocalPreviewSrc {
   const src = URL.createObjectURL(file) as SafeLocalPreviewSrc
   safeLocalPreviewSrcRegistry.add(src)
   return src
 }
 
+/** Revokes a branded local preview URL and removes it from the trusted registry. */
 export function revokeSafeLocalPreviewSrc(
   src?: SafeLocalPreviewSrc | null,
 ): void {

@@ -30,6 +30,10 @@ export const getApiQuizQuestionsInfiniteQueryKey = (
     ? (['quizQuestions', 'infinite', quizId, params] as const)
     : (['quizQuestions', 'infinite', quizId] as const)
 
+/**
+ * Infinite-query wrapper for quiz editor questions.
+ * Uses backend totalPages when available and falls back to page-size detection.
+ */
 export const useGetApiQuizQuestionsInfinite = (
   quizId: number | string,
   params?: GetApiQuizzesQuizIdQuestionsParams,

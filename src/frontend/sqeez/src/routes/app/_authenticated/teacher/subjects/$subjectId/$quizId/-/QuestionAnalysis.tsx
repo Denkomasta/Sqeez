@@ -12,6 +12,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { LongText } from '@/components/ui/LongText'
 import type { QuestionStatDto } from '@/api/generated/model'
 
+/**
+ * Teacher-facing per-question statistics.
+ * Long question and answer text is rendered with explicit wrapping to protect cards.
+ */
 export function QuestionAnalysis({
   questions,
 }: {

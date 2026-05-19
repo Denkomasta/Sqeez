@@ -29,6 +29,10 @@ interface AttemptsTableProps {
   isQuizActive?: boolean
 }
 
+/**
+ * Attempt list shared by student history and teacher grading views.
+ * Students cannot open attempts while the quiz is active.
+ */
 export function AttemptsTable({
   attempts,
   isTeacherView,

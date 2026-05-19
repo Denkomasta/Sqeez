@@ -22,6 +22,10 @@ type CustomQueryOptions = Omit<
   'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
 >
 
+/**
+ * Infinite-query wrapper for school classes.
+ * It stops when a page returns fewer records than the requested page size.
+ */
 export const useGetApiClassesInfinite = (
   params?: GetApiClassesParams,
   options?: CustomQueryOptions,

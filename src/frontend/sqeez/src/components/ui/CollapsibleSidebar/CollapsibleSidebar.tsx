@@ -17,6 +17,10 @@ interface CollapsibleSidebarProps {
   contentClassName?: string
 }
 
+/**
+ * Fixed-height sidebar that can collapse to an icon rail.
+ * Children scroll inside the expanded content area instead of growing the page.
+ */
 export function CollapsibleSidebar({
   title,
   icon,

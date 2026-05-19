@@ -14,6 +14,10 @@ interface DebouncedTextAreaProps {
   className?: string
 }
 
+/**
+ * Textarea that auto-saves after the user stops typing.
+ * The caller must provide an async save handler; visual status reflects that promise.
+ */
 export function DebouncedTextArea({
   initialValue,
   onSave,

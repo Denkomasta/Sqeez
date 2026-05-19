@@ -9,6 +9,10 @@ type PasswordInputProps = Omit<
   'rightElement' | 'type'
 >
 
+/**
+ * Password field with a localized visibility toggle.
+ * The underlying Input owns layout and browser password styling overrides.
+ */
 export function PasswordInput({
   disabled,
   className,

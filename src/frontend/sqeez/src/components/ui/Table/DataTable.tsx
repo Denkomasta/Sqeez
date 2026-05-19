@@ -15,6 +15,10 @@ interface DataTableProps<T> {
   keyExtractor: (item: T) => string | number
 }
 
+/**
+ * Lightweight generic table for admin/statistic pages.
+ * Consumers own cell rendering and must provide a stable key for each row.
+ */
 export function DataTable<T>({
   data,
   columns,

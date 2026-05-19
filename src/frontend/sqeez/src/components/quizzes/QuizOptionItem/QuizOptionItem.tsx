@@ -26,6 +26,10 @@ const FUN_COLORS = [
   'bg-quiz-opt-8 border-black/20 dark:border-white/20 text-quiz-opt-8-fg hover:brightness-110',
 ]
 
+/**
+ * Renders one playable quiz option.
+ * Free-text options switch to textarea mode and select themselves on focus.
+ */
 export function QuizOptionItem({
   option,
   index = 0,

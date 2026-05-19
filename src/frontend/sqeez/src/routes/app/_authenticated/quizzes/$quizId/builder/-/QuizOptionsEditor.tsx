@@ -16,6 +16,10 @@ interface QuizOptionsEditorProps {
   questionId: string
 }
 
+/**
+ * Chooses the option editor mode for a question.
+ * Free-text questions manage one expected-answer option instead of many choices.
+ */
 export function QuizOptionsEditor({
   quizId,
   questionId,

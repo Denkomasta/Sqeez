@@ -21,6 +21,10 @@ interface StudentGradingModalProps {
   subjectId: number
 }
 
+/**
+ * Teacher modal for assigning a final mark to one student enrollment.
+ * The enrollment is fetched only while the modal is open.
+ */
 export function StudentGradingModal({
   isOpen,
   onClose,

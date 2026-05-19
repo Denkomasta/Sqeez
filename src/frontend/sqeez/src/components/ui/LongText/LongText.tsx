@@ -8,6 +8,10 @@ type LongTextProps<TElement extends ElementType = 'span'> = {
   className?: string
 } & Omit<ComponentPropsWithoutRef<TElement>, 'as' | 'children' | 'className'>
 
+/**
+ * Renders user/backend text that may contain line breaks or very long tokens.
+ * Use `as` when semantic markup should be a paragraph, div, or another element.
+ */
 export function LongText<TElement extends ElementType = 'span'>({
   as,
   children,

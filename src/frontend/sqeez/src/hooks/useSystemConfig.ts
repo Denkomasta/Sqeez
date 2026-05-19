@@ -1,5 +1,9 @@
 import { useGetApiSystemConfig } from '@/api/generated/endpoints/system-config/system-config'
 
+/**
+ * Reads global runtime limits and settings.
+ * Config is cached for several minutes because it changes rarely during a session.
+ */
 export function useSystemConfig() {
   const query = useGetApiSystemConfig({
     query: {

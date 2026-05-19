@@ -21,6 +21,10 @@ interface QuestionMediaEditorProps {
   currentMediaAssetId: number | string | null
 }
 
+/**
+ * Uploads, previews, or clears media attached directly to a quiz question.
+ * Mutations are disabled when the quiz editor store marks the quiz as locked.
+ */
 export function QuestionMediaEditor({
   quizId,
   questionId,

@@ -13,6 +13,10 @@ interface QuizEditorUIState {
   }
 }
 
+/**
+ * Keeps quiz-builder UI state separate from persisted quiz data.
+ * `isLocked` is set when backend rules prevent editing an attempted quiz.
+ */
 export const useQuizEditorUIStore = create<QuizEditorUIState>((set) => ({
   activeQuestionId: null,
   isSidebarOpen: true,

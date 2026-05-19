@@ -43,6 +43,10 @@ const getCsvFileName = (title?: string | null) => {
   return `${safeTitle || 'quiz'}.csv`
 }
 
+/**
+ * Edits quiz-level settings and destructive quiz actions.
+ * Date clearing uses reset flags because the patch contract distinguishes null from reset.
+ */
 export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
