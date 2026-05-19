@@ -22,6 +22,10 @@ type CustomQueryOptions = Omit<
   'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
 >
 
+/**
+ * Infinite-query wrapper for users.
+ * It advances pages by item count, so callers must keep PageSize stable per query.
+ */
 export const useGetApiUsersInfinite = (
   params?: GetApiUsersParams,
   options?: CustomQueryOptions,

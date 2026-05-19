@@ -10,6 +10,10 @@ interface AuthState {
   logout: () => void
 }
 
+/**
+ * Stores the current authenticated user and derived role flags.
+ * The user object is refreshed from `/auth/me`; cookies remain the server source of truth.
+ */
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,

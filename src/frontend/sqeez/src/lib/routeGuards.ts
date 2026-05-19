@@ -6,6 +6,10 @@ interface GuardArgs {
   location: ParsedLocation
 }
 
+/**
+ * Creates a TanStack Router guard that requires an authenticated user role.
+ * Unauthenticated users are sent to login with a redirect back to the target URL.
+ */
 export function createRoleGuard(allowedRoles: string[]) {
   return async ({ location }: GuardArgs) => {
     let user

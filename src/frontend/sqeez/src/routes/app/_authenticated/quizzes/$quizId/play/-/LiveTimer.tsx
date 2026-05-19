@@ -8,6 +8,10 @@ interface LiveTimerProps {
   onTimeUp?: () => void
 }
 
+/**
+ * Shows elapsed time or a countdown for active quiz questions.
+ * A positive time limit counts down and fires `onTimeUp` once.
+ */
 export function LiveTimer({ timeLimit, onTimeUp }: LiveTimerProps) {
   const isCountdown = timeLimit > 0
   const [seconds, setSeconds] = useState(isCountdown ? timeLimit : 0)

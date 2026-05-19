@@ -19,6 +19,10 @@ interface ImportQuizCsvModalProps {
 const quizCsvHeader =
   'Quiz Title,Quiz Description,Max Retries,Publish Date,Closing Date,Question Order,Question Title,Difficulty,Time Limit,Has Penalty,Is Strict Multiple Choice,Option Order,Option Text,Is Correct,Is Free Text'
 
+/**
+ * Teacher CSV quiz import modal.
+ * The selected file is posted to the subject import endpoint and reports row-level results.
+ */
 export function ImportQuizCsvModal({
   isOpen,
   onClose,

@@ -25,6 +25,10 @@ type KnownAttemptStatusValue = keyof typeof attemptStatusTranslationKeys
 export type AttemptStatusTranslationKey =
   (typeof attemptStatusTranslationKeys)[KnownAttemptStatusValue]
 
+/**
+ * Returns the translation key for known attempt statuses.
+ * Unknown backend values intentionally fall back to raw display elsewhere.
+ */
 export function getAttemptStatusTranslationKey(
   status?: AttemptStatusValue | null,
 ): AttemptStatusTranslationKey | null {
@@ -36,6 +40,10 @@ export function getAttemptStatusTranslationKey(
   )
 }
 
+/**
+ * Formats an attempt status for UI badges and summaries.
+ * Keeps unknown statuses visible instead of hiding a backend contract change.
+ */
 export function getAttemptStatusLabel(
   t: TFunction,
   status?: AttemptStatusValue | null,
@@ -49,12 +57,16 @@ export function getAttemptStatusLabel(
   return status ? String(status) : t('attempts.statusUnknown')
 }
 
+/** True only for attempts fully completed by the backend. */
 export function isCompletedAttemptStatus(
   status?: AttemptStatusValue | null,
 ): boolean {
   return status === 'Completed'
 }
 
+/**
+ * Covers both current and older UI names for attempts waiting for teacher review.
+ */
 export function isPendingCorrectionAttemptStatus(
   status?: AttemptStatusValue | null,
 ): boolean {
@@ -65,6 +77,7 @@ export function isPendingCorrectionAttemptStatus(
   )
 }
 
+/** Covers attempts that can still be resumed or are not finished yet. */
 export function isInProgressAttemptStatus(
   status?: AttemptStatusValue | null,
 ): boolean {

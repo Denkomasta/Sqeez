@@ -1,6 +1,10 @@
 import { type TFunction } from 'i18next'
 import * as z from 'zod'
 
+/**
+ * Builds the localized login schema.
+ * Password validation mirrors registration because unverified users may resend email here.
+ */
 export const getLoginSchema = (t: TFunction) =>
   z.object({
     email: z.string().email({ message: t('register.validation.emailInvalid') }),

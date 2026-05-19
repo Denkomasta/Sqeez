@@ -12,6 +12,10 @@ interface DateTimePickerProps extends Omit<
   onChange: (isoString: string | null) => void
 }
 
+/**
+ * Local datetime input that emits UTC ISO strings to the API.
+ * Empty values are emitted as null only after blur to avoid noisy patch calls.
+ */
 export function DateTimePicker({
   value,
   onChange,

@@ -19,6 +19,10 @@ interface QuizEditorSidebarProps {
 
 const QUESTIONS_PAGE_SIZE = 25
 
+/**
+ * Question navigation for the quiz builder.
+ * Uses paginated loading so large quizzes do not fetch every question at once.
+ */
 export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
   const { t } = useTranslation()
   const { activeQuestionId, actions, isLocked } = useQuizEditorUIStore()

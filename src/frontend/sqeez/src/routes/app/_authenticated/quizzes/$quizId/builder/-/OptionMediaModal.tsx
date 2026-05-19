@@ -31,6 +31,10 @@ interface OptionMediaModalProps {
   currentMediaAssetId?: number | string | null
 }
 
+/**
+ * Uploads, previews, or removes media attached to an answer option.
+ * Local blob previews must be branded by imageHelpers before they are rendered.
+ */
 export function OptionMediaModal({
   isOpen,
   onClose,

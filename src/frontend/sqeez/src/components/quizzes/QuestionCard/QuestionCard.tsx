@@ -15,6 +15,10 @@ interface QuestionCardProps {
   onChangeFreeText?: (text: string) => void
 }
 
+/**
+ * Displays the active quiz question and delegates answer input to option items.
+ * Media rendering is injected so callers control fetching and asset presentation.
+ */
 export function QuestionCard({
   question,
   selectedOptionIds,

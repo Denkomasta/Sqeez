@@ -74,6 +74,10 @@ const translateQuizMutationErrorMessage = (
   return message
 }
 
+/**
+ * Shared toast handling for quiz-builder mutations.
+ * A 409 locks the editor because the backend rejected edits to an attempted quiz.
+ */
 export function handleQuizMutationError(error: unknown, t: TFunction) {
   if (isAxiosError(error) && error.response?.status === 409) {
     useQuizEditorUIStore.getState().actions.setLocked(true)

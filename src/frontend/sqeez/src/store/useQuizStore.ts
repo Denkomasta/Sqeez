@@ -65,6 +65,10 @@ const initialState = {
   isPendingCorrection: null,
 }
 
+/**
+ * Drives the student quiz-taking state machine.
+ * Server data decides the next question; the store only tracks local phase and UI inputs.
+ */
 export const useQuizStore = create<QuizState>()(
   devtools((set) => ({
     ...initialState,

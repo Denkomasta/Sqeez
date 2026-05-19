@@ -9,6 +9,10 @@ interface MediaAssetViewerProps {
   isOption?: boolean
 }
 
+/**
+ * Fetches and displays a media asset by id.
+ * Rendering is type-aware and falls back to a download link for documents/unknown files.
+ */
 export function MediaAssetViewer({
   assetId,
   isOption = false,

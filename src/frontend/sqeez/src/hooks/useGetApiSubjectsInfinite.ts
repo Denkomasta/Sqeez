@@ -21,6 +21,10 @@ type CustomQueryOptions = Omit<
   'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
 >
 
+/**
+ * Infinite-query wrapper for subjects.
+ * Filters are part of the query key, so changing params starts a separate cache.
+ */
 export const useGetApiSubjectsInfinite = (
   params?: GetApiSubjectsParams,
   options?: CustomQueryOptions,

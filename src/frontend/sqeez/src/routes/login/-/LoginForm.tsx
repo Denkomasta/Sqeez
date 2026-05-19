@@ -29,6 +29,10 @@ const errorMapping: Record<number, TranslationKey> = {
   500: 'error.serverError',
 }
 
+/**
+ * Login form with unverified-email recovery.
+ * Resent verification emails include the currently stored UI language.
+ */
 export function LoginForm() {
   const { t } = useTranslation()
   const search = useSearch({ strict: false })

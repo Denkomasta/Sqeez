@@ -12,6 +12,10 @@ const ThemeContext = createContext<
   | undefined
 >(undefined)
 
+/**
+ * Applies the selected DaisyUI theme to the document root.
+ * The `system` setting follows `prefers-color-scheme` and updates when it changes.
+ */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeState>(
     () => (localStorage.getItem('ui-theme') as ThemeState) || 'system',
@@ -57,6 +61,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+/** Accesses the current theme selection; must be rendered under ThemeProvider. */
 export const useTheme = () => {
   const context = useContext(ThemeContext)
   if (!context) throw new Error('useTheme must be used within a ThemeProvider')

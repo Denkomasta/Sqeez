@@ -3,6 +3,10 @@ import { queryClient } from '@/main'
 import { useAuthStore } from '@/store/useAuthStore'
 import { getGetApiAuthMeQueryOptions } from '@/api/generated/endpoints/auth/auth'
 
+/**
+ * Finalizes a successful login/register flow.
+ * The session is considered valid only after `/auth/me` returns the current user.
+ */
 export function useAuthSuccess() {
   const navigate = useNavigate()
   const router = useRouter()

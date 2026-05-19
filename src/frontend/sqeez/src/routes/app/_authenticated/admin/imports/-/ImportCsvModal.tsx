@@ -14,6 +14,10 @@ interface ImportCsvModalProps {
   onClose: () => void
 }
 
+/**
+ * Admin CSV import modal.
+ * Upload result details are kept visible so admins can inspect partial failures.
+ */
 export function ImportCsvModal({ isOpen, onClose }: ImportCsvModalProps) {
   const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)

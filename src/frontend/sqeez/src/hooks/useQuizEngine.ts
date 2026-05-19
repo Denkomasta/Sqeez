@@ -31,6 +31,10 @@ export type QuizPhase =
 
 export type BootUpError = 'QUIZ_NOT_FOUND' | 'NOT_ENROLLED' | null
 
+/**
+ * Orchestrates the student quiz flow from start/resume through completion.
+ * The backend remains authoritative for enrollment, next-question progress, and grading.
+ */
 export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   const { t } = useTranslation()
   const userId = useAuthStore((s) => s.user?.id)
@@ -94,6 +98,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
 
         if (!isMounted) return
 
+        // Resume must trust backend progress so refreshed pages keep the progress bar correct.
         const nextQuestionId = nextQuestionProgress.nextQuestionId
           ? Number(nextQuestionProgress.nextQuestionId)
           : null
@@ -144,6 +149,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
         if (option.mediaAssetId) assetIdsToFetch.push(option.mediaAssetId)
       })
 
+      // Preload media for the next visible screen to avoid blank option/question assets.
       assetIdsToFetch.forEach((id) => {
         const assetId = Number(id)
 
@@ -168,6 +174,7 @@ export function useQuizEngine(quizId: string, initialAttemptId?: number) {
       state.selectedOptionIds.length > 0 ||
       state.freeTextValue.trim().length > 0
 
+    // Timeouts may submit an empty answer; manual submits require a user selection.
     if (!hasSelection && !isTimeout) {
       toast.warning(t('quiz.selectAnswerWarning'))
       return

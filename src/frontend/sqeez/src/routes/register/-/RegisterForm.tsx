@@ -16,6 +16,10 @@ import {
 } from '@/schemas/registerSchema'
 import { getStoredLanguage } from '@/lib/languageHelpers'
 
+/**
+ * Public registration form.
+ * The registration payload includes the stored UI language for localized emails.
+ */
 export function RegisterForm() {
   const { t } = useTranslation()
   const registerSchema = useMemo(() => getRegisterSchema(t), [t])

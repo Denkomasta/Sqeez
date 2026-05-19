@@ -23,6 +23,10 @@ interface QuizQuestionEditorProps {
   quizId: string
 }
 
+/**
+ * Main editor for the selected quiz question.
+ * Edits are disabled when the quiz is locked by backend attempt history.
+ */
 export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()

@@ -43,6 +43,10 @@ const getForgotSchema = (t: TFunction) =>
 
 type ForgotFormValues = z.infer<ReturnType<typeof getForgotSchema>>
 
+/**
+ * Requests a password reset email.
+ * The API receives the stored UI language so the email can be localized.
+ */
 function ForgotPasswordForm() {
   const { t } = useTranslation()
   const [isSuccess, setIsSuccess] = useState(false)

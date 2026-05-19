@@ -52,6 +52,10 @@ function AnswerBlock({
   )
 }
 
+/**
+ * Shows a graded question response for an attempt.
+ * Teachers can assign points only for free-text answers that need manual review.
+ */
 export function QuestionResultCard({
   quizId,
   attemptId,

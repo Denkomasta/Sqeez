@@ -70,6 +70,7 @@ const containerWidthClasses: Record<ContainerWidth, string> = {
   '7xl': 'max-w-7xl',
 }
 
+/** Layout primitives used by public marketing/legal/help pages. */
 export function PublicPageLayout({
   children,
   className,
@@ -86,6 +87,7 @@ export function PublicPageLayout({
   )
 }
 
+/** First-section hero block with shared spacing and tone options. */
 export function PublicHero({
   title,
   subtitle,
@@ -144,6 +146,7 @@ export function PublicHero({
   )
 }
 
+/** Full-width public section with shared spacing, tone, and container widths. */
 export function PublicSection({
   children,
   tone = 'default',
@@ -177,6 +180,7 @@ export function PublicSection({
   )
 }
 
+/** Standard title/subtitle block for public page sections. */
 export function PublicSectionHeader({
   title,
   subtitle,
@@ -194,6 +198,7 @@ export function PublicSectionHeader({
   )
 }
 
+/** Optional support contact block; renders the email only once config has loaded. */
 export function PublicContactCard({
   title,
   description,

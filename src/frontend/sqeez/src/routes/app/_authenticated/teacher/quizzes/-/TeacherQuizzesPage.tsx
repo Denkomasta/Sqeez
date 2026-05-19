@@ -23,6 +23,10 @@ import type { AspNetProblemDetails } from '@/api/custom-axios'
 
 import { Route } from '../index'
 
+/**
+ * Teacher quiz management view.
+ * Active quizzes with attempts are closed instead of hard-deleted to preserve history.
+ */
 export function TeacherQuizzesPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()

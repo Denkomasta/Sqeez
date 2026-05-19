@@ -12,6 +12,10 @@ import { useGetApiQuizzesQuizId } from '@/api/generated/endpoints/quizzes/quizze
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 import { getAttemptStatusLabel } from '@/lib/attemptStatusHelpers'
 
+/**
+ * Detailed attempt review page for students and teachers.
+ * Teacher grading is enabled only when the current teacher owns the subject.
+ */
 export function AttemptViewerPage({
   attemptId,
   quizId,

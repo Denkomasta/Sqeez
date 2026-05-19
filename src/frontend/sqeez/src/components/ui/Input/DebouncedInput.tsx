@@ -15,6 +15,10 @@ interface DebouncedInputProps extends Omit<
   wrapperClassName?: string
 }
 
+/**
+ * Controlled input that delays parent updates while preserving local typing.
+ * Blur commits immediately; identical values are ignored to avoid mutation loops.
+ */
 export function DebouncedInput({
   value: initialValue,
   onChange,
