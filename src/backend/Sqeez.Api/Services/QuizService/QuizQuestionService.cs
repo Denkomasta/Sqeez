@@ -324,6 +324,7 @@ namespace Sqeez.Api.Services
 
             bool isTeacherOfSubject = question.Quiz.Subject.TeacherId == currentUserId;
             bool isEnrolledStudent = question.Quiz.Subject.Enrollments.Any(e => e.StudentId == currentUserId && e.ArchivedAt == null);
+            bool isClosed = question.Quiz.ClosingDate.HasValue && DateTime.UtcNow > question.Quiz.ClosingDate.Value;
             bool isAdmin = role == "Admin";
 
             if (isAdmin || isTeacherOfSubject)
@@ -340,7 +341,6 @@ namespace Sqeez.Api.Services
 
                 if (!hasActiveAttempt)
                 {
-                    bool isClosed = question.Quiz.ClosingDate.HasValue && DateTime.UtcNow > question.Quiz.ClosingDate.Value;
                     if (!isClosed)
                     {
                         return ServiceResult<DetailedQuizQuestionDto>.Failure(
@@ -367,7 +367,7 @@ namespace Sqeez.Api.Services
                     question.MediaAssetId,
                     question.Options.Select(o => new StudentQuizOptionDto(
                         o.Id,
-                        o.IsFreeText && !isTeacherOfSubject ? null : o.Text,
+                        o.IsFreeText && !isTeacherOfSubject && !isClosed ? null : o.Text,
                         o.IsFreeText,
                         o.QuizQuestionId,
                         o.MediaAssetId
