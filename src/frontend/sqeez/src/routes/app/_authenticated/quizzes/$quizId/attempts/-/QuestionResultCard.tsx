@@ -24,6 +24,33 @@ interface QuestionResultCardProps {
   isTeacher: boolean
 }
 
+interface AnswerBlockProps {
+  label: string
+  value?: string | null
+  emptyLabel: string
+  className?: string
+}
+
+function AnswerBlock({
+  label,
+  value,
+  emptyLabel,
+  className = 'bg-muted/50',
+}: AnswerBlockProps) {
+  return (
+    <div className={`min-w-0 rounded-md p-4 ${className}`}>
+      <p className="mb-2 text-sm font-semibold text-muted-foreground">
+        {label}:
+      </p>
+      <p className="max-w-full text-base leading-relaxed [overflow-wrap:anywhere] break-words whitespace-pre-wrap text-foreground">
+        {value || (
+          <span className="text-muted-foreground italic">{emptyLabel}</span>
+        )}
+      </p>
+    </div>
+  )
+}
+
 export function QuestionResultCard({
   quizId,
   attemptId,
@@ -170,18 +197,18 @@ export function QuestionResultCard({
               </div>
             )}
 
-            <div className="rounded-md bg-muted/50 p-4">
-              <p className="mb-1 text-sm font-semibold text-muted-foreground">
-                {t('grading.studentAnswer')}:
-              </p>
-              <p className="text-base whitespace-pre-wrap text-foreground">
-                {studentResponse.freeTextAnswer || (
-                  <span className="text-muted-foreground italic">
-                    {t('grading.noAnswer')}
-                  </span>
-                )}
-              </p>
-            </div>
+            <AnswerBlock
+              label={t('grading.expectedAnswer')}
+              value={questionDef.options[0]?.text}
+              emptyLabel={t('grading.noExpectedAnswer')}
+              className="bg-info/75"
+            />
+
+            <AnswerBlock
+              label={t('grading.studentAnswer')}
+              value={studentResponse.freeTextAnswer}
+              emptyLabel={t('grading.noAnswer')}
+            />
           </>
         )}
 

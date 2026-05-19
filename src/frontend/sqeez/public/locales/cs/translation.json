@@ -691,10 +691,12 @@
   "grading": {
     "assignPoints": "Přidělit body",
     "correctAnswer": "Správná odpověď",
+    "expectedAnswer": "Očekávaná odpověď",
     "invalidPoints": "Body musí být v rozmezí 0 až {{max}}",
     "likeAnswer": "Dát To se mi líbí",
     "needsGrading": "Vyžaduje hodnocení",
     "noAnswer": "Nebyla poskytnuta žádná odpověď",
+    "noExpectedAnswer": "Nebyla zadána žádná očekávaná odpověď",
     "pts": "bodů",
     "savedSuccessfully": "Hodnocení úspěšně uloženo!",
     "selectedOptions": "Vybrané možnosti",

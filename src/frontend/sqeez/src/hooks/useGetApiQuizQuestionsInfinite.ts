@@ -25,7 +25,10 @@ type CustomQueryOptions = Omit<
 export const getApiQuizQuestionsInfiniteQueryKey = (
   quizId: number | string,
   params?: GetApiQuizzesQuizIdQuestionsParams,
-) => ['quizQuestions', 'infinite', quizId, params] as const
+) =>
+  params
+    ? (['quizQuestions', 'infinite', quizId, params] as const)
+    : (['quizQuestions', 'infinite', quizId] as const)
 
 export const useGetApiQuizQuestionsInfinite = (
   quizId: number | string,

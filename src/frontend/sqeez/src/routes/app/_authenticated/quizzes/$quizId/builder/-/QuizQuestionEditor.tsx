@@ -2,7 +2,6 @@ import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import {
-  getGetApiQuizzesQuizIdQuestionsQueryKey,
   getGetApiQuizzesQuizIdQuestionsQuestionIdQueryKey,
   useGetApiQuizzesQuizIdQuestionsQuestionId,
   usePatchApiQuizzesQuizIdQuestionsQuestionId,
@@ -14,9 +13,11 @@ import { QuestionTimeLimitEditor } from './QuestionTimeLimitEditor'
 import { QuestionMediaEditor } from './QuestionMediaEditor'
 import { QuizOptionsEditor } from './QuizOptionsEditor'
 import { QuizSettingsEditor } from './QuizSettingsEditor'
-import { useQueryClient } from '@tanstack/react-query'
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query'
 import { handleQuizMutationError } from '@/lib/quizHelpers'
 import { QuestionMultipleChoiceEditor } from './QuestionMultipleChoiceEditor'
+import { getApiQuizQuestionsInfiniteQueryKey } from '@/hooks/useGetApiQuizQuestionsInfinite'
+import type { PagedResponseOfQuizQuestionDto } from '@/api/generated/model'
 
 interface QuizQuestionEditorProps {
   quizId: string
@@ -50,8 +51,29 @@ export function QuizQuestionEditor({ quizId }: QuizQuestionEditorProps) {
 
           lastSubmittedTitle.current = null
 
+          queryClient.setQueriesData<
+            InfiniteData<PagedResponseOfQuizQuestionDto>
+          >(
+            { queryKey: getApiQuizQuestionsInfiniteQueryKey(quizId) },
+            (oldData) => {
+              if (!oldData) return oldData
+
+              return {
+                ...oldData,
+                pages: oldData.pages.map((page) => ({
+                  ...page,
+                  data: page.data?.map((question) =>
+                    question.id === updatedQuizData.id
+                      ? { ...question, ...updatedQuizData }
+                      : question,
+                  ),
+                })),
+              }
+            },
+          )
+
           queryClient.invalidateQueries({
-            queryKey: getGetApiQuizzesQuizIdQuestionsQueryKey(quizId),
+            queryKey: getApiQuizQuestionsInfiniteQueryKey(quizId),
           })
         },
         onError: (error) => handleQuizMutationError(error, t),

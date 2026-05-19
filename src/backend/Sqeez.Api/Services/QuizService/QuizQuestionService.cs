@@ -367,7 +367,7 @@ namespace Sqeez.Api.Services
                     question.MediaAssetId,
                     question.Options.Select(o => new StudentQuizOptionDto(
                         o.Id,
-                        o.IsFreeText ? null : o.Text,
+                        o.IsFreeText && !isTeacherOfSubject ? null : o.Text,
                         o.IsFreeText,
                         o.QuizQuestionId,
                         o.MediaAssetId
