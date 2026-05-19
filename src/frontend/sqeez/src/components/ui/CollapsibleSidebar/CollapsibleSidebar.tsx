@@ -14,6 +14,7 @@ interface CollapsibleSidebarProps {
   expandTooltip?: string
   collapseTooltip?: string
   className?: string
+  contentClassName?: string
 }
 
 export function CollapsibleSidebar({
@@ -27,6 +28,7 @@ export function CollapsibleSidebar({
   expandTooltip = 'Expand',
   collapseTooltip = 'Collapse',
   className,
+  contentClassName,
 }: CollapsibleSidebarProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
 
@@ -34,7 +36,7 @@ export function CollapsibleSidebar({
     return (
       <aside
         className={cn(
-          'flex shrink-0 flex-col items-center border-r bg-muted/5 py-4 transition-all duration-300',
+          'flex max-h-full min-h-0 shrink-0 flex-col items-center self-stretch overflow-hidden border-r bg-muted/5 py-4 transition-all duration-300',
           collapsedWidth,
           className,
         )}
@@ -55,7 +57,7 @@ export function CollapsibleSidebar({
   return (
     <aside
       className={cn(
-        'flex shrink-0 flex-col overflow-hidden border-r bg-muted/5 transition-all duration-300',
+        'flex max-h-full min-h-0 shrink-0 flex-col self-stretch overflow-hidden border-r bg-muted/5 transition-all duration-300',
         expandedWidth,
         className,
       )}
@@ -86,7 +88,14 @@ export function CollapsibleSidebar({
         </div>
       </div>
 
-      <div className="flex-1 space-y-2 overflow-y-auto p-3">{children}</div>
+      <div
+        className={cn(
+          'min-h-0 flex-1 space-y-2 overflow-y-auto p-3',
+          contentClassName,
+        )}
+      >
+        {children}
+      </div>
     </aside>
   )
 }
