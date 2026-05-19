@@ -47,7 +47,7 @@ namespace Sqeez.Api.DTOs
     {
         public RegisterDTO() { }
 
-        public RegisterDTO(string FirstName, string LastName, string Username, string Email, string Password, bool RememberMe = false)
+        public RegisterDTO(string FirstName, string LastName, string Username, string Email, string Password, bool RememberMe = false, string? Language = null)
         {
             this.FirstName = FirstName;
             this.LastName = LastName;
@@ -55,6 +55,7 @@ namespace Sqeez.Api.DTOs
             this.Email = Email;
             this.Password = Password;
             this.RememberMe = RememberMe;
+            this.Language = Language;
         }
 
         [RegularExpression(ValidationConstants.PersonNameRegex, ErrorMessage = "First name can only contain letters, spaces, and dashes.")]
@@ -78,6 +79,9 @@ namespace Sqeez.Api.DTOs
         public string Password { get; init; } = string.Empty;
 
         public bool RememberMe { get; init; } = false;
+
+        [StringLength(ValidationConstants.LanguageCodeMaxLength)]
+        public string? Language { get; init; }
     }
 
     /// <summary>
@@ -147,10 +151,11 @@ namespace Sqeez.Api.DTOs
     {
         public ResendVerificationDto() { }
 
-        public ResendVerificationDto(string Email, bool RememberMe = false)
+        public ResendVerificationDto(string Email, bool RememberMe = false, string? Language = null)
         {
             this.Email = Email;
             this.RememberMe = RememberMe;
+            this.Language = Language;
         }
 
         [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
@@ -158,6 +163,9 @@ namespace Sqeez.Api.DTOs
         public string Email { get; init; } = string.Empty;
 
         public bool RememberMe { get; init; } = false;
+
+        [StringLength(ValidationConstants.LanguageCodeMaxLength)]
+        public string? Language { get; init; }
     }
 
     /// <summary>
@@ -167,14 +175,18 @@ namespace Sqeez.Api.DTOs
     {
         public ForgotPasswordDto() { }
 
-        public ForgotPasswordDto(string Email)
+        public ForgotPasswordDto(string Email, string? Language = null)
         {
             this.Email = Email;
+            this.Language = Language;
         }
 
         [RegularExpression(ValidationConstants.EmailRegex, ErrorMessage = "Invalid email format.")]
         [StringLength(ValidationConstants.EmailMaxLength)]
         public string Email { get; init; } = string.Empty;
+
+        [StringLength(ValidationConstants.LanguageCodeMaxLength)]
+        public string? Language { get; init; }
     }
 
     /// <summary>

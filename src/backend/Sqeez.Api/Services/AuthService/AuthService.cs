@@ -177,12 +177,13 @@ namespace Sqeez.Api.Services.AuthService
             if (!isSuperUser)
             {
                 string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}&rememberMe={dto.RememberMe.ToString().ToLower()}";
+                var emailLanguage = dto.Language;
 
                 _ = Task.Run(async () =>
                 {
                     try
                     {
-                        await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+                        await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, emailLanguage);
                     }
                     catch (Exception ex)
                     {
@@ -247,12 +248,13 @@ namespace Sqeez.Api.Services.AuthService
             await _context.SaveChangesAsync();
 
             string verificationLink = $"{_frontendUrl}/verify-email?token={verificationToken}&rememberMe={dto.RememberMe.ToString().ToLower()}";
+            var emailLanguage = dto.Language;
 
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    await _emailService.SendVerificationEmailAsync(user.Email, verificationLink);
+                    await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, emailLanguage);
                 }
                 catch (Exception ex)
                 {
@@ -264,6 +266,11 @@ namespace Sqeez.Api.Services.AuthService
         }
 
         public async Task<ServiceResult<bool>> ForgotPasswordAsync(string email)
+        {
+            return await ForgotPasswordAsync(email, null);
+        }
+
+        public async Task<ServiceResult<bool>> ForgotPasswordAsync(string email, string? language)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == email);
 
@@ -289,7 +296,7 @@ namespace Sqeez.Api.Services.AuthService
             {
                 try
                 {
-                    await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+                    await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink, language);
                 }
                 catch (Exception ex)
                 {

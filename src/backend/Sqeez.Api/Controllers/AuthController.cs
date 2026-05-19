@@ -112,7 +112,7 @@ namespace Sqeez.Api.Controllers
         [HttpPost("forgot-password")]
         public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
-            var result = await _authService.ForgotPasswordAsync(dto.Email);
+            var result = await _authService.ForgotPasswordAsync(dto.Email, dto.Language);
 
             if (!result.Success)
                 return HandleServiceResult(result);

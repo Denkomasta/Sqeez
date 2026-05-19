@@ -251,18 +251,19 @@ namespace Sqeez.Api.Tests.Integration
         public async Task ForgotPassword_WithValidEmail_PassesEmailToService()
         {
             _factory.AuthServiceMock
-                .Setup(service => service.ForgotPasswordAsync("jana@sqeez.test"))
+                .Setup(service => service.ForgotPasswordAsync("jana@sqeez.test", "cs"))
                 .ReturnsAsync(ServiceResult<bool>.Ok(true));
 
             var client = _factory.CreateClient();
 
             var response = await client.PostAsJsonAsync("/api/auth/forgot-password", new
             {
-                email = "jana@sqeez.test"
+                email = "jana@sqeez.test",
+                language = "cs"
             });
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            _factory.AuthServiceMock.Verify(service => service.ForgotPasswordAsync("jana@sqeez.test"), Times.Once);
+            _factory.AuthServiceMock.Verify(service => service.ForgotPasswordAsync("jana@sqeez.test", "cs"), Times.Once);
         }
 
         [Fact]
@@ -276,7 +277,7 @@ namespace Sqeez.Api.Tests.Integration
             });
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            _factory.AuthServiceMock.Verify(service => service.ForgotPasswordAsync(It.IsAny<string>()), Times.Never);
+            _factory.AuthServiceMock.Verify(service => service.ForgotPasswordAsync(It.IsAny<string>(), It.IsAny<string?>()), Times.Never);
         }
 
         [Fact]

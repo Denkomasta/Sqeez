@@ -524,7 +524,8 @@ namespace Sqeez.Api.Tests.Services
 
             mockEmailService.Verify(e => e.SendPasswordResetEmailAsync(
                 It.Is<string>(s => s.Equals("forgot@sqeez.org", StringComparison.OrdinalIgnoreCase)),
-                It.IsAny<string>()), Times.Once);
+                It.IsAny<string>(),
+                null), Times.Once);
         }
 
         [Fact]
