@@ -563,6 +563,7 @@
     "manageOptionMedia": "Spravovat média odpovědi",
     "markCorrect": "Označit jako správnou odpověď",
     "maxFileSizeHintTypes": "Max. {{maxSize}} MB (Obrázky, Video, Zvuk)",
+    "maxOptionsReached": "Otázka v kvízu může mít maximálně {{max}} možností.",
     "maxRetries": "Maximální počet pokusů",
     "maxRetriesHelp": "Nastavte na 0 pro neomezený počet pokusů.",
     "mediaAsset": "Média otázky",
