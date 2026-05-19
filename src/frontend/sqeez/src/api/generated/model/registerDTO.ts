@@ -37,4 +37,10 @@ export interface RegisterDTO {
    */
   password?: string
   rememberMe?: boolean
+  /**
+   * @minLength 0
+   * @maxLength 10
+   * @nullable
+   */
+  language?: string | null
 }
