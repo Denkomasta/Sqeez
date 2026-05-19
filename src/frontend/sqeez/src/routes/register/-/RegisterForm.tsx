@@ -14,6 +14,7 @@ import {
   getRegisterSchema,
   type RegisterFormValues,
 } from '@/schemas/registerSchema'
+import { getStoredLanguage } from '@/lib/languageHelpers'
 
 export function RegisterForm() {
   const { t } = useTranslation()
@@ -64,6 +65,7 @@ export function RegisterForm() {
         email: values.email.trim(),
         password: values.password,
         rememberMe: values.remember,
+        language: getStoredLanguage(),
       },
     })
   }

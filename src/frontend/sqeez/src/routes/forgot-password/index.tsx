@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/Spinner'
 import type { TFunction } from 'i18next'
 import { BrandingPanel } from '@/components/layouting/BrandingPanel'
+import { getStoredLanguage } from '@/lib/languageHelpers'
 
 export const Route = createFileRoute('/forgot-password/')({
   component: ForgotPasswordPage,
@@ -71,7 +72,7 @@ function ForgotPasswordForm() {
   })
 
   const onSubmit: SubmitHandler<ForgotFormValues> = (values) => {
-    mutate({ data: { email: values.email } })
+    mutate({ data: { email: values.email, language: getStoredLanguage() } })
   }
 
   if (isSuccess) {

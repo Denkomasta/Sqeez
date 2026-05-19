@@ -21,6 +21,7 @@ import type { AspNetProblemDetails } from '@/api/custom-axios'
 
 import { getLoginSchema, type LoginFormValues } from '@/schemas/loginSchema'
 import { useMemo } from 'react'
+import { getStoredLanguage } from '@/lib/languageHelpers'
 
 const errorMapping: Record<number, TranslationKey> = {
   401: 'error.invalidCredentials',
@@ -124,7 +125,7 @@ export function LoginForm() {
     if (!email) return
 
     resendMutation.mutate({
-      data: { email },
+      data: { email, language: getStoredLanguage() },
     })
   }
 
