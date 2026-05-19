@@ -691,10 +691,12 @@
   "grading": {
     "assignPoints": "Assign Points",
     "correctAnswer": "Correct Answer",
+    "expectedAnswer": "Expected Answer",
     "invalidPoints": "Points must be between 0 and {{max}}",
     "likeAnswer": "Like this answer",
     "needsGrading": "Needs Grading",
     "noAnswer": "No answer provided",
+    "noExpectedAnswer": "No expected answer provided",
     "pts": "pts",
     "savedSuccessfully": "Grade saved successfully!",
     "selectedOptions": "Selected Options",
