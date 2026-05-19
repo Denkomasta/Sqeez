@@ -563,6 +563,7 @@
     "manageOptionMedia": "Manage Option Media",
     "markCorrect": "Mark as correct answer",
     "maxFileSizeHintTypes": "Max {{maxSize}}MB (Images, Video, Audio)",
+    "maxOptionsReached": "A quiz question can have a maximum of {{max}} options.",
     "maxRetries": "Max Retries",
     "maxRetriesHelp": "Set to 0 for unlimited retries.",
     "mediaAsset": "Question Media",

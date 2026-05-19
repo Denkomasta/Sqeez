@@ -3,6 +3,8 @@ import { toast } from 'sonner'
 import { type TFunction } from 'i18next'
 import { useQuizEditorUIStore } from '@/store/useQuizEditorUIStore'
 import { parseUtcTime } from '@/lib/dateHelpers'
+import { getErrorMessage } from '@/lib/errorHelpers'
+import { MAX_QUIZ_QUESTION_OPTIONS } from '@/constants/quizConstants'
 
 export interface QuizDateInfo {
   publishDate?: string | null
@@ -59,6 +61,19 @@ export function getQuizStatus(
   return 'active'
 }
 
+const translateQuizMutationErrorMessage = (
+  message: string,
+  t: TFunction,
+): string => {
+  if (message.includes(`maximum of ${MAX_QUIZ_QUESTION_OPTIONS} options`)) {
+    return t('editor.maxOptionsReached', {
+      max: MAX_QUIZ_QUESTION_OPTIONS,
+    })
+  }
+
+  return message
+}
+
 export function handleQuizMutationError(error: unknown, t: TFunction) {
   if (isAxiosError(error) && error.response?.status === 409) {
     useQuizEditorUIStore.getState().actions.setLocked(true)
@@ -67,6 +82,12 @@ export function handleQuizMutationError(error: unknown, t: TFunction) {
       duration: 8000,
     })
   } else {
-    toast.error(t('common.error'))
+    const message = getErrorMessage(error)
+
+    toast.error(t('common.error'), {
+      description: message
+        ? translateQuizMutationErrorMessage(message, t)
+        : undefined,
+    })
   }
 }
