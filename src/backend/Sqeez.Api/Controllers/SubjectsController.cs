@@ -11,6 +11,9 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Authorize]
     [Route("api/subjects")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class SubjectsController : ApiBaseController
     {
         private readonly ISubjectService _subjectService;

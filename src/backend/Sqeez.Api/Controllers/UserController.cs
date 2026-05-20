@@ -10,6 +10,9 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Route("api/users")]
     [ApiController]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class UserController : ApiBaseController
     {
         private readonly IUserService _userService;
@@ -24,6 +27,8 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpGet]
         [Authorize]
+        [ProducesResponseType(typeof(PagedResponse<StudentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PagedResponse<StudentDto>>> GetAllUsers([FromQuery] UserFilterDto filter)
         {
             var result = await _userService.GetAllUsersAsync(filter, CurrentUserId, GetUserRoleFromClaims());
@@ -38,6 +43,8 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpGet("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<StudentDto>> GetUserById(long id)
         {
             var result = await _userService.GetUserByIdAsync(id, CurrentUserId, GetUserRoleFromClaims());
@@ -52,6 +59,8 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpGet("{id}/details")]
         [Authorize]
+        [ProducesResponseType(typeof(DetailedUserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<DetailedUserDto>> GetDetailedUserById(long id)
         {
             var result = await _userService.GetDetailedUserByIdAsync(id, CurrentUserId, GetUserRoleFromClaims());
@@ -67,6 +76,8 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(StudentDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<StudentDto>> CreateUser([FromBody] CreateStudentDto dto)
         {
             var result = await _userService.CreateUserAsync(dto);
@@ -81,6 +92,10 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpPatch("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<StudentDto>> PatchUser(long id, [FromBody] PatchStudentDto dto)
         {
             var role = GetUserRoleFromClaims();
@@ -96,6 +111,9 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpDelete("{id}")]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> ArchiveUser(long id)
         {
             var result = await _userService.ArchiveUserAsync(id, CurrentUserId, GetUserRoleFromClaims());
@@ -110,6 +128,9 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpPatch("{id}/restore")]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> RestoreUser(long id)
         {
             var result = await _userService.RestoreUserAsync(id, CurrentUserId, GetUserRoleFromClaims());
@@ -125,6 +146,9 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [HttpDelete("{id}/hard")]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> DeleteUser(long id, [FromQuery] long? replacementMediaOwnerId = null)
         {
             var result = await _userService.DeleteUserAsync(id, CurrentUserId, GetUserRoleFromClaims(), replacementMediaOwnerId);
@@ -139,6 +163,9 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPost("me/avatar")]
+        [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(AvatarUploadResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AvatarUploadResponseDto>> UploadAvatar(IFormFile file, [FromQuery] long? targetUserId = null)
         {
             var userIdClaim = GetUserIdFromClaims();

@@ -11,6 +11,9 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Authorize]
     [Route("api/media-assets")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class MediaAssetsController : ApiBaseController
     {
         private readonly IMediaAssetService _mediaAssetService;

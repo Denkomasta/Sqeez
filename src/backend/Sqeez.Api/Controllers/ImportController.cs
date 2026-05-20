@@ -10,6 +10,9 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Authorize]
     [Route("api/import")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class ImportController : ApiBaseController
     {
         private readonly ICsvImportService _csvImportService;

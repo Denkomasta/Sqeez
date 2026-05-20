@@ -9,6 +9,9 @@ namespace Sqeez.Api.Controllers
     /// Provides enrollment search, grade updates, and enrollment removal with role-based visibility rules.
     /// </summary>
     [Route("api/enrollments")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class EnrollmentsController : ApiBaseController
     {
         private readonly IEnrollmentService _enrollmentService;
