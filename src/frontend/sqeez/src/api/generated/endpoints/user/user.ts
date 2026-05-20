@@ -29,6 +29,7 @@ import type {
   PagedResponseOfStudentDto,
   PatchStudentDto,
   PostApiUsersMeAvatarBody,
+  PostApiUsersMeAvatarParams,
   StudentDto,
 } from '../../model'
 
@@ -876,6 +877,7 @@ export const useDeleteApiUsersIdHard = <
 }
 export const postApiUsersMeAvatar = (
   postApiUsersMeAvatarBody: PostApiUsersMeAvatarBody,
+  params?: PostApiUsersMeAvatarParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -885,7 +887,13 @@ export const postApiUsersMeAvatar = (
   }
 
   return customInstance<AvatarUploadResponseDto>(
-    { url: `/api/users/me/avatar`, method: 'POST', data: formData, signal },
+    {
+      url: `/api/users/me/avatar`,
+      method: 'POST',
+      data: formData,
+      params,
+      signal,
+    },
     options,
   )
 }
@@ -897,14 +905,14 @@ export const getPostApiUsersMeAvatarMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof postApiUsersMeAvatar>>,
     TError,
-    { data: PostApiUsersMeAvatarBody },
+    { data: PostApiUsersMeAvatarBody; params?: PostApiUsersMeAvatarParams },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof postApiUsersMeAvatar>>,
   TError,
-  { data: PostApiUsersMeAvatarBody },
+  { data: PostApiUsersMeAvatarBody; params?: PostApiUsersMeAvatarParams },
   TContext
 > => {
   const mutationKey = ['postApiUsersMeAvatar']
@@ -918,11 +926,11 @@ export const getPostApiUsersMeAvatarMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof postApiUsersMeAvatar>>,
-    { data: PostApiUsersMeAvatarBody }
+    { data: PostApiUsersMeAvatarBody; params?: PostApiUsersMeAvatarParams }
   > = (props) => {
-    const { data } = props ?? {}
+    const { data, params } = props ?? {}
 
-    return postApiUsersMeAvatar(data, requestOptions)
+    return postApiUsersMeAvatar(data, params, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -942,7 +950,7 @@ export const usePostApiUsersMeAvatar = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof postApiUsersMeAvatar>>,
       TError,
-      { data: PostApiUsersMeAvatarBody },
+      { data: PostApiUsersMeAvatarBody; params?: PostApiUsersMeAvatarParams },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -951,7 +959,7 @@ export const usePostApiUsersMeAvatar = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof postApiUsersMeAvatar>>,
   TError,
-  { data: PostApiUsersMeAvatarBody },
+  { data: PostApiUsersMeAvatarBody; params?: PostApiUsersMeAvatarParams },
   TContext
 > => {
   return useMutation(

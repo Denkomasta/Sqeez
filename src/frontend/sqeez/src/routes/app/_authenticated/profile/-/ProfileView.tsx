@@ -209,7 +209,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   }
 
   const handleAvatarClick = () => {
-    if (!isOwnProfile) return
+    if (!canEditProfile) return
     setIsAvatarModalOpen(true)
   }
 
@@ -218,9 +218,11 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   }
 
   const onAvatarSave = () => {
-    queryClient.invalidateQueries({
-      queryKey: getGetApiAuthMeQueryKey(),
-    })
+    if (isOwnProfile) {
+      queryClient.invalidateQueries({
+        queryKey: getGetApiAuthMeQueryKey(),
+      })
+    }
     refetch()
   }
 
@@ -242,7 +244,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
         <Card className="self-start shadow-sm md:col-span-1">
           <CardContent className="flex flex-col items-center pt-8 pb-8">
             <div
-              className={`relative rounded-full ${isOwnProfile ? 'group cursor-pointer' : ''}`}
+              className={`relative rounded-full ${canEditProfile ? 'group cursor-pointer' : ''}`}
               onClick={handleAvatarClick}
             >
               <SimpleAvatar
@@ -254,7 +256,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                 fallbackClassName="bg-primary text-4xl font-bold text-primary-foreground"
               />
 
-              {isOwnProfile && (
+              {canEditProfile && (
                 <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                   <Camera className="h-8 w-8 text-white" />
                 </div>
@@ -471,7 +473,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
         </BaseModal>
       )}
 
-      {isOwnProfile && (
+      {canEditProfile && (
         <AvatarUploadModal
           maxFileSizeMB={
             config?.maxAvatarAndBadgeUploadSizeMB
@@ -481,6 +483,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
           isOpen={isAvatarModalOpen}
           onClose={handleCloseAvatarModal}
           onUpload={onAvatarSave}
+          targetUserId={isOwnProfile ? undefined : idToFetch}
         />
       )}
     </PageLayout>
