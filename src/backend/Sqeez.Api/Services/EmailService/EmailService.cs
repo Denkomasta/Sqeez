@@ -70,7 +70,11 @@ namespace Sqeez.Api.Services.EmailService
 
                 using var smtp = new SmtpClient();
 
-                await smtp.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, SecureSocketOptions.StartTls);
+                var socketOptions = _smtpSettings.UseStartTls
+                    ? SecureSocketOptions.StartTls
+                    : SecureSocketOptions.None;
+
+                await smtp.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, socketOptions);
 
                 if (!string.IsNullOrEmpty(_smtpSettings.Username))
                 {

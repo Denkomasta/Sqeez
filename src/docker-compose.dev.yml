@@ -1,0 +1,29 @@
+name: sqeez-dev
+
+services:
+  sqeez-postgres:
+    image: postgres:18
+    container_name: sqeez_dev_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: TodoSecurePassword
+      POSTGRES_DB: SqeezDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - sqeez-dev-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: sqeez_dev_mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  sqeez-dev-pgdata:

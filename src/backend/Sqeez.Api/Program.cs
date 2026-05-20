@@ -20,7 +20,11 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DotNetEnv.Env.Load();
+var envFiles = new[] { ".env", ".env.local" }.Where(File.Exists).ToArray();
+if (envFiles.Length > 0)
+{
+    DotNetEnv.Env.LoadMulti(envFiles);
+}
 
 builder.Configuration.AddEnvironmentVariables();
 
@@ -29,12 +33,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 if (string.IsNullOrEmpty(tokenKey))
 {
-    throw new Exception("JWT TokenKey is missing! Check your .env file.");
+    throw new Exception("JWT TokenKey is missing! Check your .env or .env.local file.");
 }
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new Exception("Database Connection String is missing from .env!");
+    throw new Exception("Database Connection String is missing from .env or .env.local!");
 }
 
 // Add services to the container.
