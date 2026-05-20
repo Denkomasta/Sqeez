@@ -22,28 +22,22 @@ dotnet tool install --global dotnet-ef
 
 The recommended local setup is:
 
-- PostgreSQL in Docker or local PostgreSQL.
-- Backend from source using the HTTPS launch profile.
+- PostgreSQL and Mailpit in Docker.
+- Backend from source using the HTTP launch profile.
 - Frontend from source using Vite.
 
-### 1. Start PostgreSQL
+### 1. Start Local Services
 
-Example with Docker:
-
-```powershell
-docker run --name sqeez-postgres `
-  -e POSTGRES_USER=postgres `
-  -e POSTGRES_PASSWORD=TodoSecurePassword `
-  -e POSTGRES_DB=SqeezDb `
-  -p 5432:5432 `
-  -d postgres:18
-```
-
-If the container already exists, start it:
+Start PostgreSQL and Mailpit using docker-compose:
 
 ```powershell
-docker start sqeez-postgres
+docker compose -f src/docker-compose.dev.yml up -d
 ```
+
+This starts:
+- **PostgreSQL** on `localhost:5432`
+- **Mailpit SMTP** on `localhost:1025`
+- **Mailpit Web UI** on `http://localhost:8025`
 
 ### 2. Configure Backend Environment
 
@@ -60,11 +54,23 @@ SUPER_USER_EMAIL=test@example.com
 SUPER_USER_DEFAULT_PASSWORD=YourSuperSecretPassword123!
 SUPER_USER_FIRST_NAME=System
 SUPER_USER_LAST_NAME=Administrator
+
+SmtpSettings__Server=localhost
+SmtpSettings__Port=1025
+SmtpSettings__SenderName=Sqeez App
+SmtpSettings__SenderEmail=noreply@sqeez.org
+SmtpSettings__Username=
+SmtpSettings__Password=
+SmtpSettings__UseStartTls=false
 ```
 
-Email verification and password reset use SMTP settings from the same file. For development, use a sandbox SMTP service or set system config so email verification is not required.
+### 3. Local Registration & Email Verification
+When you register a user locally, the backend sends a verification email. 
+1. Open the Mailpit Web UI at **`http://localhost:8025`**.
+2. Find the verification email in your inbox.
+3. Click the verification link/button inside the email to verify and activate the account.
 
-### 3. Apply Database Migrations
+### 4. Apply Database Migrations
 
 ```powershell
 cd src/backend/Sqeez.Api
@@ -72,7 +78,7 @@ dotnet restore
 dotnet ef database update
 ```
 
-### 4. Required Bootstrap Seed
+### 5. Required Bootstrap Seed
 
 The backend includes a seed mode for required bootstrap data. It is idempotent and can be run after every deployment. It ensures:
 
@@ -92,7 +98,7 @@ dotnet run -- seed-demo
 
 Demo seed data includes an admin, teachers, students, classes, subjects, enrollments, sample quizzes, sample media, and badges.
 
-### 5. Run Backend
+### 6. Run Backend
 
 Use the HTTP launch profile:
 
@@ -110,7 +116,7 @@ Development API docs:
 - OpenAPI: `http://localhost:5000/openapi/v1.json`
 - Scalar: `http://localhost:5000/scalar/v1`
 
-### 6. Configure Frontend Environment
+### 7. Configure Frontend Environment
 
 Create `src/frontend/sqeez/.env` from `src/frontend/sqeez/.env.example`.
 
@@ -121,7 +127,7 @@ VITE_API_BASE_URL=http://localhost:5000
 VITE_PORT=3000
 ```
 
-### 7. Run Frontend
+### 8. Run Frontend
 
 ```powershell
 cd src/frontend/sqeez
