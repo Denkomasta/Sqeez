@@ -1112,6 +1112,68 @@ namespace Sqeez.Api.Tests.Services
         }
 
         [Fact]
+        public async Task UploadAvatarAsync_WhenAdminTargetsStudent_UpdatesStudentAvatar()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            var student = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
+            context.Students.AddRange(admin, student);
+            await context.SaveChangesAsync();
+
+            var mockFileService = new Mock<IFileStorageService>();
+            mockFileService.Setup(s => s.UploadFileAsync(It.IsAny<IFormFile>(), "avatars", true))
+                .ReturnsAsync(ServiceResult<string>.Ok("/avatars/student.png"));
+
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
+
+            var result = await service.UploadAvatarAsync(admin.Id, CreateMockFile("student.png").Object, student.Id, "Admin");
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal("/avatars/student.png", (await context.Students.FindAsync(student.Id))!.AvatarUrl);
+            Assert.Null((await context.Students.FindAsync(admin.Id))!.AvatarUrl);
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WhenStudentTargetsAnotherUser_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentStudent = new Student { Username = "CurrentStudent", Email = "current@sqeez.org", Role = UserRole.Student };
+            var otherStudent = new Student { Username = "OtherStudent", Email = "other@sqeez.org", Role = UserRole.Student };
+            context.Students.AddRange(currentStudent, otherStudent);
+            await context.SaveChangesAsync();
+
+            var mockFileService = new Mock<IFileStorageService>();
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
+
+            var result = await service.UploadAvatarAsync(currentStudent.Id, CreateMockFile("avatar.png").Object, otherStudent.Id, "Student");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.Null((await context.Students.FindAsync(otherStudent.Id))!.AvatarUrl);
+            mockFileService.Verify(s => s.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UploadAvatarAsync_WhenNormalAdminTargetsAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentAdmin = new Admin { Username = "CurrentAdmin", Email = "current-admin@sqeez.org", Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin };
+            context.Admins.AddRange(currentAdmin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var mockFileService = new Mock<IFileStorageService>();
+            var service = new UserService(context, new Mock<ILogger<UserService>>().Object, mockFileService.Object, CreateConfiguration());
+
+            var result = await service.UploadAvatarAsync(currentAdmin.Id, CreateMockFile("avatar.png").Object, targetAdmin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+            Assert.Null((await context.Students.FindAsync(targetAdmin.Id))!.AvatarUrl);
+            mockFileService.Verify(s => s.UploadFileAsync(It.IsAny<IFormFile>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+        }
+
+        [Fact]
         public async Task CreateStudentsBulkAsync_WhenStudentsProvided_SkipsExistingAndCreatesNew()
         {
             var context = await GetInMemoryDbContext();

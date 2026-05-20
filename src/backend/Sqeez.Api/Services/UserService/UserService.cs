@@ -918,7 +918,7 @@ namespace Sqeez.Api.Services.UserService
             return true;
         }
 
-        public async Task<ServiceResult<string>> UploadAvatarAsync(long userId, IFormFile imageFile)
+        public async Task<ServiceResult<string>> UploadAvatarAsync(long currentUserId, IFormFile imageFile, long? targetUserId = null, string? currentUserRole = null)
         {
             var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
             var allowedImageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
@@ -927,15 +927,22 @@ namespace Sqeez.Api.Services.UserService
                 return ServiceResult<string>.Failure("Avatars must be an image file (.jpg, .png, .gif).", ServiceError.ValidationFailed);
             }
 
+            var userId = targetUserId ?? currentUserId;
             var user = await _context.Students.FindAsync(userId);
             if (user == null)
             {
                 return ServiceResult<string>.Failure("User not found.", ServiceError.NotFound);
             }
 
+            var accessResult = await ValidatePatchUserAccessAsync(user, new PatchStudentDto(), currentUserId, currentUserRole);
+            if (accessResult != null)
+            {
+                return ServiceResult<string>.Failure(accessResult.ErrorMessage ?? "Forbidden", accessResult.ErrorCode);
+            }
+
             if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
             {
-                _logger.LogInformation("Deleting old avatar for user {UserId}.", userId);
+                _logger.LogInformation("Deleting old avatar for user {UserId}.", user.Id);
                 await _fileStorageService.DeleteFileAsync(user.AvatarUrl);
             }
 
