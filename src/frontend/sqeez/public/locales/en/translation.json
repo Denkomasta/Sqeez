@@ -864,6 +864,7 @@
       "minutes_other": "Last seen {{count}} minutes ago"
     },
     "noBadges": "No badges earned yet.",
+    "notSet": "Not set yet",
     "offline": "Offline",
     "online": "Online",
     "recentBadges": "Recent Badges",
