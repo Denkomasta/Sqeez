@@ -22,7 +22,7 @@ namespace Sqeez.Api.Tests.Integration
             _factory.UserServiceMock
                 .Setup(service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter =>
                     filter.SearchTerm == "anna" &&
-                    filter.PageSize == 5)))
+                    filter.PageSize == 5), 1, "Admin"))
                 .ReturnsAsync(ServiceResult<PagedResponse<StudentDto>>.Ok(
                     new PagedResponse<StudentDto>
                     {
@@ -50,7 +50,7 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>()),
+                service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>(), 1, "Admin"),
                 Times.Once);
         }
 
@@ -137,7 +137,7 @@ namespace Sqeez.Api.Tests.Integration
         {
             _factory.UserServiceMock
                 .Setup(service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter =>
-                    filter.SearchTerm == "student")))
+                    filter.SearchTerm == "student"), 7, "Student"))
                 .ReturnsAsync(ServiceResult<PagedResponse<StudentDto>>.Ok(
                     new PagedResponse<StudentDto>
                     {
@@ -165,7 +165,7 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>()),
+                service => service.GetAllUsersAsync(It.IsAny<UserFilterDto>(), 7, "Student"),
                 Times.Once);
         }
 
@@ -174,7 +174,7 @@ namespace Sqeez.Api.Tests.Integration
         {
             _factory.UserServiceMock
                 .Setup(service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter =>
-                    filter.IsEmailVerified == false)))
+                    filter.IsEmailVerified == false), 1, "Admin"))
                 .ReturnsAsync(ServiceResult<PagedResponse<StudentDto>>.Ok(
                     new PagedResponse<StudentDto>
                     {
@@ -192,7 +192,7 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter => filter.IsEmailVerified == false)),
+                service => service.GetAllUsersAsync(It.Is<UserFilterDto>(filter => filter.IsEmailVerified == false), 1, "Admin"),
                 Times.Once);
         }
 
@@ -200,7 +200,7 @@ namespace Sqeez.Api.Tests.Integration
         public async Task GetUserById_AsDifferentAuthenticatedStudent_CallsUserService()
         {
             _factory.UserServiceMock
-                .Setup(service => service.GetUserByIdAsync(8))
+                .Setup(service => service.GetUserByIdAsync(8, 7, "Student"))
                 .ReturnsAsync(ServiceResult<StudentDto>.Ok(
                     new StudentDto
                     {
@@ -219,7 +219,7 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.GetUserByIdAsync(8),
+                service => service.GetUserByIdAsync(8, 7, "Student"),
                 Times.Once);
         }
 
@@ -227,7 +227,7 @@ namespace Sqeez.Api.Tests.Integration
         public async Task GetDetailedUserById_AsDifferentAuthenticatedStudent_CallsUserService()
         {
             _factory.UserServiceMock
-                .Setup(service => service.GetDetailedUserByIdAsync(8))
+                .Setup(service => service.GetDetailedUserByIdAsync(8, 7, "Student"))
                 .ReturnsAsync(ServiceResult<DetailedUserDto>.Ok(
                     new DetailedUserDto
                     {
@@ -246,7 +246,7 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.GetDetailedUserByIdAsync(8),
+                service => service.GetDetailedUserByIdAsync(8, 7, "Student"),
                 Times.Once);
         }
 

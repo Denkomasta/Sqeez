@@ -28,9 +28,13 @@ namespace Sqeez.Api.Services.UserService
             _superUserEmail = configuration["SUPER_USER_EMAIL"]?.Trim().ToLower() ?? string.Empty;
         }
 
-        private static StudentDto MapUserToDto(Student user)
+        private static StudentDto MapUserToDto(Student user, IReadOnlySet<long>? visibleEmailUserIds = null)
         {
             if (user == null) return null!;
+
+            var email = visibleEmailUserIds == null || visibleEmailUserIds.Contains(user.Id)
+                ? user.Email
+                : PseudonymizeEmail(user.Email);
 
             return user switch
             {
@@ -40,7 +44,7 @@ namespace Sqeez.Api.Services.UserService
                     FirstName = a.FirstName,
                     LastName = a.LastName,
                     Username = a.Username,
-                    Email = a.Email,
+                    Email = email,
                     CurrentXP = a.CurrentXP,
                     Role = a.Role,
                     LastSeen = a.LastSeen,
@@ -56,7 +60,7 @@ namespace Sqeez.Api.Services.UserService
                     FirstName = t.FirstName,
                     LastName = t.LastName,
                     Username = t.Username,
-                    Email = t.Email,
+                    Email = email,
                     CurrentXP = t.CurrentXP,
                     Role = t.Role,
                     LastSeen = t.LastSeen,
@@ -71,7 +75,7 @@ namespace Sqeez.Api.Services.UserService
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Username = user.Username,
-                    Email = user.Email,
+                    Email = email,
                     CurrentXP = user.CurrentXP,
                     Role = user.Role,
                     LastSeen = user.LastSeen,
@@ -81,7 +85,7 @@ namespace Sqeez.Api.Services.UserService
             };
         }
 
-        public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter)
+        public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter, long currentUserId, string? currentUserRole)
         {
             IQueryable<Student> query = _context.Students.AsNoTracking();
 
@@ -110,8 +114,10 @@ namespace Sqeez.Api.Services.UserService
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var searchTerm = filter.SearchTerm.Trim().ToLower();
-                query = query.Where(u => u.Username.ToLower().Contains(searchTerm) ||
-                                         u.Email.ToLower().Contains(searchTerm));
+                query = currentUserRole == "Admin"
+                    ? query.Where(u => u.Username.ToLower().Contains(searchTerm) ||
+                                       u.Email.ToLower().Contains(searchTerm))
+                    : query.Where(u => u.Username.ToLower().Contains(searchTerm));
             }
 
             if (filter.IsOnline is bool isOnline)
@@ -188,7 +194,8 @@ namespace Sqeez.Api.Services.UserService
                 .Take(filter.PageSize)
                 .ToListAsync();
 
-            var mappedUsers = users.Select(MapUserToDto).ToList();
+            var visibleEmailUserIds = await GetVisibleEmailUserIdsAsync(users, currentUserId, currentUserRole);
+            var mappedUsers = users.Select(user => MapUserToDto(user, visibleEmailUserIds)).ToList();
 
             var response = new PagedResponse<StudentDto>
             {
@@ -201,16 +208,17 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<PagedResponse<StudentDto>>.Ok(response);
         }
 
-        public async Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id)
+        public async Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id, long currentUserId, string? currentUserRole)
         {
             var user = await _context.Students.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null) return ServiceResult<StudentDto>.Failure("User not found.", ServiceError.NotFound);
 
-            return ServiceResult<StudentDto>.Ok(MapUserToDto(user));
+            var visibleEmailUserIds = await GetVisibleEmailUserIdsAsync(new[] { user }, currentUserId, currentUserRole);
+            return ServiceResult<StudentDto>.Ok(MapUserToDto(user, visibleEmailUserIds));
         }
 
-        public async Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id)
+        public async Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id, long currentUserId, string? currentUserRole)
         {
             var user = await _context.Students
                 .AsNoTracking()
@@ -224,7 +232,8 @@ namespace Sqeez.Api.Services.UserService
             if (user == null)
                 return ServiceResult<DetailedUserDto>.Failure("User not found.", ServiceError.NotFound);
 
-            var baseDto = MapUserToDto(user);
+            var visibleEmailUserIds = await GetVisibleEmailUserIdsAsync(new[] { user }, currentUserId, currentUserRole);
+            var baseDto = MapUserToDto(user, visibleEmailUserIds);
 
             var detailedDto = new DetailedUserDto
             {
@@ -274,6 +283,143 @@ namespace Sqeez.Api.Services.UserService
             };
 
             return ServiceResult<DetailedUserDto>.Ok(detailedDto);
+        }
+
+        private async Task<HashSet<long>> GetVisibleEmailUserIdsAsync(IReadOnlyCollection<Student> targetUsers, long currentUserId, string? currentUserRole)
+        {
+            var visibleIds = new HashSet<long>();
+            if (!targetUsers.Any())
+            {
+                return visibleIds;
+            }
+
+            if (currentUserRole == "Admin")
+            {
+                return targetUsers.Select(user => user.Id).ToHashSet();
+            }
+
+            foreach (var admin in targetUsers.Where(user => user.Role == UserRole.Admin))
+            {
+                visibleIds.Add(admin.Id);
+            }
+
+            if (currentUserId <= 0)
+            {
+                return visibleIds;
+            }
+
+            visibleIds.Add(currentUserId);
+
+            var currentUser = await _context.Students
+                .AsNoTracking()
+                .Where(user => user.Id == currentUserId)
+                .Select(user => new { user.Id, user.Role, user.SchoolClassId })
+                .FirstOrDefaultAsync();
+
+            if (currentUser == null)
+            {
+                return visibleIds;
+            }
+
+            var targetTeacherIds = targetUsers
+                .Where(user => user.Role == UserRole.Teacher)
+                .Select(user => user.Id)
+                .ToHashSet();
+
+            if (targetTeacherIds.Any())
+            {
+                if (currentUser.SchoolClassId.HasValue)
+                {
+                    foreach (var teacher in targetUsers.OfType<Teacher>().Where(teacher => teacher.ManagedClassId == currentUser.SchoolClassId))
+                    {
+                        visibleIds.Add(teacher.Id);
+                    }
+                }
+
+                var subjectTeacherIds = await _context.Enrollments
+                    .AsNoTracking()
+                    .Where(enrollment =>
+                        enrollment.StudentId == currentUserId &&
+                        enrollment.Subject.TeacherId.HasValue &&
+                        targetTeacherIds.Contains(enrollment.Subject.TeacherId.Value))
+                    .Select(enrollment => enrollment.Subject.TeacherId!.Value)
+                    .Distinct()
+                    .ToListAsync();
+
+                foreach (var teacherId in subjectTeacherIds)
+                {
+                    visibleIds.Add(teacherId);
+                }
+            }
+
+            if (currentUserRole == "Teacher")
+            {
+                var targetNonAdminIds = targetUsers
+                    .Where(user => user.Role != UserRole.Admin)
+                    .Select(user => user.Id)
+                    .ToHashSet();
+
+                var managedClassId = await _context.Teachers
+                    .AsNoTracking()
+                    .Where(teacher => teacher.Id == currentUserId)
+                    .Select(teacher => teacher.ManagedClassId)
+                    .FirstOrDefaultAsync();
+
+                if (managedClassId.HasValue)
+                {
+                    foreach (var student in targetUsers.Where(user => user.Role != UserRole.Admin && user.SchoolClassId == managedClassId))
+                    {
+                        visibleIds.Add(student.Id);
+                    }
+                }
+
+                var enrolledStudentIds = await _context.Enrollments
+                    .AsNoTracking()
+                    .Where(enrollment =>
+                        targetNonAdminIds.Contains(enrollment.StudentId) &&
+                        enrollment.Subject.TeacherId == currentUserId)
+                    .Select(enrollment => enrollment.StudentId)
+                    .Distinct()
+                    .ToListAsync();
+
+                foreach (var studentId in enrolledStudentIds)
+                {
+                    visibleIds.Add(studentId);
+                }
+            }
+
+            return visibleIds;
+        }
+
+        private static string PseudonymizeEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return "***@***";
+            }
+
+            var parts = email.Split('@', 2);
+            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]) || string.IsNullOrWhiteSpace(parts[1]))
+            {
+                return "***@***";
+            }
+
+            var local = parts[0].Trim();
+            var domain = parts[1].Trim();
+            var domainParts = domain.Split('.', StringSplitOptions.RemoveEmptyEntries);
+
+            var maskedLocal = $"{local[0]}***";
+            if (domainParts.Length == 0)
+            {
+                return $"{maskedLocal}@***";
+            }
+
+            var maskedDomain = $"{domainParts[0][0]}***";
+            var suffix = domainParts.Length > 1
+                ? $".{domainParts[^1]}"
+                : string.Empty;
+
+            return $"{maskedLocal}@{maskedDomain}{suffix}";
         }
 
         public async Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto)
@@ -381,7 +527,7 @@ namespace Sqeez.Api.Services.UserService
                 await _context.Students.AddRangeAsync(validStudentsToInsert);
                 await _context.SaveChangesAsync();
 
-                bulkResult.Created = validStudentsToInsert.Select(MapUserToDto).ToList();
+                bulkResult.Created = validStudentsToInsert.Select(user => MapUserToDto(user)).ToList();
             }
 
             return ServiceResult<BulkOperationResult<StudentDto>>.Ok(bulkResult);

@@ -26,7 +26,7 @@ namespace Sqeez.Api.Controllers
         [Authorize]
         public async Task<ActionResult<PagedResponse<StudentDto>>> GetAllUsers([FromQuery] UserFilterDto filter)
         {
-            var result = await _userService.GetAllUsersAsync(filter);
+            var result = await _userService.GetAllUsersAsync(filter, CurrentUserId, GetUserRoleFromClaims());
 
             if (!result.Success) return BadRequest(result.ErrorMessage);
 
@@ -40,7 +40,7 @@ namespace Sqeez.Api.Controllers
         [Authorize]
         public async Task<ActionResult<StudentDto>> GetUserById(long id)
         {
-            var result = await _userService.GetUserByIdAsync(id);
+            var result = await _userService.GetUserByIdAsync(id, CurrentUserId, GetUserRoleFromClaims());
 
             if (!result.Success) return NotFound(result.ErrorMessage);
 
@@ -54,7 +54,7 @@ namespace Sqeez.Api.Controllers
         [Authorize]
         public async Task<ActionResult<DetailedUserDto>> GetDetailedUserById(long id)
         {
-            var result = await _userService.GetDetailedUserByIdAsync(id);
+            var result = await _userService.GetDetailedUserByIdAsync(id, CurrentUserId, GetUserRoleFromClaims());
 
             if (!result.Success)
                 return NotFound(result.ErrorMessage);
