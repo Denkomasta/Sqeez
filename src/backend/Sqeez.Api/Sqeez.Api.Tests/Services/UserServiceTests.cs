@@ -183,14 +183,14 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchUserAsync_WhenAdminExists_UpdatesBaseAndDerivedProperties()
         {
             var context = await GetInMemoryDbContext();
-            var admin = new Admin { Username = "OldName", Email = "old@sqeez.org", Role = UserRole.Admin, Department = "OldDept" };
+            var admin = new Admin { Username = "OldName", Email = SuperUserEmail, Role = UserRole.Admin, Department = "OldDept" };
             context.Students.Add(admin);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
             var patchDto = new PatchAdminDto { Username = "UpdatedName", Department = "HR", PhoneNumber = "999-999-9999" };
 
-            var result = await service.PatchUserAsync(admin.Id, patchDto);
+            var result = await service.PatchUserAsync(admin.Id, patchDto, admin.Id, "Admin");
 
             Assert.Null(result.ErrorMessage);
             var updatedAdmin = Assert.IsType<AdminDto>(result.Data);
@@ -595,6 +595,95 @@ namespace Sqeez.Api.Tests.Services
 
             Assert.Single(result.Data!.Data);
             Assert.Equal("JaneSmith", result.Data.Data.First().Username);
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenNormalAdminPatchesOtherAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentAdmin = new Admin { Username = "CurrentAdmin", Email = "current-admin@sqeez.org", Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin };
+            context.Admins.AddRange(currentAdmin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchAdminDto { PhoneNumber = "001234567890" };
+
+            var result = await service.PatchUserAsync(targetAdmin.Id, patchDto, currentAdmin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenNormalAdminPatchesSuperAdmin_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentAdmin = new Admin { Username = "CurrentAdmin", Email = "current-admin@sqeez.org", Role = UserRole.Admin };
+            var superAdmin = new Admin { Username = "SuperAdmin", Email = SuperUserEmail, Role = UserRole.Admin };
+            context.Admins.AddRange(currentAdmin, superAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchStudentDto { Username = "ChangedSuperAdmin" };
+
+            var result = await service.PatchUserAsync(superAdmin.Id, patchDto, currentAdmin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenSuperAdminPatchesOtherAdmin_Succeeds()
+        {
+            var context = await GetInMemoryDbContext();
+            var superAdmin = new Admin { Username = "SuperAdmin", Email = SuperUserEmail, Role = UserRole.Admin };
+            var targetAdmin = new Admin { Username = "TargetAdmin", Email = "target-admin@sqeez.org", Role = UserRole.Admin };
+            context.Admins.AddRange(superAdmin, targetAdmin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchAdminDto { PhoneNumber = "001234567890" };
+
+            var result = await service.PatchUserAsync(targetAdmin.Id, patchDto, superAdmin.Id, "Admin");
+
+            Assert.True(result.Success, result.ErrorMessage);
+            var adminDto = Assert.IsType<AdminDto>(result.Data);
+            Assert.Equal("001234567890", adminDto.PhoneNumber);
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenNormalAdminPatchesOwnRoleSpecificData_ReturnsForbidden()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            context.Admins.Add(admin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchAdminDto { PhoneNumber = "001234567890" };
+
+            var result = await service.PatchUserAsync(admin.Id, patchDto, admin.Id, "Admin");
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceError.Forbidden, result.ErrorCode);
+        }
+
+        [Fact]
+        public async Task PatchUserAsync_WhenNormalAdminPatchesOwnBasicData_Succeeds()
+        {
+            var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            context.Admins.Add(admin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var patchDto = new PatchStudentDto { Username = "UpdatedAdmin" };
+
+            var result = await service.PatchUserAsync(admin.Id, patchDto, admin.Id, "Admin");
+
+            Assert.True(result.Success, result.ErrorMessage);
+            Assert.Equal("UpdatedAdmin", result.Data!.Username);
         }
 
         [Fact]
@@ -1076,15 +1165,17 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchUserAsync_WhenTeacherManagedClassIdIsZero_RemovesManagedClass()
         {
             var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
             var schoolClass = new SchoolClass { Name = "Managed" };
             var teacher = new Teacher { Username = "Teacher", Role = UserRole.Teacher, ManagedClass = schoolClass };
+            context.Admins.Add(admin);
             context.Teachers.Add(teacher);
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
             var patchDto = new PatchTeacherDto { ManagedClassId = 0 };
 
-            var result = await service.PatchUserAsync(teacher.Id, patchDto);
+            var result = await service.PatchUserAsync(teacher.Id, patchDto, admin.Id, "Admin");
 
             Assert.True(result.Success);
             var teacherDto = Assert.IsType<TeacherDto>(result.Data);
@@ -1098,6 +1189,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchUserAsync_WhenTeacherAlreadyStudentOfManagedClass_ReturnsValidationFailed()
         {
             var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
             var schoolClass = new SchoolClass { Name = "Student class" };
             var teacher = new Teacher
             {
@@ -1106,6 +1198,7 @@ namespace Sqeez.Api.Tests.Services
                 SchoolClass = schoolClass
             };
 
+            context.Admins.Add(admin);
             context.SchoolClasses.Add(schoolClass);
             context.Teachers.Add(teacher);
             await context.SaveChangesAsync();
@@ -1113,7 +1206,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var patchDto = new PatchTeacherDto { ManagedClassId = schoolClass.Id };
 
-            var result = await service.PatchUserAsync(teacher.Id, patchDto);
+            var result = await service.PatchUserAsync(teacher.Id, patchDto, admin.Id, "Admin");
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);
@@ -1127,6 +1220,7 @@ namespace Sqeez.Api.Tests.Services
         public async Task PatchUserAsync_WhenAssigningTeacherAsStudentToManagedClass_ReturnsValidationFailed()
         {
             var context = await GetInMemoryDbContext();
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
             var schoolClass = new SchoolClass { Name = "Managed class" };
             var teacher = new Teacher
             {
@@ -1135,6 +1229,7 @@ namespace Sqeez.Api.Tests.Services
                 ManagedClass = schoolClass
             };
 
+            context.Admins.Add(admin);
             context.SchoolClasses.Add(schoolClass);
             context.Teachers.Add(teacher);
             await context.SaveChangesAsync();
@@ -1142,7 +1237,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var patchDto = new PatchTeacherDto { SchoolClassId = schoolClass.Id };
 
-            var result = await service.PatchUserAsync(teacher.Id, patchDto);
+            var result = await service.PatchUserAsync(teacher.Id, patchDto, admin.Id, "Admin");
 
             Assert.False(result.Success);
             Assert.Equal(ServiceError.ValidationFailed, result.ErrorCode);

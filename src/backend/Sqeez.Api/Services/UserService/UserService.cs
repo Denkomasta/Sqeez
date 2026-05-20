@@ -766,11 +766,15 @@ namespace Sqeez.Api.Services.UserService
                    user.Email.Equals(_superUserEmail, StringComparison.OrdinalIgnoreCase);
         }
 
-        public async Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto)
+        public async Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto, long currentUserId, string? currentUserRole)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
                 return ServiceResult<StudentDto>.Failure("User not found.", ServiceError.NotFound);
+
+            var accessResult = await ValidatePatchUserAccessAsync(user, dto, currentUserId, currentUserRole);
+            if (accessResult != null)
+                return accessResult;
 
             if (!string.IsNullOrWhiteSpace(dto.Username) && dto.Username != user.Username)
             {
@@ -830,6 +834,88 @@ namespace Sqeez.Api.Services.UserService
             await _context.SaveChangesAsync();
 
             return ServiceResult<StudentDto>.Ok(MapUserToDto(user));
+        }
+
+        private async Task<ServiceResult<StudentDto>?> ValidatePatchUserAccessAsync(
+            Student targetUser,
+            PatchStudentDto dto,
+            long currentUserId,
+            string? currentUserRole)
+        {
+            var isSelf = targetUser.Id == currentUserId;
+            if (currentUserRole != "Admin")
+            {
+                if (!isSelf)
+                {
+                    return ServiceResult<StudentDto>.Failure(
+                        "You do not have permission to modify another user's profile.",
+                        ServiceError.Forbidden);
+                }
+
+                return HasOnlyBasicPatchFields(dto)
+                    ? null
+                    : ServiceResult<StudentDto>.Failure(
+                        "You do not have permission to change assignments or role-specific profile data.",
+                        ServiceError.Forbidden);
+            }
+
+            var currentUser = await _context.Students
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == currentUserId);
+
+            if (currentUser == null || currentUser.Role != UserRole.Admin)
+            {
+                return ServiceResult<StudentDto>.Failure("Current user not found.", ServiceError.Unauthorized);
+            }
+
+            var currentUserIsSuperAdmin = IsSuperAdmin(currentUser);
+            var targetUserIsSuperAdmin = IsSuperAdmin(targetUser);
+
+            if (targetUserIsSuperAdmin)
+            {
+                return currentUserIsSuperAdmin && isSelf
+                    ? null
+                    : ServiceResult<StudentDto>.Failure(
+                        "Only the superadmin can modify their own profile.",
+                        ServiceError.Forbidden);
+            }
+
+            if (targetUser.Role == UserRole.Admin)
+            {
+                if (currentUserIsSuperAdmin)
+                {
+                    return null;
+                }
+
+                return isSelf && HasOnlyBasicPatchFields(dto)
+                    ? null
+                    : ServiceResult<StudentDto>.Failure(
+                        "Only the superadmin can modify admin profile data.",
+                        ServiceError.Forbidden);
+            }
+
+            return null;
+        }
+
+        private static bool HasOnlyBasicPatchFields(PatchStudentDto dto)
+        {
+            if (dto.SchoolClassId.HasValue)
+            {
+                return false;
+            }
+
+            if (dto is PatchTeacherDto teacherDto &&
+                (teacherDto.Department != null || teacherDto.ManagedClassId.HasValue))
+            {
+                return false;
+            }
+
+            if (dto is PatchAdminDto adminDto && adminDto.PhoneNumber != null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<ServiceResult<string>> UploadAvatarAsync(long userId, IFormFile imageFile)

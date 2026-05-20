@@ -58,11 +58,13 @@ namespace Sqeez.Api.Services.Interfaces
         /// </summary>
         /// <param name="id">The user id.</param>
         /// <param name="dto">Patch values. Class ids of 0 remove the relevant class assignment.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
         /// <returns>
         /// The updated polymorphic user DTO. Returns not found when the user or provided class reference does not exist,
         /// validation failed when class/teacher ownership assignments conflict, or conflict for duplicate identity fields.
         /// </returns>
-        Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto);
+        Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto, long currentUserId, string? currentUserRole);
 
         /// <summary>
         /// Archives a user by setting the archive timestamp according to self, admin, and superadmin rules.
