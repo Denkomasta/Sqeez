@@ -9,6 +9,9 @@ namespace Sqeez.Api.Controllers
     /// Manages school classes, class detail views, and student assignments.
     /// </summary>
     [Route("api/classes")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class SchoolClassesController : ApiBaseController
     {
         private readonly ISchoolClassService _schoolClassService;

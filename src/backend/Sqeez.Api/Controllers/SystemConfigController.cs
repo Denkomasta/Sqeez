@@ -9,6 +9,7 @@ namespace Sqeez.Api.Controllers
     /// Exposes runtime system configuration used by the application and administrators.
     /// </summary>
     [Route("api/system-config")]
+    [Produces("application/json")]
     public class SystemConfigController : ApiBaseController
     {
         private readonly ISystemConfigService _configService;

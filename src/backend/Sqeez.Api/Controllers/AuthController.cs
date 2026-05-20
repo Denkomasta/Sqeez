@@ -10,6 +10,7 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Route("api/auth")]
     [ApiController]
+    [Produces("application/json")]
     public class AuthController : ApiBaseController
     {
         private readonly IAuthService _authService;
@@ -77,6 +78,9 @@ namespace Sqeez.Api.Controllers
         /// Registers a new public account and sends an email verification link.
         /// </summary>
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> Register(RegisterDTO registerDto)
         {
             var result = await _authService.RegisterAsync(registerDto);
@@ -90,6 +94,9 @@ namespace Sqeez.Api.Controllers
         /// Verifies a pending email token, activates the account, and starts an authenticated session.
         /// </summary>
         [HttpPost("verify-email")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> VerifyEmail([FromQuery] string token, [FromQuery] bool rememberMe = false)
         {
             if (string.IsNullOrEmpty(token))
@@ -108,6 +115,8 @@ namespace Sqeez.Api.Controllers
         /// Resends a verification link without revealing whether the email belongs to an account.
         /// </summary>
         [HttpPost("resend-verification")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> ResendVerificationEmail([FromBody] ResendVerificationDto dto)
         {
             var result = await _authService.ResendVerificationEmailAsync(dto);
@@ -122,6 +131,8 @@ namespace Sqeez.Api.Controllers
         /// Starts the password-reset flow without revealing whether the email belongs to an account.
         /// </summary>
         [HttpPost("forgot-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
             var result = await _authService.ForgotPasswordAsync(dto.Email, dto.Language);
@@ -136,6 +147,8 @@ namespace Sqeez.Api.Controllers
         /// Completes the password-reset flow using a valid reset token.
         /// </summary>
         [HttpPost("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
             var result = await _authService.ResetPasswordAsync(dto);
@@ -150,6 +163,10 @@ namespace Sqeez.Api.Controllers
         /// Authenticates a verified account and stores access and refresh tokens in HTTP-only cookies.
         /// </summary>
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult> Login(LoginDTO loginDto)
         {
             var result = await _authService.LoginAsync(loginDto);
@@ -165,6 +182,8 @@ namespace Sqeez.Api.Controllers
         /// Rotates the refresh-token session and issues a fresh cookie pair.
         /// </summary>
         [HttpPost("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Refresh()
         {
             var refreshToken = Request.Cookies["sqeez_refresh_token"];
@@ -192,6 +211,8 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Logout()
         {
             var userIdClaim = GetUserIdFromClaims();
@@ -218,6 +239,9 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpGet("me")]
+        [ProducesResponseType(typeof(UserDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
             var userIdClaim = GetUserIdFromClaims();
@@ -238,6 +262,10 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         [Authorize(Roles = "Admin")]
         [HttpPatch("elevate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult> ElevateUser(UpdateRoleDTO dto)
         {
             var adminIdClaim = GetUserIdFromClaims();

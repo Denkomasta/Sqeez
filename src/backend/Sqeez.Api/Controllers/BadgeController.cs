@@ -12,6 +12,9 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Authorize]
     [Route("api/badges")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class BadgesController : ApiBaseController
     {
         private static readonly JsonSerializerOptions BadgeRuleJsonOptions = CreateBadgeRuleJsonOptions();
