@@ -21,11 +21,13 @@ namespace Sqeez.Api.Controllers
 
         private void SetTokens(AuthResponseDto tokens, bool rememberMe)
         {
+            bool isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
             // Access Token Cookie (Always short-lived)
             var accessOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !isDev,
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             };
@@ -35,7 +37,7 @@ namespace Sqeez.Api.Controllers
             var refreshOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !isDev,
                 SameSite = SameSiteMode.Strict,
                 Path = "/api/auth/refresh"
             };
@@ -50,15 +52,25 @@ namespace Sqeez.Api.Controllers
 
         private void ClearTokens()
         {
-            var cookieOptions = new CookieOptions
+            bool isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
+            var accessOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !isDev,
                 SameSite = SameSiteMode.Strict
             };
 
-            Response.Cookies.Delete("sqeez_access_token", cookieOptions);
-            Response.Cookies.Delete("sqeez_refresh_token", cookieOptions);
+            var refreshOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = !isDev,
+                SameSite = SameSiteMode.Strict,
+                Path = "/api/auth/refresh"
+            };
+
+            Response.Cookies.Delete("sqeez_access_token", accessOptions);
+            Response.Cookies.Delete("sqeez_refresh_token", refreshOptions);
         }
 
         /// <summary>

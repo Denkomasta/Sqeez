@@ -94,30 +94,21 @@ Demo seed data includes an admin, teachers, students, classes, subjects, enrollm
 
 ### 5. Run Backend
 
-Use the HTTPS launch profile:
+Use the HTTP launch profile:
 
 ```powershell
 cd src/backend/Sqeez.Api
-dotnet run --launch-profile https
+dotnet run --launch-profile http
 ```
 
 Backend URLs:
 
-- `https://localhost:5001`
 - `http://localhost:5000`
-
-Use `https://localhost:5001` for browser auth testing. The auth cookies are configured as `Secure`, so they are not set correctly over plain HTTP.
 
 Development API docs:
 
-- OpenAPI: `https://localhost:5001/openapi/v1.json`
-- Scalar: `https://localhost:5001/scalar/v1`
-
-Your browser may ask you to trust the local ASP.NET development certificate. If needed, run:
-
-```powershell
-dotnet dev-certs https --trust
-```
+- OpenAPI: `http://localhost:5000/openapi/v1.json`
+- Scalar: `http://localhost:5000/scalar/v1`
 
 ### 6. Configure Frontend Environment
 
@@ -126,7 +117,7 @@ Create `src/frontend/sqeez/.env` from `src/frontend/sqeez/.env.example`.
 Recommended local values:
 
 ```dotenv
-VITE_API_BASE_URL=https://localhost:5001
+VITE_API_BASE_URL=http://localhost:5000
 VITE_PORT=3000
 ```
 
