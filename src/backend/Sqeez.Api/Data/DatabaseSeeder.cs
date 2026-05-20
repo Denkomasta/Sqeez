@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Models.Academics;
-using Sqeez.Api.Models.Gamification; // <-- Added the Gamification namespace!
+using Sqeez.Api.Models.Gamification;
 using Sqeez.Api.Models.Media;
 using Sqeez.Api.Models.QuizSystem;
 using Sqeez.Api.Models.System;
@@ -10,8 +10,16 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace Sqeez.Api.Data
 {
+    /// <summary>
+    /// Creates required baseline data and optional demo data for local development environments.
+    /// </summary>
     public static class DatabaseSeeder
     {
+        /// <summary>
+        /// Ensures production-required seed data exists: the singleton system configuration row and superadmin account.
+        /// </summary>
+        /// <param name="context">Database context to seed.</param>
+        /// <param name="config">Application configuration containing required superadmin settings.</param>
         public static async Task SeedAsync(SqeezDbContext context, IConfiguration config)
         {
             await EnsureSystemConfigAsync(context);
@@ -20,11 +28,18 @@ namespace Sqeez.Api.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Seeds a complete demo dataset with users, classes, subjects, enrollments, quiz content, media, and badges.
+        /// </summary>
+        /// <remarks>
+        /// Demo seeding is idempotent at the database level: if any users already exist, no demo records are added.
+        /// </remarks>
+        /// <param name="context">Database context to seed.</param>
+        /// <param name="config">Application configuration used for demo superadmin credentials.</param>
         public static async Task SeedDemoAsync(SqeezDbContext context, IConfiguration config)
         {
             await EnsureSystemConfigAsync(context);
 
-            // Check if we already have data. If yes, exit.
             if (await context.Students.AnyAsync())
             {
                 await context.SaveChangesAsync();
@@ -362,6 +377,9 @@ namespace Sqeez.Api.Data
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Ensures the singleton system configuration row exists.
+        /// </summary>
         private static async Task EnsureSystemConfigAsync(SqeezDbContext context)
         {
             if (!await context.SystemConfigs.AnyAsync(systemConfig => systemConfig.Id == 1))
@@ -370,6 +388,12 @@ namespace Sqeez.Api.Data
             }
         }
 
+        /// <summary>
+        /// Ensures the configured superadmin email belongs to an admin account.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when required superadmin configuration is missing or the configured email already belongs to a non-admin user.
+        /// </exception>
         private static async Task EnsureSuperAdminAsync(SqeezDbContext context, IConfiguration config)
         {
             string superEmail = GetRequiredConfig(config, "SUPER_USER_EMAIL").Trim().ToLowerInvariant();
@@ -404,6 +428,9 @@ namespace Sqeez.Api.Data
             });
         }
 
+        /// <summary>
+        /// Reads a required configuration value and fails fast when it is missing.
+        /// </summary>
         private static string GetRequiredConfig(IConfiguration config, string key)
         {
             var value = config[key];
@@ -416,6 +443,9 @@ namespace Sqeez.Api.Data
             return value;
         }
 
+        /// <summary>
+        /// Builds a username from the email local part and appends a numeric suffix until it is unique.
+        /// </summary>
         private static async Task<string> BuildUniqueUsernameAsync(SqeezDbContext context, string email)
         {
             var baseUsername = email.Split('@')[0].Trim().ToLowerInvariant();
