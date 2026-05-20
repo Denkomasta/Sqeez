@@ -11,6 +11,9 @@ type LongTextProps<TElement extends ElementType = 'span'> = {
 /**
  * Renders user/backend text that may contain line breaks or very long tokens.
  * Use `as` when semantic markup should be a paragraph, div, or another element.
+ *
+ * @param props.as - Element to render while keeping the long-text wrapping styles.
+ * @param props.children - Text or inline content that should wrap safely.
  */
 export function LongText<TElement extends ElementType = 'span'>({
   as,

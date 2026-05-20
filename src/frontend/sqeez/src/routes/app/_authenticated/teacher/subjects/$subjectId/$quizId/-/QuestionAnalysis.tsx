@@ -15,6 +15,8 @@ import type { QuestionStatDto } from '@/api/generated/model'
 /**
  * Teacher-facing per-question statistics.
  * Long question and answer text is rendered with explicit wrapping to protect cards.
+ *
+ * @param props.questions - Question statistics returned by the quiz statistics endpoint.
  */
 export function QuestionAnalysis({
   questions,

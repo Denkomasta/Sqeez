@@ -18,6 +18,10 @@ interface DebouncedInputProps extends Omit<
 /**
  * Controlled input that delays parent updates while preserving local typing.
  * Blur commits immediately; identical values are ignored to avoid mutation loops.
+ *
+ * @param props.value - Latest committed value from the parent.
+ * @param props.onChange - Receives committed values after the debounce delay or blur.
+ * @param props.debounceTime - Delay in milliseconds before committing typed changes.
  */
 export function DebouncedInput({
   value: initialValue,

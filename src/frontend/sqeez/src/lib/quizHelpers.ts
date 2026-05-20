@@ -13,6 +13,8 @@ export interface QuizDateInfo {
 
 /**
  * Checks if a quiz is currently closed.
+ *
+ * @param closingDate - API UTC closing date; missing values mean the quiz is not closed.
  */
 export function isQuizClosed(closingDate?: string | null): boolean {
   if (!closingDate) return false
@@ -25,6 +27,8 @@ export function isQuizClosed(closingDate?: string | null): boolean {
 
 /**
  * Checks if a quiz is currently active and available to be played.
+ *
+ * @param quiz - Quiz date fields from the API; missing publish date means inactive.
  */
 export function isQuizActive(quiz?: QuizDateInfo | null): boolean {
   if (!quiz || !quiz.publishDate) return false
@@ -42,6 +46,8 @@ export function isQuizActive(quiz?: QuizDateInfo | null): boolean {
 /**
  * Returns a specific status string for UI badges.
  * Returns: 'draft' | 'scheduled' | 'active' | 'closed'
+ *
+ * @param quiz - Quiz date fields from the API.
  */
 export function getQuizStatus(
   quiz?: QuizDateInfo | null,
@@ -77,6 +83,9 @@ const translateQuizMutationErrorMessage = (
 /**
  * Shared toast handling for quiz-builder mutations.
  * A 409 locks the editor because the backend rejected edits to an attempted quiz.
+ *
+ * @param error - Mutation error from a quiz-builder API request.
+ * @param t - i18next translator used for localized fallback messages.
  */
 export function handleQuizMutationError(error: unknown, t: TFunction) {
   if (isAxiosError(error) && error.response?.status === 409) {

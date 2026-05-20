@@ -15,6 +15,14 @@ interface ConfirmModalProps {
   isLoading?: boolean
 }
 
+/**
+ * Confirmation dialog for actions that need an explicit user decision.
+ * Use `isDestructive` for irreversible or high-risk actions so the dialog uses destructive styling.
+ *
+ * @param props.onConfirm - Action executed by the confirm button; promises keep the button loading.
+ * @param props.isDestructive - Switches confirm styling and warning icon for irreversible actions.
+ * @param props.isLoading - External loading state that disables cancellation.
+ */
 export function ConfirmModal({
   isOpen,
   onClose,

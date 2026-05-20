@@ -18,6 +18,10 @@ export interface PageLayoutProps {
 /**
  * Standard page wrapper for authenticated screens.
  * The `app` variant owns its own scroll area for editor/dashboard-style layouts.
+ *
+ * @param props.isLoading - Shows the shared loading state instead of rendering children.
+ * @param props.variant - Use `app` when the page content should scroll inside the app shell.
+ * @param props.headerControls - Optional controls rendered below the title row, typically filters/search.
  */
 export function PageLayout({
   title,

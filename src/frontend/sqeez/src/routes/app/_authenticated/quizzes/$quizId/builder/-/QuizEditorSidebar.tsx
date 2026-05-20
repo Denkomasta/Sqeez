@@ -22,6 +22,8 @@ const QUESTIONS_PAGE_SIZE = 25
 /**
  * Question navigation for the quiz builder.
  * Uses paginated loading so large quizzes do not fetch every question at once.
+ *
+ * @param props.quizId - Quiz whose questions should be listed and mutated.
  */
 export function QuizEditorSidebar({ quizId }: QuizEditorSidebarProps) {
   const { t } = useTranslation()

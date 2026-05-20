@@ -10,6 +10,14 @@ interface AsyncButtonProps extends Omit<ButtonProps, 'onClick' | 'asChild'> {
   isLoading?: boolean
 }
 
+/**
+ * Button wrapper for async actions.
+ * It disables itself while the click handler is pending, while still allowing callers to drive loading state externally.
+ *
+ * @param props.onClick - Optional click handler; promises keep the button in an internal loading state until settled.
+ * @param props.isLoading - External loading flag for parent-controlled mutations.
+ * @param props.loadingText - Text shown while either internal or external loading is active.
+ */
 export function AsyncButton({
   onClick,
   children,

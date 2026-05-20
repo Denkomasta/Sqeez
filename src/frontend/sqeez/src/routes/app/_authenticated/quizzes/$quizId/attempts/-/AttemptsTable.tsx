@@ -32,6 +32,10 @@ interface AttemptsTableProps {
 /**
  * Attempt list shared by student history and teacher grading views.
  * Students cannot open attempts while the quiz is active.
+ *
+ * @param props.attempts - Attempt rows already shaped for the table.
+ * @param props.isTeacherView - Switches the primary column and grading action.
+ * @param props.isQuizActive - Disables student result links while the quiz is still active.
  */
 export function AttemptsTable({
   attempts,

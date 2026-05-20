@@ -21,6 +21,14 @@ interface ScrollableSelectListProps {
   isFetchingNextPage?: boolean
 }
 
+/**
+ * Scrollable option picker for compact modals and filters.
+ * Supports loading, empty, selected, and manual "load more" states without owning pagination state itself.
+ *
+ * @param props.options - Rendered options; ids must be stable across pagination.
+ * @param props.selectedId - Currently selected option id, or an empty string when nothing is selected.
+ * @param props.onLoadMore - Optional callback for fetching the next page when `hasMore` is true.
+ */
 export function ScrollableSelectList({
   options,
   selectedId,

@@ -70,7 +70,11 @@ const containerWidthClasses: Record<ContainerWidth, string> = {
   '7xl': 'max-w-7xl',
 }
 
-/** Layout primitives used by public marketing/legal/help pages. */
+/**
+ * Layout primitives used by public marketing/legal/help pages.
+ *
+ * @param props.children - Public page sections to render in order.
+ */
 export function PublicPageLayout({
   children,
   className,
@@ -87,7 +91,14 @@ export function PublicPageLayout({
   )
 }
 
-/** First-section hero block with shared spacing and tone options. */
+/**
+ * First-section hero block with shared spacing and tone options.
+ *
+ * @param props.title - Main hero heading.
+ * @param props.subtitle - Optional supporting copy below the title.
+ * @param props.tone - Background tone shared with public sections.
+ * @param props.maxWidth - Container width preset for the hero content.
+ */
 export function PublicHero({
   title,
   subtitle,
@@ -146,7 +157,14 @@ export function PublicHero({
   )
 }
 
-/** Full-width public section with shared spacing, tone, and container widths. */
+/**
+ * Full-width public section with shared spacing, tone, and container widths.
+ *
+ * @param props.children - Section body content.
+ * @param props.tone - Background tone used by the section.
+ * @param props.size - Vertical spacing preset.
+ * @param props.maxWidth - Container width preset.
+ */
 export function PublicSection({
   children,
   tone = 'default',
@@ -180,7 +198,12 @@ export function PublicSection({
   )
 }
 
-/** Standard title/subtitle block for public page sections. */
+/**
+ * Standard title/subtitle block for public page sections.
+ *
+ * @param props.title - Section heading.
+ * @param props.subtitle - Optional supporting text under the heading.
+ */
 export function PublicSectionHeader({
   title,
   subtitle,
@@ -198,7 +221,12 @@ export function PublicSectionHeader({
   )
 }
 
-/** Optional support contact block; renders the email only once config has loaded. */
+/**
+ * Optional support contact block; renders the email only once config has loaded.
+ *
+ * @param props.supportEmail - Email address linked after system config has loaded.
+ * @param props.isLoading - Shows a spinner while the email value is being fetched.
+ */
 export function PublicContactCard({
   title,
   description,

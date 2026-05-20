@@ -19,6 +19,9 @@ interface QuizOptionsEditorProps {
 /**
  * Chooses the option editor mode for a question.
  * Free-text questions manage one expected-answer option instead of many choices.
+ *
+ * @param props.quizId - Quiz id used by option list and create endpoints.
+ * @param props.questionId - Question id whose options are managed.
  */
 export function QuizOptionsEditor({
   quizId,

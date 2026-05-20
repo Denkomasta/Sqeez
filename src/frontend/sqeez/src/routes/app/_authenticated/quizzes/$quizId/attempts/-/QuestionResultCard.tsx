@@ -55,6 +55,11 @@ function AnswerBlock({
 /**
  * Shows a graded question response for an attempt.
  * Teachers can assign points only for free-text answers that need manual review.
+ *
+ * @param props.quizId - Quiz id used to fetch the detailed question definition.
+ * @param props.attemptId - Attempt id invalidated after teacher grading.
+ * @param props.studentResponse - Stored response and score for this question.
+ * @param props.isTeacher - Enables manual grading controls for free-text answers.
  */
 export function QuestionResultCard({
   quizId,

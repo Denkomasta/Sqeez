@@ -18,6 +18,10 @@ interface DataTableProps<T> {
 /**
  * Lightweight generic table for admin/statistic pages.
  * Consumers own cell rendering and must provide a stable key for each row.
+ *
+ * @param props.data - Rows to render.
+ * @param props.columns - Column definitions that own header and cell rendering.
+ * @param props.keyExtractor - Provides a stable key for each row item.
  */
 export function DataTable<T>({
   data,

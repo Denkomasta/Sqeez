@@ -34,6 +34,9 @@ export type BootUpError = 'QUIZ_NOT_FOUND' | 'NOT_ENROLLED' | null
 /**
  * Orchestrates the student quiz flow from start/resume through completion.
  * The backend remains authoritative for enrollment, next-question progress, and grading.
+ *
+ * @param quizId - Route quiz id used by all quiz, attempt, and question requests.
+ * @param initialAttemptId - Optional existing attempt id; when present the hook resumes that attempt instead of starting from scratch.
  */
 export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   const { t } = useTranslation()

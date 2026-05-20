@@ -25,6 +25,9 @@ type CustomQueryOptions = Omit<
 /**
  * Infinite-query wrapper for school classes.
  * It stops when a page returns fewer records than the requested page size.
+ *
+ * @param params - Backend class filters and paging options; `PageSize` defaults to 20 when omitted.
+ * @param options - React Query options merged into the infinite query.
  */
 export const useGetApiClassesInfinite = (
   params?: GetApiClassesParams,

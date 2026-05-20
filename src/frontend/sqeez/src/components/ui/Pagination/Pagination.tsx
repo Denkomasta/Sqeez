@@ -9,6 +9,14 @@ interface PaginationProps {
   className?: string
 }
 
+/**
+ * Minimal previous/next pagination control for server-paginated lists.
+ * Renders nothing when there is only one page.
+ *
+ * @param props.currentPage - Current 1-based page number.
+ * @param props.totalPages - Total page count from the backend.
+ * @param props.onPageChange - Called with the next 1-based page number.
+ */
 export function Pagination({
   currentPage,
   totalPages,

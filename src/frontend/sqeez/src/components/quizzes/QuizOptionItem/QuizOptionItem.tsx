@@ -29,6 +29,10 @@ const FUN_COLORS = [
 /**
  * Renders one playable quiz option.
  * Free-text options switch to textarea mode and select themselves on focus.
+ *
+ * @param props.option - Option DTO from the current detailed question.
+ * @param props.isMultiChoice - Enables checkbox-style selection feedback for strict multiple-choice questions.
+ * @param props.onFreeTextChange - Called only for free-text options as the user types.
  */
 export function QuizOptionItem({
   option,

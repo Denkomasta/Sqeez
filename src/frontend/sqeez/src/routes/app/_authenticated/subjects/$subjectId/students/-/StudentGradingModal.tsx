@@ -24,6 +24,9 @@ interface StudentGradingModalProps {
 /**
  * Teacher modal for assigning a final mark to one student enrollment.
  * The enrollment is fetched only while the modal is open.
+ *
+ * @param props.student - Student whose enrollment mark is being edited.
+ * @param props.subjectId - Subject id used to locate the student's enrollment.
  */
 export function StudentGradingModal({
   isOpen,

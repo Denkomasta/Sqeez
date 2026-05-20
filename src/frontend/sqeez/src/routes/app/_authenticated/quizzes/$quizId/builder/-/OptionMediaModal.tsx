@@ -34,6 +34,10 @@ interface OptionMediaModalProps {
 /**
  * Uploads, previews, or removes media attached to an answer option.
  * Local blob previews must be branded by imageHelpers before they are rendered.
+ *
+ * @param props.isOpen - Controls modal visibility.
+ * @param props.onSave - Persists the selected media id, or the removal sentinel used by the editor.
+ * @param props.currentMediaAssetId - Existing option media id shown before a new file is selected.
  */
 export function OptionMediaModal({
   isOpen,

@@ -9,6 +9,8 @@ interface GuardArgs {
 /**
  * Creates a TanStack Router guard that requires an authenticated user role.
  * Unauthenticated users are sent to login with a redirect back to the target URL.
+ *
+ * @param allowedRoles - User roles that may enter the guarded route.
  */
 export function createRoleGuard(allowedRoles: string[]) {
   return async ({ location }: GuardArgs) => {
