@@ -2,12 +2,18 @@
 
 namespace Sqeez.Api.Extensions
 {
+    /// <summary>
+    /// Query helpers for quiz availability filtering.
+    /// </summary>
     public static class QuizQueryableExtensions
     {
         /// <summary>
-        /// Filters Quizzes to only include those that are published, have not closed, 
-        /// AND belong to a Subject that has not yet ended.
+        /// Filters quizzes to those currently available for students to take.
         /// </summary>
+        /// <remarks>
+        /// A quiz is active when it has a publish date in the past, has no closing date in the past,
+        /// and its parent subject has not ended.
+        /// </remarks>
         public static IQueryable<Quiz> WhereIsActive(this IQueryable<Quiz> query)
         {
             var now = DateTime.UtcNow;
@@ -18,8 +24,7 @@ namespace Sqeez.Api.Extensions
         }
 
         /// <summary>
-        /// Filters Quizzes to include drafts, future scheduled quizzes, closed quizzes, 
-        /// OR quizzes belonging to a Subject that has ended.
+        /// Filters quizzes to drafts, future quizzes, closed quizzes, or quizzes under ended subjects.
         /// </summary>
         public static IQueryable<Quiz> WhereIsInactive(this IQueryable<Quiz> query)
         {

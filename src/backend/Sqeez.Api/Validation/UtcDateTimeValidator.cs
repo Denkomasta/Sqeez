@@ -3,6 +3,10 @@ namespace Sqeez.Api.Validation
     /// <summary>
     /// Shared UTC date-time validation helpers used by data annotations and service-level checks.
     /// </summary>
+    /// <remarks>
+    /// The validator checks <see cref="DateTime.Kind"/> instead of converting values. This keeps accidental local or
+    /// unspecified date-time inputs visible as validation failures.
+    /// </remarks>
     public static class UtcDateTimeValidator
     {
         /// <summary>
