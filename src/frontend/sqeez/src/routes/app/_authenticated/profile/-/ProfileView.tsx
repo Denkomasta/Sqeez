@@ -300,6 +300,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   value={profileData.username ?? 'john_doe'}
                   fieldKey="username"
                   canEdit={isOwnProfile}
+                  buttonText={t('common.edit')}
                   onEdit={handleEditClick}
                 />
                 <EditableInfoItem
@@ -308,6 +309,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   value={profileData.email ?? 'john_doe@sqeez.org'}
                   fieldKey="email"
                   canEdit={false} // Email is not editable for now
+                  buttonText={t('common.edit')}
                   onEdit={() => {}}
                 />
                 <EditableInfoItem
@@ -316,27 +318,42 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   value={profileData.role ?? 'Student'}
                   fieldKey="role"
                   canEdit={false}
+                  buttonText={t('common.edit')}
                   onEdit={handleEditClick}
                 />
 
-                {profileData.department && (
+                {(isOwnProfile || profileData.department) && (
                   <EditableInfoItem
                     icon={<Briefcase className="size-4" />}
                     label={t('common.department')}
-                    value={profileData.department}
+                    value={profileData.department || t('profile.notSet')}
+                    editValue={profileData.department || ''}
                     fieldKey="department"
                     canEdit={isOwnProfile}
+                    buttonText={t('common.edit')}
+                    isEmpty={!profileData.department}
                     onEdit={handleEditClick}
                   />
                 )}
 
-                {profileData.phoneNumber && (
+                {(isOwnProfile || profileData.phoneNumber) && (
                   <EditableInfoItem
                     icon={<Phone className="size-4" />}
                     label={t('common.phoneNumber')}
-                    value={formatPhoneForDisplay(profileData.phoneNumber)}
+                    value={
+                      profileData.phoneNumber
+                        ? formatPhoneForDisplay(profileData.phoneNumber)
+                        : t('profile.notSet')
+                    }
+                    editValue={
+                      profileData.phoneNumber
+                        ? formatPhoneForDisplay(profileData.phoneNumber)
+                        : ''
+                    }
                     fieldKey="phoneNumber"
                     canEdit={isOwnProfile}
+                    buttonText={t('common.edit')}
+                    isEmpty={!profileData.phoneNumber}
                     onEdit={handleEditClick}
                   />
                 )}

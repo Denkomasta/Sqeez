@@ -867,6 +867,7 @@
       "minutes_other": "Naposledy viděn před {{count}} minutami"
     },
     "noBadges": "Zatím žádné získané odznaky.",
+    "notSet": "Zatím nevyplněno",
     "offline": "Offline",
     "online": "Online",
     "recentBadges": "Nedávné odznaky",
