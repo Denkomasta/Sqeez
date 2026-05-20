@@ -55,8 +55,18 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
-        public async Task PatchUser_ForAnotherUserAsStudent_ReturnsForbiddenBeforeCallingService()
+        public async Task PatchUser_ForAnotherUserAsStudent_ReturnsForbiddenFromService()
         {
+            _factory.UserServiceMock
+                .Setup(service => service.PatchUserAsync(
+                    8,
+                    It.IsAny<PatchStudentDto>(),
+                    7,
+                    "Student"))
+                .ReturnsAsync(ServiceResult<StudentDto>.Failure(
+                    "You do not have permission to modify another user's profile.",
+                    ServiceError.Forbidden));
+
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
@@ -68,8 +78,8 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.PatchUserAsync(It.IsAny<long>(), It.IsAny<PatchStudentDto>()),
-                Times.Never);
+                service => service.PatchUserAsync(8, It.IsAny<PatchStudentDto>(), 7, "Student"),
+                Times.Once);
         }
 
         [Fact]
@@ -251,8 +261,18 @@ namespace Sqeez.Api.Tests.Integration
         }
 
         [Fact]
-        public async Task PatchUser_AsSelfChangingSchoolClass_ReturnsForbiddenBeforeCallingService()
+        public async Task PatchUser_AsSelfChangingSchoolClass_ReturnsForbiddenFromService()
         {
+            _factory.UserServiceMock
+                .Setup(service => service.PatchUserAsync(
+                    7,
+                    It.IsAny<PatchStudentDto>(),
+                    7,
+                    "Student"))
+                .ReturnsAsync(ServiceResult<StudentDto>.Failure(
+                    "You do not have permission to change assignments or role-specific profile data.",
+                    ServiceError.Forbidden));
+
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "7");
             client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Student");
@@ -265,8 +285,45 @@ namespace Sqeez.Api.Tests.Integration
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             _factory.UserServiceMock.Verify(
-                service => service.PatchUserAsync(It.IsAny<long>(), It.IsAny<PatchStudentDto>()),
-                Times.Never);
+                service => service.PatchUserAsync(7, It.IsAny<PatchStudentDto>(), 7, "Student"),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task PatchUser_AsAdmin_PassesRequesterContextToService()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.PatchUserAsync(
+                    8,
+                    It.Is<PatchStudentDto>(dto => dto.Username == "changed"),
+                    1,
+                    "Admin"))
+                .ReturnsAsync(ServiceResult<StudentDto>.Ok(
+                    new StudentDto
+                    {
+                        Id = 8,
+                        Username = "changed",
+                        Role = UserRole.Student,
+                        LastSeen = DateTime.UtcNow
+                    }));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            var response = await client.PatchAsJsonAsync("/api/users/8", new
+            {
+                username = "changed"
+            });
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.PatchUserAsync(
+                    8,
+                    It.Is<PatchStudentDto>(dto => dto.Username == "changed"),
+                    1,
+                    "Admin"),
+                Times.Once);
         }
 
         [Fact]

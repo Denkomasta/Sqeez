@@ -84,38 +84,9 @@ namespace Sqeez.Api.Controllers
         public async Task<ActionResult<StudentDto>> PatchUser(long id, [FromBody] PatchStudentDto dto)
         {
             var role = GetUserRoleFromClaims();
-            if (role != "Admin" && !IsIdLoggedUser(id))
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    error = "Forbidden",
-                    message = "You do not have permission to modify another student's profile."
-                });
-            }
+            var result = await _userService.PatchUserAsync(id, dto, CurrentUserId, role);
 
-            if (role != "Admin" && dto.SchoolClassId.HasValue)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    error = "Forbidden",
-                    message = "You do not have permission to change school class assignment."
-                });
-            }
-
-            if (role != "Admin" &&
-                dto is PatchTeacherDto teacherDto &&
-                (teacherDto.Department != null || teacherDto.ManagedClassId.HasValue))
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new
-                {
-                    error = "Forbidden",
-                    message = "You do not have permission to change teacher assignments."
-                });
-            }
-
-            var result = await _userService.PatchUserAsync(id, dto);
-
-            if (!result.Success) return BadRequest(result.ErrorMessage);
+            if (!result.Success) return HandleServiceResult(result);
 
             return Ok(result.Data);
         }
