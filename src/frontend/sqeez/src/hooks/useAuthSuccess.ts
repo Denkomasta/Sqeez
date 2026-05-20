@@ -6,6 +6,8 @@ import { getGetApiAuthMeQueryOptions } from '@/api/generated/endpoints/auth/auth
 /**
  * Finalizes a successful login/register flow.
  * The session is considered valid only after `/auth/me` returns the current user.
+ *
+ * @returns Async handler that stores the user, invalidates router state, and navigates to the redirect target.
  */
 export function useAuthSuccess() {
   const navigate = useNavigate()

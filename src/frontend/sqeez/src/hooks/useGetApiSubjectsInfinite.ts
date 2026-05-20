@@ -24,6 +24,7 @@ type CustomQueryOptions = Omit<
 /**
  * Infinite-query wrapper for subjects.
  * Filters are part of the query key, so changing params starts a separate cache.
+ * Intended for selectors and admin flows that should not load every subject at once.
  *
  * @param params - Backend subject filters and paging options; `PageSize` defaults to 20 when omitted.
  * @param options - React Query options merged into the infinite query.

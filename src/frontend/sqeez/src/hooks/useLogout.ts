@@ -7,6 +7,8 @@ import { postApiAuthLogout } from '@/api/generated/endpoints/auth/auth'
 /**
  * Logs the user out locally even if the server logout request fails.
  * This keeps stale authenticated UI from surviving a broken network request.
+ *
+ * @returns Logout handler and pending state for buttons/menus.
  */
 export function useLogout() {
   const navigate = useNavigate()

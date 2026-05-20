@@ -3,6 +3,8 @@ import { useGetApiSystemConfig } from '@/api/generated/endpoints/system-config/s
 /**
  * Reads global runtime limits and settings.
  * Config is cached for several minutes because it changes rarely during a session.
+ *
+ * @returns Normalized config query shape used by upload limits and feature flags.
  */
 export function useSystemConfig() {
   const query = useGetApiSystemConfig({

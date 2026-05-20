@@ -22,6 +22,13 @@ type CustomQueryOptions = Omit<
   'queryKey' | 'queryFn' | 'initialPageParam' | 'getNextPageParam'
 >
 
+/**
+ * Query key used for every paginated quiz-question list in the editor.
+ * Keep this helper in sync with mutations that patch question titles or list metadata.
+ *
+ * @param quizId - Quiz whose question list is cached.
+ * @param params - Filters and page settings that must be part of the cache identity.
+ */
 export const getApiQuizQuestionsInfiniteQueryKey = (
   quizId: number | string,
   params?: GetApiQuizzesQuizIdQuestionsParams,
@@ -33,6 +40,8 @@ export const getApiQuizQuestionsInfiniteQueryKey = (
 /**
  * Infinite-query wrapper for quiz editor questions.
  * Uses backend totalPages when available and falls back to page-size detection.
+ * The default page size is intentionally 25 so the editor sidebar stays responsive
+ * without making a request for every small scroll movement.
  *
  * @param quizId - Quiz whose questions should be paged.
  * @param params - Backend question filters and paging options; `PageSize` defaults to 25 when omitted.
