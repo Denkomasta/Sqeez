@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Quiz metadata summary returned by quiz endpoints.
+ */
 export interface QuizDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

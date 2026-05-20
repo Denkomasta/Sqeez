@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for partially updating a quiz question.
+ */
 export interface PatchQuizQuestionDto {
   /**
    * @minLength 0
@@ -29,6 +32,7 @@ export interface PatchQuizQuestionDto {
    */
   timeLimit?: number | string | null
   /**
+   * Optional media attachment. A value of 0 removes the current media attachment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

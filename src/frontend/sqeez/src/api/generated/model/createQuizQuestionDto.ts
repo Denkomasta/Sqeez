@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for creating a quiz question.
+ */
 export interface CreateQuizQuestionDto {
   /**
    * @minLength 0

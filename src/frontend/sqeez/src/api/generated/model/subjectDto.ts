@@ -5,32 +5,61 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Subject summary returned by subject endpoints.
+ */
 export interface SubjectDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Subject identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id: number | string
+  /** Human-readable subject name. */
   name: string
+  /** Unique subject code used for imports and search. */
   code: string
-  /** @nullable */
+  /**
+   * Optional subject description.
+   * @nullable
+   */
   description: string | null
+  /** Subject start date stored as UTC. */
   startDate: string
-  /** @nullable */
+  /**
+   * Optional subject end date stored as UTC.
+   * @nullable
+   */
   endDate: string | null
   /**
+   * Assigned teacher id, or null when the subject has no teacher.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   teacherId: number | string | null
-  /** @nullable */
+  /**
+   * Assigned teacher username, or null when no teacher is assigned.
+   * @nullable
+   */
   teacherName: string | null
   /**
+   * Assigned school class id, or null when no class is assigned.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   schoolClassId: number | string | null
-  /** @nullable */
+  /**
+   * Assigned school class name, or null when no class is assigned.
+   * @nullable
+   */
   schoolClassName: string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of enrollments attached to the subject.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   enrollmentCount: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of quizzes attached to the subject.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   quizCount: number | string
 }

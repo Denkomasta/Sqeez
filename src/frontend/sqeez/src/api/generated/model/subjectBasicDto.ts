@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Compact subject view embedded in class and user detail responses.
+ */
 export interface SubjectBasicDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string

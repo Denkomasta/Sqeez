@@ -9,6 +9,8 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/register
+      description: Registers a new public account and sends an email verification link.
       requestBody:
         content:
           application/json:
@@ -28,6 +30,9 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/verify-email
+      description: Verifies a pending email token, activates the account, and starts
+        an authenticated session.
       parameters:
         - name: token
           in: query
@@ -45,6 +50,9 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/resend-verification
+      description: Resends a verification link without revealing whether the email
+        belongs to an account.
       requestBody:
         content:
           application/json:
@@ -64,6 +72,9 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/forgot-password
+      description: Starts the password-reset flow without revealing whether the email
+        belongs to an account.
       requestBody:
         content:
           application/json:
@@ -83,6 +94,8 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/reset-password
+      description: Completes the password-reset flow using a valid reset token.
       requestBody:
         content:
           application/json:
@@ -102,6 +115,9 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/login
+      description: Authenticates a verified account and stores access and refresh
+        tokens in HTTP-only cookies.
       requestBody:
         content:
           application/json:
@@ -121,6 +137,8 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/refresh
+      description: Rotates the refresh-token session and issues a fresh cookie pair.
       responses:
         "200":
           description: OK
@@ -128,6 +146,9 @@ paths:
     post:
       tags:
         - Auth
+      summary: POST /api/auth/logout
+      description: Revokes the current refresh-token session and clears authentication
+        cookies.
       responses:
         "200":
           description: OK
@@ -135,6 +156,8 @@ paths:
     get:
       tags:
         - Auth
+      summary: GET /api/auth/me
+      description: Returns the currently authenticated user's lightweight profile.
       responses:
         "200":
           description: OK
@@ -152,6 +175,8 @@ paths:
     patch:
       tags:
         - Auth
+      summary: PATCH /api/auth/elevate
+      description: Updates a user's role and role-specific metadata. Admin-only.
       requestBody:
         content:
           application/json:
@@ -171,7 +196,11 @@ paths:
     post:
       tags:
         - Badges
+      summary: POST /api/badges
+      description: Creates a badge with optional icon upload and rule definitions.
+        Admin-only.
       requestBody:
+        description: Rules that must be satisfied before the badge can be awarded.
         content:
           multipart/form-data:
             schema:
@@ -217,19 +246,24 @@ paths:
     get:
       tags:
         - Badges
+      summary: GET /api/badges
+      description: Gets a paged list of badge definitions.
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches badge name and description.
           schema:
             maxLength: 100
             minLength: 0
             type: string
         - name: isEarned
           in: query
+          description: Filters badges by whether StudentId has earned them.
           schema:
             type: boolean
         - name: StudentId
           in: query
+          description: Student id used together with isEarned.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -273,6 +307,8 @@ paths:
     patch:
       tags:
         - Badges
+      summary: PATCH /api/badges/{id}
+      description: Updates a badge, optional icon, and rule definitions. Admin-only.
       parameters:
         - name: id
           in: path
@@ -284,6 +320,8 @@ paths:
               - string
             format: int64
       requestBody:
+        description: Full desired rule set. Existing rules omitted from this list are
+          removed.
         content:
           multipart/form-data:
             schema:
@@ -329,6 +367,9 @@ paths:
     delete:
       tags:
         - Badges
+      summary: DELETE /api/badges/{id}
+      description: Deletes a badge and its icon when the badge is not currently
+        awarded. Admin-only.
       parameters:
         - name: id
           in: path
@@ -356,6 +397,8 @@ paths:
     post:
       tags:
         - Badges
+      summary: POST /api/badges/{badgeId}/award/{studentId}
+      description: Awards a badge to a student. Admin-only.
       parameters:
         - name: badgeId
           in: path
@@ -392,6 +435,8 @@ paths:
     get:
       tags:
         - Badges
+      summary: GET /api/badges/student/{studentId}
+      description: Gets badges awarded to a student.
       parameters:
         - name: studentId
           in: path
@@ -425,9 +470,15 @@ paths:
     get:
       tags:
         - Enrollments
+      summary: GET /api/enrollments
+      description: "GET /api/enrollments\r
+
+        Searches enrollments. Students are limited to their own enrollments;
+        teachers must filter by an owned subject."
       parameters:
         - name: Mark
           in: query
+          description: Filters enrollments by exact mark.
           schema:
             maximum: 5
             minimum: 1
@@ -438,6 +489,8 @@ paths:
             format: int32
         - name: StudentId
           in: query
+          description: Filters enrollments by student id. Student callers are forced to
+            their own id by the service.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -446,6 +499,8 @@ paths:
             format: int64
         - name: SubjectId
           in: query
+          description: Filters enrollments by subject id. Teacher callers must use an
+            owned subject unless viewing their own enrollment.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -454,6 +509,8 @@ paths:
             format: int64
         - name: IsActive
           in: query
+          description: Filters active or archived enrollments. Null leaves archive state
+            unfiltered.
           schema:
             type: boolean
         - name: IsDescending
@@ -497,6 +554,11 @@ paths:
     get:
       tags:
         - Enrollments
+      summary: GET /api/enrollments/{id}
+      description: "GET /api/enrollments/452\r
+
+        Gets a single enrollment when the requester is the student, the subject
+        teacher, or an admin."
       parameters:
         - name: id
           in: path
@@ -523,6 +585,11 @@ paths:
     patch:
       tags:
         - Enrollments
+      summary: PATCH /api/enrollments/{id}
+      description: "PATCH /api/enrollments/452\r
+
+        Used by admins or subject teachers to grade a student by updating the
+        mark."
       parameters:
         - name: id
           in: path
@@ -561,6 +628,11 @@ paths:
     delete:
       tags:
         - Enrollments
+      summary: DELETE /api/enrollments/{id}
+      description: "DELETE /api/enrollments/452\r
+
+        Deletes a specific enrollment. Admins can delete any enrollment;
+        students can delete only their own."
       parameters:
         - name: id
           in: path
@@ -588,6 +660,9 @@ paths:
     post:
       tags:
         - Import
+      summary: POST /api/import/master
+      description: Imports the master CSV file and reports created or skipped records.
+        Admin-only.
       requestBody:
         content:
           multipart/form-data:
@@ -614,9 +689,14 @@ paths:
     get:
       tags:
         - MediaAssets
+      summary: GET /api/media-assets
+      description: "GET /api/media-assets\r
+
+        Gets a paged list of media asset metadata."
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches description and location URL.
           schema:
             maxLength: 100
             minLength: 0
@@ -639,6 +719,10 @@ paths:
             format: int64
         - name: UnassignedOnly
           in: query
+          description: "When true, returns only assets that are not attached to any quiz
+            question or quiz option.\r
+
+            Required for bulk unassigned-asset deletion."
           schema:
             type: boolean
         - name: PageNumber
@@ -677,6 +761,11 @@ paths:
     post:
       tags:
         - MediaAssets
+      summary: POST /api/media-assets
+      description: "POST /api/media-assets\r
+
+        Saves metadata for a new media asset without uploading a file. The owner
+        id is taken from the authenticated user."
       requestBody:
         content:
           application/json:
@@ -705,9 +794,15 @@ paths:
     delete:
       tags:
         - MediaAssets
+      summary: DELETE /api/media-assets
+      description: "DELETE /api/media-assets?unassignedOnly=true\r
+
+        Deletes unassigned media assets. Admins can delete all matching
+        unassigned assets; teachers are limited to their own."
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches description and location URL.
           schema:
             maxLength: 100
             minLength: 0
@@ -730,6 +825,10 @@ paths:
             format: int64
         - name: UnassignedOnly
           in: query
+          description: "When true, returns only assets that are not attached to any quiz
+            question or quiz option.\r
+
+            Required for bulk unassigned-asset deletion."
           schema:
             type: boolean
         - name: PageNumber
@@ -781,6 +880,10 @@ paths:
     get:
       tags:
         - MediaAssets
+      summary: GET /api/media-assets/{id}
+      description: "GET /api/media-assets/{id}\r
+
+        Gets media asset metadata by id."
       parameters:
         - name: id
           in: path
@@ -807,6 +910,11 @@ paths:
     patch:
       tags:
         - MediaAssets
+      summary: PATCH /api/media-assets/{id}
+      description: "PATCH /api/media-assets/{id}\r
+
+        Updates media asset metadata. Admins can patch any asset; teachers can
+        patch only their own assets."
       parameters:
         - name: id
           in: path
@@ -845,6 +953,11 @@ paths:
     delete:
       tags:
         - MediaAssets
+      summary: DELETE /api/media-assets/{id}
+      description: "DELETE /api/media-assets/{id}\r
+
+        Deletes the database metadata and physical file. Admins can delete any
+        asset; teachers can delete only their own assets."
       parameters:
         - name: id
           in: path
@@ -872,6 +985,11 @@ paths:
     patch:
       tags:
         - MediaAssets
+      summary: PATCH /api/media-assets/{id}/owner
+      description: "PATCH /api/media-assets/{id}/owner\r
+
+        Transfers media asset ownership to another active teacher or admin.
+        Admin-only."
       parameters:
         - name: id
           in: path
@@ -911,7 +1029,13 @@ paths:
     post:
       tags:
         - MediaAssets
+      summary: POST /api/media-assets/upload
+      description: "POST /api/media-assets/upload\r
+
+        Accepts a physical file, saves it securely, and creates the database
+        record."
       requestBody:
+        description: Marks the asset as private for download authorization checks.
         content:
           multipart/form-data:
             schema:
@@ -949,6 +1073,11 @@ paths:
     get:
       tags:
         - MediaAssets
+      summary: GET /api/media-assets/{id}/file
+      description: "GET /api/media-assets/{id}/file\r
+
+        Streams a stored file after checking the asset's privacy and requester
+        access."
       parameters:
         - name: id
           in: path
@@ -982,6 +1111,10 @@ paths:
     post:
       tags:
         - QuizAttempts
+      summary: POST /api/quiz-attempts/start
+      description: "POST /api/quiz-attempts/start\r
+
+        Starts a new attempt for the currently authenticated student."
       requestBody:
         content:
           application/json:
@@ -1011,6 +1144,10 @@ paths:
     post:
       tags:
         - QuizAttempts
+      summary: POST /api/quiz-attempts/{id}/answer
+      description: "POST /api/quiz-attempts/{id}/answers\r
+
+        Submits or updates an answer for a specific question."
       parameters:
         - name: id
           in: path
@@ -1050,6 +1187,11 @@ paths:
     get:
       tags:
         - QuizAttempts
+      summary: GET /api/quiz-attempts/{id}/next-question
+      description: "GET /api/quiz-attempts/{id}/next-question\r
+
+        Recovers the ID of the next unanswered question and current answered
+        count if the frontend loses context."
       parameters:
         - name: id
           in: path
@@ -1077,6 +1219,10 @@ paths:
     post:
       tags:
         - QuizAttempts
+      summary: POST /api/quiz-attempts/{id}/complete
+      description: "POST /api/quiz-attempts/{id}/complete\r
+
+        Locks the attempt and calculates the final score."
       parameters:
         - name: id
           in: path
@@ -1104,6 +1250,13 @@ paths:
     get:
       tags:
         - QuizAttempts
+      summary: GET /api/quiz-attempts/{id}
+      description: "GET /api/quiz-attempts/{id}\r
+
+        Gets full attempt details. Students see their own attempts, subject
+        teachers see attempts for their quizzes,\r
+
+        and admins can see any attempt."
       parameters:
         - name: id
           in: path
@@ -1130,6 +1283,11 @@ paths:
     delete:
       tags:
         - QuizAttempts
+      summary: DELETE /api/quiz-attempts/{id}
+      description: "DELETE /api/quiz-attempts/{id}\r
+
+        Deletes a specific quiz attempt (Allows a teacher to reset a student's
+        try)."
       parameters:
         - name: id
           in: path
@@ -1157,6 +1315,10 @@ paths:
     get:
       tags:
         - QuizAttempts
+      summary: GET /api/quiz-attempts/quiz/{quizId}
+      description: "GET /api/quiz-attempts/quiz/{quizId}\r
+
+        Gets a paginated list of all attempts for a specific quiz."
       parameters:
         - name: quizId
           in: path
@@ -1202,6 +1364,10 @@ paths:
     patch:
       tags:
         - QuizAttempts
+      summary: PATCH /api/quiz-attempts/responses/{responseId}/grade
+      description: "PATCH /api/quiz-attempts/responses/{responseId}/grade\r
+
+        Allows a teacher to manually grade a free-text answer and \"Like\" it."
       parameters:
         - name: responseId
           in: path
@@ -1241,6 +1407,10 @@ paths:
     delete:
       tags:
         - QuizAttempts
+      summary: DELETE /api/quiz-attempts/{quizId}/attempts
+      description: "DELETE /api/quizzes/{quizId}/attempts\r
+
+        Deletes all quiz attempts and student responses for a specific quiz."
       parameters:
         - name: quizId
           in: path
@@ -1268,6 +1438,10 @@ paths:
     get:
       tags:
         - QuizStatistics
+      summary: GET /api/quizzes/{quizId}/statistics/summary
+      description: "GET /api/quizzes/{quizId}/statistics/summary\r
+
+        Gets high-level summary statistics for a specific quiz."
       parameters:
         - name: quizId
           in: path
@@ -1295,6 +1469,11 @@ paths:
     get:
       tags:
         - QuizStatistics
+      summary: GET /api/quizzes/{quizId}/statistics/questions
+      description: "GET /api/quizzes/{quizId}/statistics/questions\r
+
+        Gets detailed statistics for each question within a quiz to identify
+        difficult or popular questions."
       parameters:
         - name: quizId
           in: path
@@ -1328,24 +1507,31 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes
+      description: Gets a paged quiz list using the supplied filters.
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches quiz title and description.
           schema:
             maxLength: 100
             minLength: 0
             type: string
         - name: IsActive
           in: query
+          description: Filters quizzes by currently active schedule. Null leaves activity
+            unfiltered.
           schema:
             type: boolean
         - name: PublishDate
           in: query
+          description: Exact UTC publish date filter.
           schema:
             type: string
             format: date-time
         - name: ClosingDate
           in: query
+          description: Exact UTC closing date filter.
           schema:
             type: string
             format: date-time
@@ -1410,6 +1596,9 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}
+      description: Gets one quiz by id, optionally including student-specific attempt
+        context.
       parameters:
         - name: quizId
           in: path
@@ -1444,6 +1633,9 @@ paths:
     patch:
       tags:
         - Quizzes
+      summary: PATCH /api/quizzes/{quizId}
+      description: Updates quiz metadata. Admins can update any quiz; teachers can
+        update quizzes for their subjects.
       parameters:
         - name: quizId
           in: path
@@ -1482,6 +1674,9 @@ paths:
     delete:
       tags:
         - Quizzes
+      summary: DELETE /api/quizzes/{quizId}
+      description: Deletes a quiz. Admins can delete any quiz; teachers can delete
+        quizzes for their subjects.
       parameters:
         - name: quizId
           in: path
@@ -1509,6 +1704,10 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}/export
+      description: "GET /api/quizzes/5/export\r
+
+        Exports one quiz into the quiz CSV import format. Subject teacher only."
       parameters:
         - name: quizId
           in: path
@@ -1526,6 +1725,8 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}/questions
+      description: Gets questions for a quiz visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -1604,6 +1805,8 @@ paths:
     post:
       tags:
         - Quizzes
+      summary: POST /api/quizzes/{quizId}/questions
+      description: Creates a question in the route quiz. The route quiz id is authoritative.
       parameters:
         - name: quizId
           in: path
@@ -1643,6 +1846,8 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}/questions/{questionId}
+      description: Gets one quiz question visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -1678,6 +1883,8 @@ paths:
     patch:
       tags:
         - Quizzes
+      summary: PATCH /api/quizzes/{quizId}/questions/{questionId}
+      description: Updates a quiz question visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -1725,6 +1932,8 @@ paths:
     delete:
       tags:
         - Quizzes
+      summary: DELETE /api/quizzes/{quizId}/questions/{questionId}
+      description: Deletes a quiz question visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -1761,6 +1970,9 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}/questions/{questionId}/detailed
+      description: Gets a detailed quiz question for quiz taking or quiz management,
+        according to requester role.
       parameters:
         - name: quizId
           in: path
@@ -1797,6 +2009,9 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}/questions/{questionId}/options
+      description: Gets answer options for a question visible to the admin or subject
+        teacher.
       parameters:
         - name: quizId
           in: path
@@ -1882,6 +2097,9 @@ paths:
     post:
       tags:
         - Quizzes
+      summary: POST /api/quizzes/{quizId}/questions/{questionId}/options
+      description: Creates an answer option in the route question. The route question
+        id is authoritative.
       parameters:
         - name: quizId
           in: path
@@ -1930,6 +2148,8 @@ paths:
     get:
       tags:
         - Quizzes
+      summary: GET /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+      description: Gets one answer option visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -1974,6 +2194,8 @@ paths:
     patch:
       tags:
         - Quizzes
+      summary: PATCH /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+      description: Updates an answer option visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -2030,6 +2252,8 @@ paths:
     delete:
       tags:
         - Quizzes
+      summary: DELETE /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+      description: Deletes an answer option visible to the admin or subject teacher.
       parameters:
         - name: quizId
           in: path
@@ -2075,21 +2299,26 @@ paths:
     get:
       tags:
         - SchoolClasses
+      summary: GET /api/classes
+      description: Gets a paged list of school classes.
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches class name and section.
           schema:
             maxLength: 100
             minLength: 0
             type: string
         - name: AcademicYear
           in: query
+          description: Filters classes by academic year label.
           schema:
             maxLength: 20
             minLength: 0
             type: string
         - name: TeacherId
           in: query
+          description: Filters classes by managing teacher id.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -2132,6 +2361,8 @@ paths:
     post:
       tags:
         - SchoolClasses
+      summary: POST /api/classes
+      description: Creates a school class. Admin-only.
       requestBody:
         content:
           application/json:
@@ -2161,6 +2392,8 @@ paths:
     get:
       tags:
         - SchoolClasses
+      summary: GET /api/classes/{id}
+      description: Gets class details including assigned teacher and students.
       parameters:
         - name: id
           in: path
@@ -2187,6 +2420,8 @@ paths:
     patch:
       tags:
         - SchoolClasses
+      summary: PATCH /api/classes/{id}
+      description: Updates class metadata and managed teacher assignment. Admin-only.
       parameters:
         - name: id
           in: path
@@ -2225,6 +2460,8 @@ paths:
     delete:
       tags:
         - SchoolClasses
+      summary: DELETE /api/classes/{id}
+      description: Deletes a school class when it can be safely removed. Admin-only.
       parameters:
         - name: id
           in: path
@@ -2252,6 +2489,9 @@ paths:
     post:
       tags:
         - SchoolClasses
+      summary: POST /api/classes/{id}/students
+      description: Assigns students to a class while preventing teacher/student
+        assignment conflicts. Admin-only.
       parameters:
         - name: id
           in: path
@@ -2291,6 +2531,8 @@ paths:
     post:
       tags:
         - SchoolClasses
+      summary: POST /api/classes/{id}/students/remove
+      description: Removes students from a class. Admin-only.
       parameters:
         - name: id
           in: path
@@ -2330,9 +2572,14 @@ paths:
     get:
       tags:
         - Subjects
+      summary: GET /api/subjects
+      description: "GET /api/subjects\r
+
+        Gets a paged list of subjects."
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches subject name and description.
           schema:
             maxLength: 100
             minLength: 0
@@ -2361,6 +2608,8 @@ paths:
             format: int64
         - name: StudentId
           in: query
+          description: Filters to subjects available to or already connected with a
+            student, depending on service context.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -2369,10 +2618,13 @@ paths:
             format: int64
         - name: IsActive
           in: query
+          description: Filters subjects by current active state. Null leaves activity
+            unfiltered.
           schema:
             type: boolean
         - name: StartingAfter
           in: query
+          description: Filters subjects whose start date is after the supplied UTC value.
           schema:
             type: string
             format: date-time
@@ -2416,6 +2668,10 @@ paths:
     post:
       tags:
         - Subjects
+      summary: POST /api/subjects
+      description: "POST /api/subjects\r
+
+        Creates a subject. Admin-only."
       requestBody:
         content:
           application/json:
@@ -2445,6 +2701,10 @@ paths:
     get:
       tags:
         - Subjects
+      summary: GET /api/subjects/{id}
+      description: "GET /api/subjects/5\r
+
+        Gets one subject by id."
       parameters:
         - name: id
           in: path
@@ -2471,6 +2731,10 @@ paths:
     patch:
       tags:
         - Subjects
+      summary: PATCH /api/subjects/{id}
+      description: "PATCH /api/subjects/5\r
+
+        Updates subject metadata and assignments. Admin-only."
       parameters:
         - name: id
           in: path
@@ -2509,6 +2773,11 @@ paths:
     delete:
       tags:
         - Subjects
+      summary: DELETE /api/subjects/{id}
+      description: "DELETE /api/subjects/5\r
+
+        Deletes an empty subject or archives it when enrollments or quizzes are
+        present."
       parameters:
         - name: id
           in: path
@@ -2536,6 +2805,11 @@ paths:
     get:
       tags:
         - Subjects
+      summary: GET /api/subjects/{subjectId}/enrollments
+      description: "GET /api/subjects/5/enrollments\r
+
+        Lists enrollments for the subject with student and teacher visibility
+        restrictions."
       parameters:
         - name: subjectId
           in: path
@@ -2548,6 +2822,7 @@ paths:
             format: int64
         - name: Mark
           in: query
+          description: Filters enrollments by exact mark.
           schema:
             maximum: 5
             minimum: 1
@@ -2558,6 +2833,8 @@ paths:
             format: int32
         - name: StudentId
           in: query
+          description: Filters enrollments by student id. Student callers are forced to
+            their own id by the service.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -2566,6 +2843,8 @@ paths:
             format: int64
         - name: SubjectId
           in: query
+          description: Filters enrollments by subject id. Teacher callers must use an
+            owned subject unless viewing their own enrollment.
           schema:
             pattern: ^-?(?:0|[1-9]\d*)$
             type:
@@ -2574,6 +2853,8 @@ paths:
             format: int64
         - name: IsActive
           in: query
+          description: Filters active or archived enrollments. Null leaves archive state
+            unfiltered.
           schema:
             type: boolean
         - name: IsDescending
@@ -2616,6 +2897,11 @@ paths:
     post:
       tags:
         - Subjects
+      summary: POST /api/subjects/{subjectId}/enrollments
+      description: "POST /api/subjects/5/enrollments\r
+
+        Enrolls students in the subject. Admins can enroll anyone; students can
+        enroll only themselves."
       parameters:
         - name: subjectId
           in: path
@@ -2654,6 +2940,11 @@ paths:
     delete:
       tags:
         - Subjects
+      summary: DELETE /api/subjects/{subjectId}/enrollments
+      description: "DELETE /api/subjects/5/enrollments\r
+
+        Removes students from the subject. Admins can remove anyone; teachers
+        can remove from their own subjects."
       parameters:
         - name: subjectId
           in: path
@@ -2703,6 +2994,10 @@ paths:
     get:
       tags:
         - Subjects
+      summary: GET /api/subjects/{subjectId}/quizzes
+      description: "GET /api/subjects/5/quizzes\r
+
+        Lists quizzes attached to the subject."
       parameters:
         - name: subjectId
           in: path
@@ -2715,21 +3010,26 @@ paths:
             format: int64
         - name: SearchTerm
           in: query
+          description: Searches quiz title and description.
           schema:
             maxLength: 100
             minLength: 0
             type: string
         - name: IsActive
           in: query
+          description: Filters quizzes by currently active schedule. Null leaves activity
+            unfiltered.
           schema:
             type: boolean
         - name: PublishDate
           in: query
+          description: Exact UTC publish date filter.
           schema:
             type: string
             format: date-time
         - name: ClosingDate
           in: query
+          description: Exact UTC closing date filter.
           schema:
             type: string
             format: date-time
@@ -2793,6 +3093,11 @@ paths:
     delete:
       tags:
         - Subjects
+      summary: DELETE /api/subjects/{subjectId}/quizzes
+      description: "DELETE /api/subjects/5/quizzes?deleteAll=true\r
+
+        Removes all quizzes and quiz content for the subject after enrollment
+        history has been removed. Admin-only."
       parameters:
         - name: subjectId
           in: path
@@ -2824,6 +3129,10 @@ paths:
     post:
       tags:
         - Subjects
+      summary: POST /api/subjects/{subjectId}/quizzes
+      description: "POST /api/subjects/5/quizzes\r
+
+        Creates a new quiz attached to this subject."
       parameters:
         - name: subjectId
           in: path
@@ -2863,6 +3172,11 @@ paths:
     post:
       tags:
         - Subjects
+      summary: POST /api/subjects/{subjectId}/quizzes/import
+      description: "POST /api/subjects/5/quizzes/import\r
+
+        Imports quizzes, questions, and options from a CSV file into the
+        subject. Subject teacher only."
       parameters:
         - name: subjectId
           in: path
@@ -2899,6 +3213,8 @@ paths:
     get:
       tags:
         - SystemConfig
+      summary: GET /api/system-config
+      description: Gets the current system configuration.
       responses:
         "200":
           description: OK
@@ -2915,6 +3231,8 @@ paths:
     patch:
       tags:
         - SystemConfig
+      summary: PATCH /api/system-config
+      description: Updates mutable system configuration values. Admin-only.
       requestBody:
         content:
           application/json:
@@ -2944,9 +3262,14 @@ paths:
     get:
       tags:
         - User
+      summary: GET /api/users
+      description: Gets a paged list of users using the supplied filters. Any
+        authenticated user may search users.
       parameters:
         - name: SearchTerm
           in: query
+          description: Searches username, first name, last name, and email where email
+            visibility allows it.
           schema:
             maxLength: 100
             minLength: 0
@@ -2973,10 +3296,13 @@ paths:
             format: int64
         - name: IsArchived
           in: query
+          description: Filters archived accounts. Null leaves archived state unfiltered.
           schema:
             type: boolean
         - name: IsEmailVerified
           in: query
+          description: Filters accounts by email verification state. Null leaves
+            verification state unfiltered.
           schema:
             type: boolean
         - name: Role
@@ -2985,6 +3311,8 @@ paths:
             $ref: "#/components/schemas/UserRole"
         - name: StrictRoleOnly
           in: query
+          description: When true, limits role filtering to the exact discriminator instead
+            of including derived user types.
           schema:
             type: boolean
         - name: Department
@@ -3009,6 +3337,7 @@ paths:
             type: boolean
         - name: HasAssignedClass
           in: query
+          description: Filters users by whether SchoolClassId is assigned.
           schema:
             type: boolean
         - name: PageNumber
@@ -3047,6 +3376,8 @@ paths:
     post:
       tags:
         - User
+      summary: POST /api/users
+      description: Creates a student, teacher, or admin account. Admin-only.
       requestBody:
         content:
           application/json:
@@ -3076,6 +3407,9 @@ paths:
     get:
       tags:
         - User
+      summary: GET /api/users/{id}
+      description: Gets a lightweight user profile. Any authenticated user may read
+        the profile.
       parameters:
         - name: id
           in: path
@@ -3102,6 +3436,9 @@ paths:
     patch:
       tags:
         - User
+      summary: PATCH /api/users/{id}
+      description: Updates a user profile. Users can update their own basic fields;
+        admins can update assignments and role data.
       parameters:
         - name: id
           in: path
@@ -3140,6 +3477,9 @@ paths:
     delete:
       tags:
         - User
+      summary: DELETE /api/users/{id}
+      description: Archives a user. Users can archive themselves; admins can archive
+        non-admin users; the superadmin can archive admins too.
       parameters:
         - name: id
           in: path
@@ -3157,6 +3497,9 @@ paths:
     get:
       tags:
         - User
+      summary: GET /api/users/{id}/details
+      description: Gets a detailed user profile with class, enrollment, and badge
+        data. Any authenticated user may read it.
       parameters:
         - name: id
           in: path
@@ -3184,6 +3527,9 @@ paths:
     patch:
       tags:
         - User
+      summary: PATCH /api/users/{id}/restore
+      description: Restores an archived user. Admins can restore non-admin users; the
+        superadmin can restore admins too.
       parameters:
         - name: id
           in: path
@@ -3201,6 +3547,12 @@ paths:
     delete:
       tags:
         - User
+      summary: DELETE /api/users/{id}/hard
+      description: "Permanently deletes an archived student or teacher. Admin targets
+        must be changed to teacher first.\r
+
+        If the deleted user owns media assets, provide a replacement
+        teacher/admin owner id."
       parameters:
         - name: id
           in: path
@@ -3226,6 +3578,9 @@ paths:
     post:
       tags:
         - User
+      summary: POST /api/users/me/avatar
+      description: Uploads and replaces a user's avatar image. Without targetUserId,
+        the current user's avatar is changed.
       parameters:
         - name: targetUserId
           in: query
@@ -3271,6 +3626,7 @@ components:
               - integer
               - string
             format: int64
+      description: Request containing student ids to assign to a class or subject.
     AttemptStatus:
       enum:
         - Created
@@ -3278,6 +3634,7 @@ components:
         - Completed
         - PendingCorrection
         - Abandoned
+      description: Lifecycle state of a quiz attempt.
     AvatarUploadResponseDto:
       required:
         - message
@@ -3288,6 +3645,7 @@ components:
           type: string
         avatarUrl:
           type: string
+      description: Response returned after a successful avatar upload.
     BadgeDto:
       required:
         - id
@@ -3303,31 +3661,39 @@ components:
           type:
             - integer
             - string
+          description: Badge identifier.
           format: int64
         name:
           type: string
+          description: Badge display name.
         description:
           type: string
+          description: Badge description.
         iconUrl:
           type:
             - "null"
             - string
+          description: Public icon URL, or null when no icon is assigned.
         xpBonus:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: XP added when the badge is awarded.
           format: int32
         rules:
           type: array
           items:
             $ref: "#/components/schemas/BadgeRuleDto"
+          description: Rules attached to this badge.
+      description: Badge definition returned by badge endpoints.
     BadgeMetric:
       enum:
         - ScorePercentage
         - TotalScore
         - PerfectAnswersCount
         - TotalAttempts
+      description: Metric evaluated by badge rules after quiz attempt completion or grading.
     BadgeOperator:
       enum:
         - Equals
@@ -3336,6 +3702,7 @@ components:
         - LessThan
         - LessThanOrEqual
         - NotEquals
+      description: Comparison operator used by badge rule evaluation.
     BadgeRuleDto:
       required:
         - id
@@ -3349,17 +3716,22 @@ components:
           type:
             - integer
             - string
+          description: Rule identifier.
           format: int64
         metric:
+          description: Metric inspected during badge evaluation.
           $ref: "#/components/schemas/BadgeMetric"
         operator:
+          description: Comparison operator used against TargetValue.
           $ref: "#/components/schemas/BadgeOperator"
         targetValue:
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
           type:
             - number
             - string
+          description: Value that the selected metric is compared with.
           format: double
+      description: Persisted rule that determines when a badge can be awarded.
     BulkEnrollmentResultDto:
       type: object
       properties:
@@ -3371,6 +3743,7 @@ components:
               - integer
               - string
             format: int64
+          description: Student ids that were newly enrolled by the request.
         alreadyEnrolledIds:
           type: array
           items:
@@ -3379,6 +3752,9 @@ components:
               - integer
               - string
             format: int64
+          description: Student ids that already had an enrollment for the subject.
+      description: Result of a bulk enrollment operation, split by newly enrolled and
+        already enrolled student ids.
     ClassmateDto:
       type: object
       properties:
@@ -3404,12 +3780,15 @@ components:
           type:
             - "null"
             - string
+      description: Compact student profile used inside class detail responses.
     CreateBadgeRuleDto:
       type: object
       properties:
         metric:
+          description: Metric inspected during badge evaluation.
           $ref: "#/components/schemas/BadgeMetric"
         operator:
+          description: Comparison operator used against TargetValue.
           $ref: "#/components/schemas/BadgeOperator"
         targetValue:
           maximum: 1000000
@@ -3418,7 +3797,9 @@ components:
           type:
             - number
             - string
+          description: Value that the selected metric is compared with.
           format: double
+      description: Request for creating one badge rule.
     CreateMediaAssetDto:
       type: object
       properties:
@@ -3442,6 +3823,7 @@ components:
           type:
             - "null"
             - string
+      description: Request for creating media asset metadata.
     CreateQuizDto:
       type: object
       properties:
@@ -3477,6 +3859,7 @@ components:
             - "null"
             - string
           format: date-time
+      description: Request for creating a quiz with optional UTC publish and closing dates.
     CreateQuizOptionDto:
       type: object
       properties:
@@ -3503,6 +3886,7 @@ components:
             - integer
             - string
           format: int64
+      description: Request for creating a quiz option.
     CreateQuizQuestionDto:
       type: object
       properties:
@@ -3543,6 +3927,7 @@ components:
           format: int64
         isStrictMultipleChoice:
           type: boolean
+      description: Request for creating a quiz question.
     CreateSchoolClassDto:
       type: object
       properties:
@@ -3564,7 +3949,9 @@ components:
             - "null"
             - integer
             - string
+          description: Optional managing teacher assignment.
           format: int64
+      description: Request for creating a school class with an optional managed teacher.
     CreateStudentDto:
       required:
         - role
@@ -3573,6 +3960,8 @@ components:
         - $ref: "#/components/schemas/CreateStudentDtoCreateStudentDto"
         - $ref: "#/components/schemas/CreateStudentDtoCreateTeacherDto"
         - $ref: "#/components/schemas/CreateStudentDtoCreateAdminDto"
+      description: Polymorphic user creation DTO; the role discriminator selects
+        student, teacher, or admin fields.
       discriminator:
         propertyName: role
         mapping:
@@ -3635,7 +4024,10 @@ components:
             - "null"
             - integer
             - string
+          description: Optional school class assignment for the created student-shaped
+            account.
           format: int64
+      description: Admin creation DTO with optional phone number.
     CreateStudentDtoCreateStudentDto:
       properties:
         role:
@@ -3670,7 +4062,11 @@ components:
             - "null"
             - integer
             - string
+          description: Optional school class assignment for the created student-shaped
+            account.
           format: int64
+      description: Polymorphic user creation DTO; the role discriminator selects
+        student, teacher, or admin fields.
     CreateStudentDtoCreateTeacherDto:
       properties:
         role:
@@ -3720,7 +4116,11 @@ components:
             - "null"
             - integer
             - string
+          description: Optional school class assignment for the created student-shaped
+            account.
           format: int64
+      description: Teacher creation DTO with optional department and managed class
+        assignment.
     CreateSubjectDto:
       type: object
       properties:
@@ -3754,6 +4154,7 @@ components:
             - "null"
             - integer
             - string
+          description: Optional teacher assignment.
           format: int64
         schoolClassId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3761,7 +4162,9 @@ components:
             - "null"
             - integer
             - string
+          description: Optional school class assignment.
           format: int64
+      description: Request for creating a subject with optional UTC dates and assignments.
     DetailedQuizQuestionDto:
       required:
         - id
@@ -3823,6 +4226,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/StudentQuizOptionDto"
+      description: Question detail used for quiz taking and management views.
     DetailedUserDto:
       type: object
       properties:
@@ -3856,6 +4260,7 @@ components:
           type:
             - integer
             - string
+          description: User identifier shared by students, teachers, and admins.
           format: int64
         firstName:
           type: string
@@ -3865,6 +4270,8 @@ components:
           type: string
         email:
           type: string
+          description: Email address visible according to requester permissions; it can be
+            pseudo-anonymized for restricted viewers.
         currentXP:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -3886,7 +4293,10 @@ components:
             - "null"
             - integer
             - string
+          description: Assigned school class id. Null means the user is not assigned to a
+            class as a student.
           format: int64
+      description: Expanded user profile including class, badges, and enrollment history.
     EnrollmentBasicDto:
       type: object
       properties:
@@ -3919,6 +4329,7 @@ components:
             - "null"
             - string
           format: date-time
+      description: Compact enrollment view embedded in detailed user profiles.
     EnrollmentDto:
       required:
         - id
@@ -3938,6 +4349,7 @@ components:
           type:
             - integer
             - string
+          description: Enrollment identifier.
           format: int64
         mark:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -3945,39 +4357,49 @@ components:
             - "null"
             - integer
             - string
+          description: Optional teacher-assigned mark.
           format: int32
         enrolledAt:
           type: string
+          description: UTC timestamp when the enrollment was created.
           format: date-time
         archivedAt:
           type:
             - "null"
             - string
+          description: UTC timestamp when the enrollment was archived; null means active.
           format: date-time
         studentId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Enrolled student id.
           format: int64
         studentUserName:
           type: string
+          description: Enrolled student's username.
         subjectId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Subject id.
           format: int64
         subjectName:
           type: string
+          description: Subject name.
         subjectCode:
           type: string
+          description: Subject code.
         quizAttemptsCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of quiz attempts connected to this enrollment.
           format: int32
+      description: Enrollment summary joining a student with a subject and optional mark.
     EntityTagHeaderValue:
       type: object
       properties:
@@ -4021,6 +4443,7 @@ components:
           type:
             - "null"
             - string
+      description: Request for starting the password-reset email flow.
     GradeQuestionResponseDto:
       type: object
       properties:
@@ -4034,6 +4457,8 @@ components:
           format: int32
         isLiked:
           type: boolean
+          description: Teacher feedback flag for highlighting an answer.
+      description: Teacher/admin request for manually grading a free-text response.
     IFormFile:
       type: string
       format: binary
@@ -4045,13 +4470,17 @@ components:
           type:
             - integer
             - string
+          description: Number of records successfully imported.
           format: int32
         errors:
           type: array
           items:
             type: string
+          description: Row-level or file-level import errors.
         hasRowErrors:
           type: boolean
+          description: Indicates whether any row errors were collected during import.
+      description: Import summary with number of imported records and row-level errors.
     LoginDTO:
       type: object
       properties:
@@ -4066,6 +4495,7 @@ components:
           type: string
         rememberMe:
           type: boolean
+      description: Login request containing credentials and session persistence preference.
     MediaAssetDto:
       required:
         - id
@@ -4103,12 +4533,15 @@ components:
           type:
             - "null"
             - string
+      description: Media asset metadata returned by media endpoints.
     MediaType:
       enum:
         - Image
         - Video
         - Audio
         - Document
+      description: High-level media category used for upload validation, storage, and
+        response metadata.
     NextQuestionProgressDto:
       required:
         - nextQuestionId
@@ -4121,13 +4554,17 @@ components:
             - "null"
             - integer
             - string
+          description: Next unanswered question id, or null when all questions are answered.
           format: int64
         answeredQuestionsCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of distinct questions already answered in the attempt.
           format: int32
+      description: Quiz attempt navigation state used to recover the next question and
+        render progress.
     OptionStatDto:
       type: object
       properties:
@@ -4136,19 +4573,24 @@ components:
           type:
             - integer
             - string
+          description: Option identifier.
           format: int64
         text:
           type:
             - "null"
             - string
+          description: Option text, if the option has text content.
         pickCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of responses that selected this option.
           format: int32
         isCorrect:
           type: boolean
+          description: Whether this option is marked as correct.
+      description: Aggregated option selection statistics for a question.
     PagedResponseOfBadgeDto:
       type: object
       properties:
@@ -4156,30 +4598,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/BadgeDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfEnrollmentDto:
       type: object
       properties:
@@ -4187,30 +4635,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnrollmentDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfMediaAssetDto:
       type: object
       properties:
@@ -4218,30 +4672,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MediaAssetDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfQuizAttemptDto:
       type: object
       properties:
@@ -4249,30 +4709,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QuizAttemptDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfQuizDto:
       type: object
       properties:
@@ -4280,30 +4746,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QuizDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfQuizOptionDto:
       type: object
       properties:
@@ -4311,30 +4783,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QuizOptionDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfQuizQuestionDto:
       type: object
       properties:
@@ -4342,30 +4820,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QuizQuestionDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfSchoolClassDto:
       type: object
       properties:
@@ -4373,30 +4857,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SchoolClassDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfStudentDto:
       type: object
       properties:
@@ -4404,30 +4894,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/StudentDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PagedResponseOfSubjectDto:
       type: object
       properties:
@@ -4435,30 +4931,36 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SubjectDto"
+          description: Items for the requested page.
         totalCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of items matching the filter before paging is applied.
           format: int32
         pageNumber:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: One-based page number returned by the query.
           format: int32
         pageSize:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum number of items requested for this page.
           format: int32
         totalPages:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total number of pages calculated from TotalCount and PageSize.
           format: int32
+      description: Standard paged response shape used by list endpoints.
     PatchEnrollmentDto:
       type: object
       properties:
@@ -4475,6 +4977,9 @@ components:
           type:
             - "null"
             - boolean
+          description: When true, clears the current mark. This distinguishes mark removal
+            from an omitted Mark value.
+      description: Request for updating or clearing an enrollment mark.
     PatchMediaAssetDto:
       type: object
       properties:
@@ -4498,6 +5003,7 @@ components:
           type:
             - "null"
             - string
+      description: Request for partially updating media asset metadata.
     PatchQuizDto:
       type: object
       properties:
@@ -4541,8 +5047,13 @@ components:
           format: date-time
         resetPublishDate:
           type: boolean
+          description: When true, clears PublishDate. This is needed because omitted and
+            null patch values are otherwise indistinguishable.
         resetClosingDate:
           type: boolean
+          description: When true, clears ClosingDate. This is needed because omitted and
+            null patch values are otherwise indistinguishable.
+      description: Request for partially updating quiz metadata and schedule values.
     PatchQuizOptionDto:
       type: object
       properties:
@@ -4566,7 +5077,10 @@ components:
             - "null"
             - integer
             - string
+          description: Optional media attachment. A value of 0 removes the current media
+            attachment.
           format: int64
+      description: Request for partially updating a quiz option.
     PatchQuizQuestionDto:
       type: object
       properties:
@@ -4604,11 +5118,14 @@ components:
             - "null"
             - integer
             - string
+          description: Optional media attachment. A value of 0 removes the current media
+            attachment.
           format: int64
         isStrictMultipleChoice:
           type:
             - "null"
             - boolean
+      description: Request for partially updating a quiz question.
     PatchSchoolClassDto:
       type: object
       properties:
@@ -4636,7 +5153,10 @@ components:
             - "null"
             - integer
             - string
+          description: Optional managing teacher assignment. A value of 0 removes the
+            teacher.
           format: int64
+      description: Request for partially updating a school class and managed teacher.
     PatchStudentDto:
       required:
         - role
@@ -4645,6 +5165,8 @@ components:
         - $ref: "#/components/schemas/PatchStudentDtoPatchStudentDto"
         - $ref: "#/components/schemas/PatchStudentDtoPatchTeacherDto"
         - $ref: "#/components/schemas/PatchStudentDtoPatchAdminDto"
+      description: Polymorphic user patch DTO; the role discriminator selects which
+        role-specific fields may be supplied.
       discriminator:
         propertyName: role
         mapping:
@@ -4678,6 +5200,8 @@ components:
             - "null"
             - integer
             - string
+          description: Optional class managed by the teacher. When supplied by an
+            authorized admin, 0 removes the managed class.
           format: int64
         username:
           maxLength: 20
@@ -4692,6 +5216,8 @@ components:
             - "null"
             - integer
             - string
+          description: Optional class assignment. When supplied by an authorized admin, 0
+            removes the current class assignment.
           format: int64
         avatarUrl:
           maxLength: 2048
@@ -4699,6 +5225,9 @@ components:
           type:
             - "null"
             - string
+          description: Avatar URL metadata patch. File uploads should use the avatar
+            upload endpoint instead.
+      description: Admin patch DTO for phone-number updates.
     PatchStudentDtoPatchStudentDto:
       properties:
         role:
@@ -4718,6 +5247,8 @@ components:
             - "null"
             - integer
             - string
+          description: Optional class assignment. When supplied by an authorized admin, 0
+            removes the current class assignment.
           format: int64
         avatarUrl:
           maxLength: 2048
@@ -4725,6 +5256,10 @@ components:
           type:
             - "null"
             - string
+          description: Avatar URL metadata patch. File uploads should use the avatar
+            upload endpoint instead.
+      description: Polymorphic user patch DTO; the role discriminator selects which
+        role-specific fields may be supplied.
     PatchStudentDtoPatchTeacherDto:
       properties:
         role:
@@ -4745,6 +5280,8 @@ components:
             - "null"
             - integer
             - string
+          description: Optional class managed by the teacher. When supplied by an
+            authorized admin, 0 removes the managed class.
           format: int64
         username:
           maxLength: 20
@@ -4759,6 +5296,8 @@ components:
             - "null"
             - integer
             - string
+          description: Optional class assignment. When supplied by an authorized admin, 0
+            removes the current class assignment.
           format: int64
         avatarUrl:
           maxLength: 2048
@@ -4766,6 +5305,9 @@ components:
           type:
             - "null"
             - string
+          description: Avatar URL metadata patch. File uploads should use the avatar
+            upload endpoint instead.
+      description: Teacher patch DTO for department and managed class assignment updates.
     PatchSubjectDto:
       type: object
       properties:
@@ -4803,6 +5345,7 @@ components:
             - "null"
             - integer
             - string
+          description: Optional teacher assignment. A value of 0 removes the teacher.
           format: int64
         schoolClassId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -4810,7 +5353,9 @@ components:
             - "null"
             - integer
             - string
+          description: Optional school class assignment. A value of 0 removes the class.
           format: int64
+      description: Request for partially updating a subject and its optional assignments.
     ProblemDetails:
       type: object
       properties:
@@ -4908,6 +5453,8 @@ components:
             - integer
             - string
           format: int64
+      description: Answer-submission response with correctness hints and next-question
+        navigation.
     QuestionResponseDto:
       required:
         - id
@@ -4958,6 +5505,7 @@ components:
               - integer
               - string
             format: int64
+      description: Stored answer response returned in attempt details.
     QuestionStatDto:
       type: object
       properties:
@@ -4966,39 +5514,49 @@ components:
           type:
             - integer
             - string
+          description: Question identifier.
           format: int64
         questionText:
           type:
             - "null"
             - string
+          description: Question title or text.
         isFreeText:
           type: boolean
+          description: Whether the question is answered with free text.
         totalAnswers:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of responses submitted for this question.
           format: int32
         averageScore:
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
           type:
             - number
             - string
+          description: Average score awarded for this question.
           format: double
         averageResponseTimeSeconds:
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
           type:
             - number
             - string
+          description: Average response time in seconds.
           format: double
         options:
           type: array
           items:
             $ref: "#/components/schemas/OptionStatDto"
+          description: Option pick statistics for choice questions.
         submittedFreeTextAnswers:
           type: array
           items:
             type: string
+          description: Submitted answers for free-text questions.
+      description: Aggregated question statistics including response counts, timing,
+        and option/free-text details.
     QuizAttemptDetailDto:
       required:
         - id
@@ -5059,6 +5617,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/QuestionResponseDto"
+      description: Full quiz attempt view including all submitted responses.
     QuizAttemptDto:
       required:
         - id
@@ -5076,36 +5635,43 @@ components:
           type:
             - integer
             - string
+          description: Attempt identifier.
           format: int64
         quizId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Quiz being attempted.
           format: int64
         enrollmentId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Enrollment that proves the student's access to the quiz subject.
           format: int64
         startTime:
           type:
             - "null"
             - string
+          description: UTC timestamp when the attempt started.
           format: date-time
         endTime:
           type:
             - "null"
             - string
+          description: UTC timestamp when the attempt was completed or closed.
           format: date-time
         status:
+          description: Attempt lifecycle state.
           $ref: "#/components/schemas/AttemptStatus"
         totalScore:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Total score currently awarded for the attempt.
           format: int32
         mark:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -5113,6 +5679,7 @@ components:
             - "null"
             - integer
             - string
+          description: Optional derived mark for completed attempts.
           format: int32
         nextQuestionId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -5120,6 +5687,8 @@ components:
             - "null"
             - integer
             - string
+          description: Next unanswered question id, or null when no pending question
+            remains.
           format: int64
         earnedBadges:
           type:
@@ -5127,17 +5696,22 @@ components:
             - array
           items:
             $ref: "#/components/schemas/StudentBadgeBasicDto"
+          description: Badges awarded while completing the attempt.
         studentName:
           type:
             - "null"
             - string
+          description: Student display name, included only for privileged quiz-owner views.
         studentId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
             - integer
             - string
+          description: Student id, included only for privileged quiz-owner views.
           format: int64
+      description: Quiz attempt summary returned when an attempt is started,
+        completed, or listed.
     QuizDto:
       required:
         - id
@@ -5199,6 +5773,7 @@ components:
             - integer
             - string
           format: int32
+      description: Quiz metadata summary returned by quiz endpoints.
     QuizOptionDto:
       required:
         - id
@@ -5243,6 +5818,7 @@ components:
             - integer
             - string
           format: int32
+      description: Quiz option summary returned by management endpoints.
     QuizQuestionDto:
       required:
         - id
@@ -5306,6 +5882,7 @@ components:
             - integer
             - string
           format: int32
+      description: Quiz question summary returned by management endpoints.
     QuizSummaryStatDto:
       type: object
       properties:
@@ -5314,43 +5891,51 @@ components:
           type:
             - integer
             - string
+          description: Quiz identifier.
           format: int64
         totalAttempts:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of attempts created for the quiz.
           format: int32
         completedAttempts:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of attempts that reached the completed state.
           format: int32
         averageScore:
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
           type:
             - number
             - string
+          description: Average score across completed attempts.
           format: double
         highestScore:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Highest score across completed attempts.
           format: int32
         lowestScore:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Lowest score across completed attempts.
           format: int32
         averageCompletionTimeMinutes:
           pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
           type:
             - number
             - string
+          description: Average completion time in minutes for completed attempts.
           format: double
+      description: High-level quiz performance statistics.
     ReassignMediaAssetOwnerDto:
       required:
         - ownerId
@@ -5363,6 +5948,8 @@ components:
             - integer
             - string
           format: int64
+      description: Request for transferring media asset ownership to another teacher
+        or admin.
     RegisterDTO:
       type: object
       properties:
@@ -5401,6 +5988,7 @@ components:
           type:
             - "null"
             - string
+      description: Public registration request for a new unverified account.
     RemoveStudentsDto:
       type: object
       properties:
@@ -5413,6 +6001,7 @@ components:
               - integer
               - string
             format: int64
+      description: Request containing student ids to remove from a class or subject.
     ResendVerificationDto:
       type: object
       properties:
@@ -5429,6 +6018,7 @@ components:
           type:
             - "null"
             - string
+      description: Request for resending account verification email.
     ResetPasswordDto:
       type: object
       properties:
@@ -5441,6 +6031,7 @@ components:
           minLength: 8
           pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$
           type: string
+      description: Request for replacing a password using a reset token.
     SchoolClassBasicDto:
       type: object
       properties:
@@ -5456,6 +6047,7 @@ components:
           type: string
         section:
           type: string
+      description: Compact school class view embedded in user profiles.
     SchoolClassDetailDto:
       type: object
       properties:
@@ -5483,6 +6075,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SubjectBasicDto"
+      description: Detailed school class view with teacher, students, and subjects.
     SchoolClassDto:
       required:
         - id
@@ -5500,36 +6093,45 @@ components:
           type:
             - integer
             - string
+          description: School class identifier.
           format: int64
         name:
           type: string
+          description: Class display name.
         academicYear:
           type: string
+          description: Academic year label.
         section:
           type: string
+          description: Section label within the academic year.
         teacherId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
             - integer
             - string
+          description: Assigned managing teacher id, or null when none is assigned.
           format: int64
         teacherName:
           type:
             - "null"
             - string
+          description: Assigned managing teacher username, or null when none is assigned.
         studentCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of students assigned to this class.
           format: int32
         subjectCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of subjects assigned to this class.
           format: int32
+      description: School class summary returned by class endpoints.
     StartQuizAttemptDto:
       required:
         - quizId
@@ -5548,6 +6150,7 @@ components:
             - integer
             - string
           format: int64
+      description: Request for starting a quiz attempt for a student's enrollment.
     StringSegment:
       type: object
       properties:
@@ -5581,16 +6184,21 @@ components:
           type:
             - integer
             - string
+          description: Awarded badge id.
           format: int64
         name:
           type: string
+          description: Badge display name.
         iconUrl:
           type:
             - "null"
             - string
+          description: Public icon URL, or null when no icon is assigned.
         earnedAt:
           type: string
+          description: UTC timestamp when the student earned the badge.
           format: date-time
+      description: Compact badge award view embedded in user and quiz attempt responses.
     StudentBadgeDto:
       required:
         - badgeId
@@ -5606,24 +6214,31 @@ components:
           type:
             - integer
             - string
+          description: Awarded badge id.
           format: int64
         name:
           type: string
+          description: Badge display name.
         description:
           type: string
+          description: Badge description.
         iconUrl:
           type:
             - "null"
             - string
+          description: Public icon URL, or null when no icon is assigned.
         xpBonus:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: XP added when the badge was awarded.
           format: int32
         earnedAt:
           type: string
+          description: UTC timestamp when the student earned the badge.
           format: date-time
+      description: Badge award view returned for a specific student.
     StudentDto:
       required:
         - $type
@@ -5632,6 +6247,8 @@ components:
         - $ref: "#/components/schemas/StudentDtoStudentDto"
         - $ref: "#/components/schemas/StudentDtoTeacherDto"
         - $ref: "#/components/schemas/StudentDtoAdminDto"
+      description: Base user DTO returned for student-shaped profiles and polymorphic
+        user lists.
       discriminator:
         propertyName: $type
         mapping:
@@ -5662,6 +6279,7 @@ components:
           type:
             - integer
             - string
+          description: User identifier shared by students, teachers, and admins.
           format: int64
         firstName:
           type: string
@@ -5671,6 +6289,8 @@ components:
           type: string
         email:
           type: string
+          description: Email address visible according to requester permissions; it can be
+            pseudo-anonymized for restricted viewers.
         currentXP:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -5692,7 +6312,10 @@ components:
             - "null"
             - integer
             - string
+          description: Assigned school class id. Null means the user is not assigned to a
+            class as a student.
           format: int64
+      description: Admin profile DTO with administrative contact details.
     StudentDtoStudentDto:
       properties:
         $type:
@@ -5704,6 +6327,7 @@ components:
           type:
             - integer
             - string
+          description: User identifier shared by students, teachers, and admins.
           format: int64
         firstName:
           type: string
@@ -5713,6 +6337,8 @@ components:
           type: string
         email:
           type: string
+          description: Email address visible according to requester permissions; it can be
+            pseudo-anonymized for restricted viewers.
         currentXP:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -5734,7 +6360,11 @@ components:
             - "null"
             - integer
             - string
+          description: Assigned school class id. Null means the user is not assigned to a
+            class as a student.
           format: int64
+      description: Base user DTO returned for student-shaped profiles and polymorphic
+        user lists.
     StudentDtoTeacherDto:
       properties:
         $type:
@@ -5757,6 +6387,7 @@ components:
           type:
             - integer
             - string
+          description: User identifier shared by students, teachers, and admins.
           format: int64
         firstName:
           type: string
@@ -5766,6 +6397,8 @@ components:
           type: string
         email:
           type: string
+          description: Email address visible according to requester permissions; it can be
+            pseudo-anonymized for restricted viewers.
         currentXP:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
@@ -5787,7 +6420,11 @@ components:
             - "null"
             - integer
             - string
+          description: Assigned school class id. Null means the user is not assigned to a
+            class as a student.
           format: int64
+      description: Teacher profile DTO with teaching department and managed class
+        assignment.
     StudentQuizOptionDto:
       required:
         - id
@@ -5822,6 +6459,7 @@ components:
             - integer
             - string
           format: int64
+      description: Student-safe quiz option DTO that hides correctness.
     SubjectBasicDto:
       type: object
       properties:
@@ -5835,6 +6473,7 @@ components:
           type: string
         code:
           type: string
+      description: Compact subject view embedded in class and user detail responses.
     SubjectDto:
       required:
         - id
@@ -5856,22 +6495,28 @@ components:
           type:
             - integer
             - string
+          description: Subject identifier.
           format: int64
         name:
           type: string
+          description: Human-readable subject name.
         code:
           type: string
+          description: Unique subject code used for imports and search.
         description:
           type:
             - "null"
             - string
+          description: Optional subject description.
         startDate:
           type: string
+          description: Subject start date stored as UTC.
           format: date-time
         endDate:
           type:
             - "null"
             - string
+          description: Optional subject end date stored as UTC.
           format: date-time
         teacherId:
           pattern: ^-?(?:0|[1-9]\d*)$
@@ -5879,34 +6524,41 @@ components:
             - "null"
             - integer
             - string
+          description: Assigned teacher id, or null when the subject has no teacher.
           format: int64
         teacherName:
           type:
             - "null"
             - string
+          description: Assigned teacher username, or null when no teacher is assigned.
         schoolClassId:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - "null"
             - integer
             - string
+          description: Assigned school class id, or null when no class is assigned.
           format: int64
         schoolClassName:
           type:
             - "null"
             - string
+          description: Assigned school class name, or null when no class is assigned.
         enrollmentCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of enrollments attached to the subject.
           format: int32
         quizCount:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Number of quizzes attached to the subject.
           format: int32
+      description: Subject summary returned by subject endpoints.
     SubmitQuestionResponseDto:
       type: object
       properties:
@@ -5915,6 +6567,7 @@ components:
           type:
             - integer
             - string
+          description: Question being answered. It must belong to the quiz attempt.
           format: int64
         responseTimeMs:
           maximum: 3600000
@@ -5923,6 +6576,7 @@ components:
           type:
             - integer
             - string
+          description: Time spent on the question in milliseconds.
           format: int64
         freeTextAnswer:
           maxLength: 4000
@@ -5930,6 +6584,7 @@ components:
           type:
             - "null"
             - string
+          description: Free-text answer for free-text questions.
         selectedOptionIds:
           maxItems: 1000
           type: array
@@ -5939,6 +6594,8 @@ components:
               - integer
               - string
             format: int64
+          description: Selected option ids for single-choice or multiple-choice questions.
+      description: Request for submitting a response to one quiz question.
     SystemConfigDto:
       required:
         - schoolName
@@ -5955,36 +6612,48 @@ components:
       properties:
         schoolName:
           type: string
+          description: School name displayed in the application.
         logoUrl:
           type: string
+          description: Public logo URL.
         supportEmail:
           type: string
+          description: Support contact email.
         defaultLanguage:
           type: string
+          description: Default language code used for localized email templates.
         currentAcademicYear:
           type: string
+          description: Current academic year label.
         allowPublicRegistration:
           type: boolean
+          description: Whether unauthenticated users can register themselves.
         requireEmailVerification:
           type: boolean
+          description: Whether users must verify email before login.
         maxAvatarAndBadgeUploadSizeMB:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Upload size limit for avatars and badge icons.
           format: int32
         maxQuizMediaUploadSizeMB:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Upload size limit for quiz media.
           format: int32
         maxActiveSessionsPerUser:
           pattern: ^-?(?:0|[1-9]\d*)$
           type:
             - integer
             - string
+          description: Maximum active refresh-token sessions per user.
           format: int32
+      description: Current application configuration exposed to the frontend and
+        administrators.
     TeacherBasicDto:
       type: object
       properties:
@@ -6004,6 +6673,7 @@ components:
           type:
             - "null"
             - string
+      description: Compact teacher profile used inside class detail responses.
     UpdateBadgeRuleDto:
       type: object
       properties:
@@ -6013,10 +6683,13 @@ components:
             - "null"
             - integer
             - string
+          description: Existing rule id. Null creates a new rule attached to the badge.
           format: int64
         metric:
+          description: Metric inspected during badge evaluation.
           $ref: "#/components/schemas/BadgeMetric"
         operator:
+          description: Comparison operator used against TargetValue.
           $ref: "#/components/schemas/BadgeOperator"
         targetValue:
           maximum: 1000000
@@ -6025,7 +6698,10 @@ components:
           type:
             - number
             - string
+          description: Value that the selected metric is compared with.
           format: double
+      description: Request for updating an existing badge rule or creating a new rule
+        when id is omitted.
     UpdateRoleDTO:
       required:
         - id
@@ -6061,7 +6737,11 @@ components:
             - "null"
             - integer
             - string
+          description: Teacher/admin id that receives media owned by the user when
+            changing the user to Student.
           format: int64
+      description: Administrative request for changing a user's role and role-specific
+        metadata.
     UpdateSystemConfigDto:
       type: object
       properties:
@@ -6077,6 +6757,7 @@ components:
           type:
             - "null"
             - string
+          description: Public logo URL.
         supportEmail:
           maxLength: 254
           minLength: 0
@@ -6084,26 +6765,31 @@ components:
           type:
             - "null"
             - string
+          description: Support contact email.
         defaultLanguage:
           maxLength: 10
           minLength: 0
           type:
             - "null"
             - string
+          description: Default language code used for localized email templates.
         currentAcademicYear:
           maxLength: 20
           minLength: 0
           type:
             - "null"
             - string
+          description: Current academic year label.
         allowPublicRegistration:
           type:
             - "null"
             - boolean
+          description: Whether unauthenticated users can register themselves.
         requireEmailVerification:
           type:
             - "null"
             - boolean
+          description: Whether users must verify email before login.
         maxAvatarAndBadgeUploadSizeMB:
           maximum: 100
           minimum: 1
@@ -6112,6 +6798,7 @@ components:
             - "null"
             - integer
             - string
+          description: Upload size limit for avatars and badge icons.
           format: int32
         maxQuizMediaUploadSizeMB:
           maximum: 100
@@ -6121,6 +6808,7 @@ components:
             - "null"
             - integer
             - string
+          description: Upload size limit for quiz media.
           format: int32
         maxActiveSessionsPerUser:
           maximum: 20
@@ -6130,7 +6818,9 @@ components:
             - "null"
             - integer
             - string
+          description: Maximum active refresh-token sessions per user.
           format: int32
+      description: Request for partially updating mutable system configuration values.
     UserDTO:
       required:
         - id
@@ -6159,11 +6849,13 @@ components:
           type:
             - "null"
             - string
+      description: Lightweight authenticated user profile returned by auth endpoints.
     UserRole:
       enum:
         - Student
         - Teacher
         - Admin
+      description: Application role used for authorization and user discriminator behavior.
     UserSortField:
       enum:
         - Username

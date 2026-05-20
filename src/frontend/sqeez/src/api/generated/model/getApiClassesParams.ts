@@ -7,16 +7,19 @@
 
 export type GetApiClassesParams = {
   /**
+   * Searches class name and section.
    * @minLength 0
    * @maxLength 100
    */
   SearchTerm?: string
   /**
+   * Filters classes by academic year label.
    * @minLength 0
    * @maxLength 20
    */
   AcademicYear?: string
   /**
+   * Filters classes by managing teacher id.
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   TeacherId?: number | string

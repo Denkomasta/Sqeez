@@ -7,12 +7,22 @@
 
 export type GetApiQuizzesParams = {
   /**
+   * Searches quiz title and description.
    * @minLength 0
    * @maxLength 100
    */
   SearchTerm?: string
+  /**
+   * Filters quizzes by currently active schedule. Null leaves activity unfiltered.
+   */
   IsActive?: boolean
+  /**
+   * Exact UTC publish date filter.
+   */
   PublishDate?: string
+  /**
+   * Exact UTC closing date filter.
+   */
   ClosingDate?: string
   /**
    * @pattern ^-?(?:0|[1-9]\d*)$

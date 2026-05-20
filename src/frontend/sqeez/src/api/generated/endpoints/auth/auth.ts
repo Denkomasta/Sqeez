@@ -36,6 +36,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Registers a new public account and sends an email verification link.
+ * @summary POST /api/auth/register
+ */
 export const postApiAuthRegister = (
   registerDTO: RegisterDTO,
   options?: SecondParameter<typeof customInstance>,
@@ -97,6 +101,9 @@ export type PostApiAuthRegisterMutationResult = NonNullable<
 export type PostApiAuthRegisterMutationBody = RegisterDTO
 export type PostApiAuthRegisterMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/register
+ */
 export const usePostApiAuthRegister = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -122,6 +129,10 @@ export const usePostApiAuthRegister = <
     queryClient,
   )
 }
+/**
+ * Verifies a pending email token, activates the account, and starts an authenticated session.
+ * @summary POST /api/auth/verify-email
+ */
 export const postApiAuthVerifyEmail = (
   params?: PostApiAuthVerifyEmailParams,
   options?: SecondParameter<typeof customInstance>,
@@ -177,6 +188,9 @@ export type PostApiAuthVerifyEmailMutationResult = NonNullable<
 
 export type PostApiAuthVerifyEmailMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/verify-email
+ */
 export const usePostApiAuthVerifyEmail = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -202,6 +216,10 @@ export const usePostApiAuthVerifyEmail = <
     queryClient,
   )
 }
+/**
+ * Resends a verification link without revealing whether the email belongs to an account.
+ * @summary POST /api/auth/resend-verification
+ */
 export const postApiAuthResendVerification = (
   resendVerificationDto: ResendVerificationDto,
   options?: SecondParameter<typeof customInstance>,
@@ -263,6 +281,9 @@ export type PostApiAuthResendVerificationMutationResult = NonNullable<
 export type PostApiAuthResendVerificationMutationBody = ResendVerificationDto
 export type PostApiAuthResendVerificationMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/resend-verification
+ */
 export const usePostApiAuthResendVerification = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -288,6 +309,10 @@ export const usePostApiAuthResendVerification = <
     queryClient,
   )
 }
+/**
+ * Starts the password-reset flow without revealing whether the email belongs to an account.
+ * @summary POST /api/auth/forgot-password
+ */
 export const postApiAuthForgotPassword = (
   forgotPasswordDto: ForgotPasswordDto,
   options?: SecondParameter<typeof customInstance>,
@@ -349,6 +374,9 @@ export type PostApiAuthForgotPasswordMutationResult = NonNullable<
 export type PostApiAuthForgotPasswordMutationBody = ForgotPasswordDto
 export type PostApiAuthForgotPasswordMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/forgot-password
+ */
 export const usePostApiAuthForgotPassword = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -374,6 +402,10 @@ export const usePostApiAuthForgotPassword = <
     queryClient,
   )
 }
+/**
+ * Completes the password-reset flow using a valid reset token.
+ * @summary POST /api/auth/reset-password
+ */
 export const postApiAuthResetPassword = (
   resetPasswordDto: ResetPasswordDto,
   options?: SecondParameter<typeof customInstance>,
@@ -435,6 +467,9 @@ export type PostApiAuthResetPasswordMutationResult = NonNullable<
 export type PostApiAuthResetPasswordMutationBody = ResetPasswordDto
 export type PostApiAuthResetPasswordMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/reset-password
+ */
 export const usePostApiAuthResetPassword = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -460,6 +495,10 @@ export const usePostApiAuthResetPassword = <
     queryClient,
   )
 }
+/**
+ * Authenticates a verified account and stores access and refresh tokens in HTTP-only cookies.
+ * @summary POST /api/auth/login
+ */
 export const postApiAuthLogin = (
   loginDTO: LoginDTO,
   options?: SecondParameter<typeof customInstance>,
@@ -521,6 +560,9 @@ export type PostApiAuthLoginMutationResult = NonNullable<
 export type PostApiAuthLoginMutationBody = LoginDTO
 export type PostApiAuthLoginMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/login
+ */
 export const usePostApiAuthLogin = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -543,6 +585,10 @@ export const usePostApiAuthLogin = <
 > => {
   return useMutation(getPostApiAuthLoginMutationOptions(options), queryClient)
 }
+/**
+ * Rotates the refresh-token session and issues a fresh cookie pair.
+ * @summary POST /api/auth/refresh
+ */
 export const postApiAuthRefresh = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
@@ -595,6 +641,9 @@ export type PostApiAuthRefreshMutationResult = NonNullable<
 
 export type PostApiAuthRefreshMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/refresh
+ */
 export const usePostApiAuthRefresh = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -617,6 +666,10 @@ export const usePostApiAuthRefresh = <
 > => {
   return useMutation(getPostApiAuthRefreshMutationOptions(options), queryClient)
 }
+/**
+ * Revokes the current refresh-token session and clears authentication cookies.
+ * @summary POST /api/auth/logout
+ */
 export const postApiAuthLogout = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
@@ -669,6 +722,9 @@ export type PostApiAuthLogoutMutationResult = NonNullable<
 
 export type PostApiAuthLogoutMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/auth/logout
+ */
 export const usePostApiAuthLogout = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -691,6 +747,10 @@ export const usePostApiAuthLogout = <
 > => {
   return useMutation(getPostApiAuthLogoutMutationOptions(options), queryClient)
 }
+/**
+ * Returns the currently authenticated user's lightweight profile.
+ * @summary GET /api/auth/me
+ */
 export const getApiAuthMe = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
@@ -792,6 +852,9 @@ export function useGetApiAuthMe<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/auth/me
+ */
 
 export function useGetApiAuthMe<
   TData = Awaited<ReturnType<typeof getApiAuthMe>>,
@@ -817,6 +880,10 @@ export function useGetApiAuthMe<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates a user's role and role-specific metadata. Admin-only.
+ * @summary PATCH /api/auth/elevate
+ */
 export const patchApiAuthElevate = (
   updateRoleDTO: UpdateRoleDTO,
   options?: SecondParameter<typeof customInstance>,
@@ -878,6 +945,9 @@ export type PatchApiAuthElevateMutationResult = NonNullable<
 export type PatchApiAuthElevateMutationBody = UpdateRoleDTO
 export type PatchApiAuthElevateMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/auth/elevate
+ */
 export const usePatchApiAuthElevate = <
   TError = ErrorType<unknown>,
   TContext = unknown,

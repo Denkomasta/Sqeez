@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Teacher/admin request for manually grading a free-text response.
+ */
 export interface GradeQuestionResponseDto {
   /**
    * @minimum -1000
@@ -12,5 +15,6 @@ export interface GradeQuestionResponseDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   score?: number | string
+  /** Teacher feedback flag for highlighting an answer. */
   isLiked?: boolean
 }

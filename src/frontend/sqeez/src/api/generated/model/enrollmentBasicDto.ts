@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Compact enrollment view embedded in detailed user profiles.
+ */
 export interface EnrollmentBasicDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string

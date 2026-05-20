@@ -38,6 +38,11 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * POST /api/quiz-attempts/start
+Starts a new attempt for the currently authenticated student.
+ * @summary POST /api/quiz-attempts/start
+ */
 export const postApiQuizAttemptsStart = (
   startQuizAttemptDto: StartQuizAttemptDto,
   options?: SecondParameter<typeof customInstance>,
@@ -99,6 +104,9 @@ export type PostApiQuizAttemptsStartMutationResult = NonNullable<
 export type PostApiQuizAttemptsStartMutationBody = StartQuizAttemptDto
 export type PostApiQuizAttemptsStartMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/quiz-attempts/start
+ */
 export const usePostApiQuizAttemptsStart = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -124,6 +132,11 @@ export const usePostApiQuizAttemptsStart = <
     queryClient,
   )
 }
+/**
+ * POST /api/quiz-attempts/{id}/answers
+Submits or updates an answer for a specific question.
+ * @summary POST /api/quiz-attempts/{id}/answer
+ */
 export const postApiQuizAttemptsIdAnswer = (
   id: number | string,
   submitQuestionResponseDto: SubmitQuestionResponseDto,
@@ -186,6 +199,9 @@ export type PostApiQuizAttemptsIdAnswerMutationResult = NonNullable<
 export type PostApiQuizAttemptsIdAnswerMutationBody = SubmitQuestionResponseDto
 export type PostApiQuizAttemptsIdAnswerMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/quiz-attempts/{id}/answer
+ */
 export const usePostApiQuizAttemptsIdAnswer = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -211,6 +227,11 @@ export const usePostApiQuizAttemptsIdAnswer = <
     queryClient,
   )
 }
+/**
+ * GET /api/quiz-attempts/{id}/next-question
+Recovers the ID of the next unanswered question and current answered count if the frontend loses context.
+ * @summary GET /api/quiz-attempts/{id}/next-question
+ */
 export const getApiQuizAttemptsIdNextQuestion = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -344,6 +365,9 @@ export function useGetApiQuizAttemptsIdNextQuestion<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quiz-attempts/{id}/next-question
+ */
 
 export function useGetApiQuizAttemptsIdNextQuestion<
   TData = Awaited<ReturnType<typeof getApiQuizAttemptsIdNextQuestion>>,
@@ -377,6 +401,11 @@ export function useGetApiQuizAttemptsIdNextQuestion<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * POST /api/quiz-attempts/{id}/complete
+Locks the attempt and calculates the final score.
+ * @summary POST /api/quiz-attempts/{id}/complete
+ */
 export const postApiQuizAttemptsIdComplete = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -432,6 +461,9 @@ export type PostApiQuizAttemptsIdCompleteMutationResult = NonNullable<
 
 export type PostApiQuizAttemptsIdCompleteMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/quiz-attempts/{id}/complete
+ */
 export const usePostApiQuizAttemptsIdComplete = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -457,6 +489,12 @@ export const usePostApiQuizAttemptsIdComplete = <
     queryClient,
   )
 }
+/**
+ * GET /api/quiz-attempts/{id}
+Gets full attempt details. Students see their own attempts, subject teachers see attempts for their quizzes,
+and admins can see any attempt.
+ * @summary GET /api/quiz-attempts/{id}
+ */
 export const getApiQuizAttemptsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -586,6 +624,9 @@ export function useGetApiQuizAttemptsId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quiz-attempts/{id}
+ */
 
 export function useGetApiQuizAttemptsId<
   TData = Awaited<ReturnType<typeof getApiQuizAttemptsId>>,
@@ -616,6 +657,11 @@ export function useGetApiQuizAttemptsId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * DELETE /api/quiz-attempts/{id}
+Deletes a specific quiz attempt (Allows a teacher to reset a student's try).
+ * @summary DELETE /api/quiz-attempts/{id}
+ */
 export const deleteApiQuizAttemptsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -671,6 +717,9 @@ export type DeleteApiQuizAttemptsIdMutationResult = NonNullable<
 
 export type DeleteApiQuizAttemptsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/quiz-attempts/{id}
+ */
 export const useDeleteApiQuizAttemptsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -696,6 +745,11 @@ export const useDeleteApiQuizAttemptsId = <
     queryClient,
   )
 }
+/**
+ * GET /api/quiz-attempts/quiz/{quizId}
+Gets a paginated list of all attempts for a specific quiz.
+ * @summary GET /api/quiz-attempts/quiz/{quizId}
+ */
 export const getApiQuizAttemptsQuizQuizId = (
   quizId: number | string,
   params?: GetApiQuizAttemptsQuizQuizIdParams,
@@ -839,6 +893,9 @@ export function useGetApiQuizAttemptsQuizQuizId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quiz-attempts/quiz/{quizId}
+ */
 
 export function useGetApiQuizAttemptsQuizQuizId<
   TData = Awaited<ReturnType<typeof getApiQuizAttemptsQuizQuizId>>,
@@ -874,6 +931,11 @@ export function useGetApiQuizAttemptsQuizQuizId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * PATCH /api/quiz-attempts/responses/{responseId}/grade
+Allows a teacher to manually grade a free-text answer and "Like" it.
+ * @summary PATCH /api/quiz-attempts/responses/{responseId}/grade
+ */
 export const patchApiQuizAttemptsResponsesResponseIdGrade = (
   responseId: number | string,
   gradeQuestionResponseDto: GradeQuestionResponseDto,
@@ -943,6 +1005,9 @@ export type PatchApiQuizAttemptsResponsesResponseIdGradeMutationBody =
 export type PatchApiQuizAttemptsResponsesResponseIdGradeMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/quiz-attempts/responses/{responseId}/grade
+ */
 export const usePatchApiQuizAttemptsResponsesResponseIdGrade = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -968,6 +1033,11 @@ export const usePatchApiQuizAttemptsResponsesResponseIdGrade = <
     queryClient,
   )
 }
+/**
+ * DELETE /api/quizzes/{quizId}/attempts
+Deletes all quiz attempts and student responses for a specific quiz.
+ * @summary DELETE /api/quiz-attempts/{quizId}/attempts
+ */
 export const deleteApiQuizAttemptsQuizIdAttempts = (
   quizId: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -1024,6 +1094,9 @@ export type DeleteApiQuizAttemptsQuizIdAttemptsMutationResult = NonNullable<
 export type DeleteApiQuizAttemptsQuizIdAttemptsMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/quiz-attempts/{quizId}/attempts
+ */
 export const useDeleteApiQuizAttemptsQuizIdAttempts = <
   TError = ErrorType<unknown>,
   TContext = unknown,

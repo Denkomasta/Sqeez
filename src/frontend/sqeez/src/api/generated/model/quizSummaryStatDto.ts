@@ -5,19 +5,43 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * High-level quiz performance statistics.
+ */
 export interface QuizSummaryStatDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Quiz identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   quizId?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of attempts created for the quiz.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   totalAttempts?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of attempts that reached the completed state.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   completedAttempts?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
+  /**
+   * Average score across completed attempts.
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+   */
   averageScore?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Highest score across completed attempts.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   highestScore?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Lowest score across completed attempts.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   lowestScore?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
+  /**
+   * Average completion time in minutes for completed attempts.
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+   */
   averageCompletionTimeMinutes?: number | string
 }

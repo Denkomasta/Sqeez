@@ -5,9 +5,17 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Import summary with number of imported records and row-level errors.
+ */
 export interface ImportResultDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of records successfully imported.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   recordsImported?: number | string
+  /** Row-level or file-level import errors. */
   errors?: string[]
+  /** Indicates whether any row errors were collected during import. */
   hasRowErrors?: boolean
 }

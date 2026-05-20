@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for transferring media asset ownership to another teacher or admin.
+ */
 export interface ReassignMediaAssetOwnerDto {
   /**
    * @nullable

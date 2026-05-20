@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for replacing a password using a reset token.
+ */
 export interface ResetPasswordDto {
   /**
    * @minLength 0

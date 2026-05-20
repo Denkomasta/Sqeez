@@ -8,6 +8,9 @@ import type { ClassmateDto } from './classmateDto'
 import type { SubjectBasicDto } from './subjectBasicDto'
 import type { TeacherBasicDto } from './teacherBasicDto'
 
+/**
+ * Detailed school class view with teacher, students, and subjects.
+ */
 export interface SchoolClassDetailDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string

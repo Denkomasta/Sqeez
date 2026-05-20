@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for creating a quiz option.
+ */
 export interface CreateQuizOptionDto {
   isCorrect?: boolean
   /** @pattern ^-?(?:0|[1-9]\d*)$ */

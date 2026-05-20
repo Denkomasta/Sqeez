@@ -6,6 +6,9 @@
  */
 import type { MediaType } from './mediaType'
 
+/**
+ * Request for creating media asset metadata.
+ */
 export interface CreateMediaAssetDto {
   /**
    * @minLength 0

@@ -7,19 +7,25 @@
 
 export type GetApiEnrollmentsParams = {
   /**
+   * Filters enrollments by exact mark.
    * @minimum 1
    * @maximum 5
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   Mark?: number | string
   /**
+   * Filters enrollments by student id. Student callers are forced to their own id by the service.
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   StudentId?: number | string
   /**
+   * Filters enrollments by subject id. Teacher callers must use an owned subject unless viewing their own enrollment.
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   SubjectId?: number | string
+  /**
+   * Filters active or archived enrollments. Null leaves archive state unfiltered.
+   */
   IsActive?: boolean
   IsDescending?: boolean
   /**

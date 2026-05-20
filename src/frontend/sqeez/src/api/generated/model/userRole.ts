@@ -5,4 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Application role used for authorization and user discriminator behavior.
+ */
 export type UserRole = 'Student' | 'Teacher' | 'Admin'

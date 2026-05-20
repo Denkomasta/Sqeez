@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Login request containing credentials and session persistence preference.
+ */
 export interface LoginDTO {
   /**
    * @minLength 0

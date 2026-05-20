@@ -8,6 +8,7 @@ import type { MediaType } from './mediaType'
 
 export type DeleteApiMediaAssetsParams = {
   /**
+   * Searches description and location URL.
    * @minLength 0
    * @maxLength 100
    */
@@ -18,6 +19,10 @@ export type DeleteApiMediaAssetsParams = {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   OwnerId?: number | string
+  /**
+ * When true, returns only assets that are not attached to any quiz question or quiz option.
+Required for bulk unassigned-asset deletion.
+ */
   UnassignedOnly?: boolean
   /**
    * @minimum 1

@@ -7,6 +7,7 @@
 
 export type GetApiSubjectsParams = {
   /**
+   * Searches subject name and description.
    * @minLength 0
    * @maxLength 100
    */
@@ -25,10 +26,17 @@ export type GetApiSubjectsParams = {
    */
   SchoolClassId?: number | string
   /**
+   * Filters to subjects available to or already connected with a student, depending on service context.
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   StudentId?: number | string
+  /**
+   * Filters subjects by current active state. Null leaves activity unfiltered.
+   */
   IsActive?: boolean
+  /**
+   * Filters subjects whose start date is after the supplied UTC value.
+   */
   StartingAfter?: string
   IsDescending?: boolean
   /**

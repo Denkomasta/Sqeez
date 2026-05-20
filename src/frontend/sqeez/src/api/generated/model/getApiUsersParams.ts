@@ -9,6 +9,7 @@ import type { UserSortField } from './userSortField'
 
 export type GetApiUsersParams = {
   /**
+   * Searches username, first name, last name, and email where email visibility allows it.
    * @minLength 0
    * @maxLength 100
    */
@@ -22,9 +23,18 @@ export type GetApiUsersParams = {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   SubjectId?: number | string
+  /**
+   * Filters archived accounts. Null leaves archived state unfiltered.
+   */
   IsArchived?: boolean
+  /**
+   * Filters accounts by email verification state. Null leaves verification state unfiltered.
+   */
   IsEmailVerified?: boolean
   Role?: UserRole
+  /**
+   * When true, limits role filtering to the exact discriminator instead of including derived user types.
+   */
   StrictRoleOnly?: boolean
   /**
    * @minLength 0
@@ -38,6 +48,9 @@ export type GetApiUsersParams = {
   PhoneNumber?: string
   SortBy?: UserSortField
   IsDescending?: boolean
+  /**
+   * Filters users by whether SchoolClassId is assigned.
+   */
   HasAssignedClass?: boolean
   /**
    * @minimum 1

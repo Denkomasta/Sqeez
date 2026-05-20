@@ -9,9 +9,6 @@ namespace Sqeez.Api.Controllers
     /// Handles quiz attempt lifecycle operations, answer submission, grading, and attempt cleanup.
     /// </summary>
     [Route("api/quiz-attempts")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class QuizAttemptsController : ApiBaseController
     {
         private readonly IQuizAttemptService _quizAttemptService;

@@ -6,6 +6,9 @@
  */
 import type { MediaType } from './mediaType'
 
+/**
+ * Request for partially updating media asset metadata.
+ */
 export interface PatchMediaAssetDto {
   /**
    * @minLength 0

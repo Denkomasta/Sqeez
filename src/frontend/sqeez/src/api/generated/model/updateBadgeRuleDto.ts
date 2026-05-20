@@ -7,15 +7,22 @@
 import type { BadgeMetric } from './badgeMetric'
 import type { BadgeOperator } from './badgeOperator'
 
+/**
+ * Request for updating an existing badge rule or creating a new rule when id is omitted.
+ */
 export interface UpdateBadgeRuleDto {
   /**
+   * Existing rule id. Null creates a new rule attached to the badge.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   id?: number | string | null
+  /** Metric inspected during badge evaluation. */
   metric?: BadgeMetric
+  /** Comparison operator used against TargetValue. */
   operator?: BadgeOperator
   /**
+   * Value that the selected metric is compared with.
    * @minimum 0
    * @maximum 1000000
    * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$

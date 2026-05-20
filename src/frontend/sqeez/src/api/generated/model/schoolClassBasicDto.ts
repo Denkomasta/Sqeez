@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Compact school class view embedded in user profiles.
+ */
 export interface SchoolClassBasicDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string

@@ -44,6 +44,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Gets a paged quiz list using the supplied filters.
+ * @summary GET /api/quizzes
+ */
 export const getApiQuizzes = (
   params?: GetApiQuizzesParams,
   options?: SecondParameter<typeof customInstance>,
@@ -152,6 +156,9 @@ export function useGetApiQuizzes<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes
+ */
 
 export function useGetApiQuizzes<
   TData = Awaited<ReturnType<typeof getApiQuizzes>>,
@@ -178,6 +185,10 @@ export function useGetApiQuizzes<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Gets one quiz by id, optionally including student-specific attempt context.
+ * @summary GET /api/quizzes/{quizId}
+ */
 export const getApiQuizzesQuizId = (
   quizId: number | string,
   params?: GetApiQuizzesQuizIdParams,
@@ -317,6 +328,9 @@ export function useGetApiQuizzesQuizId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}
+ */
 
 export function useGetApiQuizzesQuizId<
   TData = Awaited<ReturnType<typeof getApiQuizzesQuizId>>,
@@ -352,6 +366,10 @@ export function useGetApiQuizzesQuizId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates quiz metadata. Admins can update any quiz; teachers can update quizzes for their subjects.
+ * @summary PATCH /api/quizzes/{quizId}
+ */
 export const patchApiQuizzesQuizId = (
   quizId: number | string,
   patchQuizDto: PatchQuizDto,
@@ -414,6 +432,9 @@ export type PatchApiQuizzesQuizIdMutationResult = NonNullable<
 export type PatchApiQuizzesQuizIdMutationBody = PatchQuizDto
 export type PatchApiQuizzesQuizIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/quizzes/{quizId}
+ */
 export const usePatchApiQuizzesQuizId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -439,6 +460,10 @@ export const usePatchApiQuizzesQuizId = <
     queryClient,
   )
 }
+/**
+ * Deletes a quiz. Admins can delete any quiz; teachers can delete quizzes for their subjects.
+ * @summary DELETE /api/quizzes/{quizId}
+ */
 export const deleteApiQuizzesQuizId = (
   quizId: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -494,6 +519,9 @@ export type DeleteApiQuizzesQuizIdMutationResult = NonNullable<
 
 export type DeleteApiQuizzesQuizIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/quizzes/{quizId}
+ */
 export const useDeleteApiQuizzesQuizId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -519,6 +547,11 @@ export const useDeleteApiQuizzesQuizId = <
     queryClient,
   )
 }
+/**
+ * GET /api/quizzes/5/export
+Exports one quiz into the quiz CSV import format. Subject teacher only.
+ * @summary GET /api/quizzes/{quizId}/export
+ */
 export const getApiQuizzesQuizIdExport = (
   quizId: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -651,6 +684,9 @@ export function useGetApiQuizzesQuizIdExport<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/export
+ */
 
 export function useGetApiQuizzesQuizIdExport<
   TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdExport>>,
@@ -681,6 +717,10 @@ export function useGetApiQuizzesQuizIdExport<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Gets questions for a quiz visible to the admin or subject teacher.
+ * @summary GET /api/quizzes/{quizId}/questions
+ */
 export const getApiQuizzesQuizIdQuestions = (
   quizId: number | string,
   params?: GetApiQuizzesQuizIdQuestionsParams,
@@ -824,6 +864,9 @@ export function useGetApiQuizzesQuizIdQuestions<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/questions
+ */
 
 export function useGetApiQuizzesQuizIdQuestions<
   TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdQuestions>>,
@@ -859,6 +902,10 @@ export function useGetApiQuizzesQuizIdQuestions<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Creates a question in the route quiz. The route quiz id is authoritative.
+ * @summary POST /api/quizzes/{quizId}/questions
+ */
 export const postApiQuizzesQuizIdQuestions = (
   quizId: number | string,
   createQuizQuestionDto: CreateQuizQuestionDto,
@@ -921,6 +968,9 @@ export type PostApiQuizzesQuizIdQuestionsMutationResult = NonNullable<
 export type PostApiQuizzesQuizIdQuestionsMutationBody = CreateQuizQuestionDto
 export type PostApiQuizzesQuizIdQuestionsMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/quizzes/{quizId}/questions
+ */
 export const usePostApiQuizzesQuizIdQuestions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -946,6 +996,10 @@ export const usePostApiQuizzesQuizIdQuestions = <
     queryClient,
   )
 }
+/**
+ * Gets one quiz question visible to the admin or subject teacher.
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}
+ */
 export const getApiQuizzesQuizIdQuestionsQuestionId = (
   quizId: number | string,
   questionId: number | string,
@@ -1096,6 +1150,9 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}
+ */
 
 export function useGetApiQuizzesQuizIdQuestionsQuestionId<
   TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdQuestionsQuestionId>>,
@@ -1131,6 +1188,10 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates a quiz question visible to the admin or subject teacher.
+ * @summary PATCH /api/quizzes/{quizId}/questions/{questionId}
+ */
 export const patchApiQuizzesQuizIdQuestionsQuestionId = (
   quizId: number | string,
   questionId: number | string,
@@ -1214,6 +1275,9 @@ export type PatchApiQuizzesQuizIdQuestionsQuestionIdMutationBody =
 export type PatchApiQuizzesQuizIdQuestionsQuestionIdMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/quizzes/{quizId}/questions/{questionId}
+ */
 export const usePatchApiQuizzesQuizIdQuestionsQuestionId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -1247,6 +1311,10 @@ export const usePatchApiQuizzesQuizIdQuestionsQuestionId = <
     queryClient,
   )
 }
+/**
+ * Deletes a quiz question visible to the admin or subject teacher.
+ * @summary DELETE /api/quizzes/{quizId}/questions/{questionId}
+ */
 export const deleteApiQuizzesQuizIdQuestionsQuestionId = (
   quizId: number | string,
   questionId: number | string,
@@ -1313,6 +1381,9 @@ export type DeleteApiQuizzesQuizIdQuestionsQuestionIdMutationResult =
 export type DeleteApiQuizzesQuizIdQuestionsQuestionIdMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/quizzes/{quizId}/questions/{questionId}
+ */
 export const useDeleteApiQuizzesQuizIdQuestionsQuestionId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -1338,6 +1409,10 @@ export const useDeleteApiQuizzesQuizIdQuestionsQuestionId = <
     queryClient,
   )
 }
+/**
+ * Gets a detailed quiz question for quiz taking or quiz management, according to requester role.
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}/detailed
+ */
 export const getApiQuizzesQuizIdQuestionsQuestionIdDetailed = (
   quizId: number | string,
   questionId: number | string,
@@ -1516,6 +1591,9 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}/detailed
+ */
 
 export function useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed<
   TData = Awaited<
@@ -1556,6 +1634,10 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionIdDetailed<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Gets answer options for a question visible to the admin or subject teacher.
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}/options
+ */
 export const getApiQuizzesQuizIdQuestionsQuestionIdOptions = (
   quizId: number | string,
   questionId: number | string,
@@ -1746,6 +1828,9 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionIdOptions<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}/options
+ */
 
 export function useGetApiQuizzesQuizIdQuestionsQuestionIdOptions<
   TData = Awaited<
@@ -1788,6 +1873,10 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionIdOptions<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Creates an answer option in the route question. The route question id is authoritative.
+ * @summary POST /api/quizzes/{quizId}/questions/{questionId}/options
+ */
 export const postApiQuizzesQuizIdQuestionsQuestionIdOptions = (
   quizId: number | string,
   questionId: number | string,
@@ -1873,6 +1962,9 @@ export type PostApiQuizzesQuizIdQuestionsQuestionIdOptionsMutationBody =
 export type PostApiQuizzesQuizIdQuestionsQuestionIdOptionsMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary POST /api/quizzes/{quizId}/questions/{questionId}/options
+ */
 export const usePostApiQuizzesQuizIdQuestionsQuestionIdOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -1908,6 +2000,10 @@ export const usePostApiQuizzesQuizIdQuestionsQuestionIdOptions = <
     queryClient,
   )
 }
+/**
+ * Gets one answer option visible to the admin or subject teacher.
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+ */
 export const getApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = (
   quizId: number | string,
   questionId: number | string,
@@ -2120,6 +2216,9 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+ */
 
 export function useGetApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId<
   TData = Awaited<
@@ -2164,6 +2263,10 @@ export function useGetApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates an answer option visible to the admin or subject teacher.
+ * @summary PATCH /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+ */
 export const patchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = (
   quizId: number | string,
   questionId: number | string,
@@ -2264,6 +2367,9 @@ export type PatchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionIdMutationBody 
 export type PatchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionIdMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+ */
 export const usePatchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -2307,6 +2413,10 @@ export const usePatchApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = <
     queryClient,
   )
 }
+/**
+ * Deletes an answer option visible to the admin or subject teacher.
+ * @summary DELETE /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+ */
 export const deleteApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = (
   quizId: number | string,
   questionId: number | string,
@@ -2403,6 +2513,9 @@ export type DeleteApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionIdMutationResu
 export type DeleteApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionIdMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/quizzes/{quizId}/questions/{questionId}/options/{optionId}
+ */
 export const useDeleteApiQuizzesQuizIdQuestionsQuestionIdOptionsOptionId = <
   TError = ErrorType<unknown>,
   TContext = unknown,

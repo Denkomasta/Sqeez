@@ -6,6 +6,9 @@
  */
 import type { MediaType } from './mediaType'
 
+/**
+ * Media asset metadata returned by media endpoints.
+ */
 export interface MediaAssetDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

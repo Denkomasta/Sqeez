@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for partially updating mutable system configuration values.
+ */
 export interface UpdateSystemConfigDto {
   /**
    * @minLength 0
@@ -13,12 +16,14 @@ export interface UpdateSystemConfigDto {
    */
   schoolName?: string | null
   /**
+   * Public logo URL.
    * @minLength 0
    * @maxLength 2048
    * @nullable
    */
   logoUrl?: string | null
   /**
+   * Support contact email.
    * @minLength 0
    * @maxLength 254
    * @nullable
@@ -26,22 +31,31 @@ export interface UpdateSystemConfigDto {
    */
   supportEmail?: string | null
   /**
+   * Default language code used for localized email templates.
    * @minLength 0
    * @maxLength 10
    * @nullable
    */
   defaultLanguage?: string | null
   /**
+   * Current academic year label.
    * @minLength 0
    * @maxLength 20
    * @nullable
    */
   currentAcademicYear?: string | null
-  /** @nullable */
+  /**
+   * Whether unauthenticated users can register themselves.
+   * @nullable
+   */
   allowPublicRegistration?: boolean | null
-  /** @nullable */
+  /**
+   * Whether users must verify email before login.
+   * @nullable
+   */
   requireEmailVerification?: boolean | null
   /**
+   * Upload size limit for avatars and badge icons.
    * @minimum 1
    * @maximum 100
    * @nullable
@@ -49,6 +63,7 @@ export interface UpdateSystemConfigDto {
    */
   maxAvatarAndBadgeUploadSizeMB?: number | string | null
   /**
+   * Upload size limit for quiz media.
    * @minimum 1
    * @maximum 100
    * @nullable
@@ -56,6 +71,7 @@ export interface UpdateSystemConfigDto {
    */
   maxQuizMediaUploadSizeMB?: number | string | null
   /**
+   * Maximum active refresh-token sessions per user.
    * @minimum 1
    * @maximum 20
    * @nullable

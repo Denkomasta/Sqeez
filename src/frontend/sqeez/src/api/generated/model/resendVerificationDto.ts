@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for resending account verification email.
+ */
 export interface ResendVerificationDto {
   /**
    * @minLength 0

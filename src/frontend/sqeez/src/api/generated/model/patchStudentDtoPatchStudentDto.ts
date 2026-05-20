@@ -6,6 +6,9 @@
  */
 import type { PatchStudentDtoPatchStudentDtoRole } from './patchStudentDtoPatchStudentDtoRole'
 
+/**
+ * Polymorphic user patch DTO; the role discriminator selects which role-specific fields may be supplied.
+ */
 export interface PatchStudentDtoPatchStudentDto {
   role: PatchStudentDtoPatchStudentDtoRole
   /**
@@ -16,11 +19,13 @@ export interface PatchStudentDtoPatchStudentDto {
    */
   username?: string | null
   /**
+   * Optional class assignment. When supplied by an authorized admin, 0 removes the current class assignment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   schoolClassId?: number | string | null
   /**
+   * Avatar URL metadata patch. File uploads should use the avatar upload endpoint instead.
    * @minLength 0
    * @maxLength 2048
    * @nullable

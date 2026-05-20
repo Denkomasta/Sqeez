@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request containing student ids to assign to a class or subject.
+ */
 export interface AssignStudentsDto {
   /** @maxItems 1000 */
   studentIds?: (number | string)[]

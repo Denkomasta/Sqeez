@@ -8,6 +8,9 @@ import type { StudentDtoAdminDto } from './studentDtoAdminDto'
 import type { StudentDtoStudentDto } from './studentDtoStudentDto'
 import type { StudentDtoTeacherDto } from './studentDtoTeacherDto'
 
+/**
+ * Base user DTO returned for student-shaped profiles and polymorphic user lists.
+ */
 export type StudentDto =
   | StudentDtoStudentDto
   | StudentDtoTeacherDto

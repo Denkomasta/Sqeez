@@ -32,6 +32,11 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * GET /api/enrollments
+Searches enrollments. Students are limited to their own enrollments; teachers must filter by an owned subject.
+ * @summary GET /api/enrollments
+ */
 export const getApiEnrollments = (
   params?: GetApiEnrollmentsParams,
   options?: SecondParameter<typeof customInstance>,
@@ -159,6 +164,9 @@ export function useGetApiEnrollments<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/enrollments
+ */
 
 export function useGetApiEnrollments<
   TData = Awaited<ReturnType<typeof getApiEnrollments>>,
@@ -189,6 +197,11 @@ export function useGetApiEnrollments<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * GET /api/enrollments/452
+Gets a single enrollment when the requester is the student, the subject teacher, or an admin.
+ * @summary GET /api/enrollments/{id}
+ */
 export const getApiEnrollmentsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -318,6 +331,9 @@ export function useGetApiEnrollmentsId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/enrollments/{id}
+ */
 
 export function useGetApiEnrollmentsId<
   TData = Awaited<ReturnType<typeof getApiEnrollmentsId>>,
@@ -348,6 +364,11 @@ export function useGetApiEnrollmentsId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * PATCH /api/enrollments/452
+Used by admins or subject teachers to grade a student by updating the mark.
+ * @summary PATCH /api/enrollments/{id}
+ */
 export const patchApiEnrollmentsId = (
   id: number | string,
   patchEnrollmentDto: PatchEnrollmentDto,
@@ -410,6 +431,9 @@ export type PatchApiEnrollmentsIdMutationResult = NonNullable<
 export type PatchApiEnrollmentsIdMutationBody = PatchEnrollmentDto
 export type PatchApiEnrollmentsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/enrollments/{id}
+ */
 export const usePatchApiEnrollmentsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -435,6 +459,11 @@ export const usePatchApiEnrollmentsId = <
     queryClient,
   )
 }
+/**
+ * DELETE /api/enrollments/452
+Deletes a specific enrollment. Admins can delete any enrollment; students can delete only their own.
+ * @summary DELETE /api/enrollments/{id}
+ */
 export const deleteApiEnrollmentsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -490,6 +519,9 @@ export type DeleteApiEnrollmentsIdMutationResult = NonNullable<
 
 export type DeleteApiEnrollmentsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/enrollments/{id}
+ */
 export const useDeleteApiEnrollmentsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,

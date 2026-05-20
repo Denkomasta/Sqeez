@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for starting the password-reset email flow.
+ */
 export interface ForgotPasswordDto {
   /**
    * @minLength 0

@@ -5,7 +5,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Result of a bulk enrollment operation, split by newly enrolled and already enrolled student ids.
+ */
 export interface BulkEnrollmentResultDto {
+  /** Student ids that were newly enrolled by the request. */
   newlyEnrolledIds?: (number | string)[]
+  /** Student ids that already had an enrollment for the subject. */
   alreadyEnrolledIds?: (number | string)[]
 }

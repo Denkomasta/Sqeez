@@ -19,6 +19,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Imports the master CSV file and reports created or skipped records. Admin-only.
+ * @summary POST /api/import/master
+ */
 export const postApiImportMaster = (
   postApiImportMasterBody: PostApiImportMasterBody,
   options?: SecondParameter<typeof customInstance>,
@@ -79,6 +83,9 @@ export type PostApiImportMasterMutationResult = NonNullable<
 export type PostApiImportMasterMutationBody = PostApiImportMasterBody
 export type PostApiImportMasterMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/import/master
+ */
 export const usePostApiImportMaster = <
   TError = ErrorType<unknown>,
   TContext = unknown,

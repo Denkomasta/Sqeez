@@ -24,6 +24,11 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * GET /api/quizzes/{quizId}/statistics/summary
+Gets high-level summary statistics for a specific quiz.
+ * @summary GET /api/quizzes/{quizId}/statistics/summary
+ */
 export const getApiQuizzesQuizIdStatisticsSummary = (
   quizId: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -158,6 +163,9 @@ export function useGetApiQuizzesQuizIdStatisticsSummary<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/statistics/summary
+ */
 
 export function useGetApiQuizzesQuizIdStatisticsSummary<
   TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdStatisticsSummary>>,
@@ -191,6 +199,11 @@ export function useGetApiQuizzesQuizIdStatisticsSummary<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * GET /api/quizzes/{quizId}/statistics/questions
+Gets detailed statistics for each question within a quiz to identify difficult or popular questions.
+ * @summary GET /api/quizzes/{quizId}/statistics/questions
+ */
 export const getApiQuizzesQuizIdStatisticsQuestions = (
   quizId: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -330,6 +343,9 @@ export function useGetApiQuizzesQuizIdStatisticsQuestions<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/quizzes/{quizId}/statistics/questions
+ */
 
 export function useGetApiQuizzesQuizIdStatisticsQuestions<
   TData = Awaited<ReturnType<typeof getApiQuizzesQuizIdStatisticsQuestions>>,

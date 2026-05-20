@@ -7,35 +7,66 @@
 import type { AttemptStatus } from './attemptStatus'
 import type { StudentBadgeBasicDto } from './studentBadgeBasicDto'
 
+/**
+ * Quiz attempt summary returned when an attempt is started, completed, or listed.
+ */
 export interface QuizAttemptDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Attempt identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Quiz being attempted.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   quizId: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Enrollment that proves the student's access to the quiz subject.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   enrollmentId: number | string
-  /** @nullable */
+  /**
+   * UTC timestamp when the attempt started.
+   * @nullable
+   */
   startTime: string | null
-  /** @nullable */
+  /**
+   * UTC timestamp when the attempt was completed or closed.
+   * @nullable
+   */
   endTime: string | null
+  /** Attempt lifecycle state. */
   status: AttemptStatus
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Total score currently awarded for the attempt.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   totalScore: number | string
   /**
+   * Optional derived mark for completed attempts.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   mark: number | string | null
   /**
+   * Next unanswered question id, or null when no pending question remains.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   nextQuestionId?: number | string | null
-  /** @nullable */
+  /**
+   * Badges awarded while completing the attempt.
+   * @nullable
+   */
   earnedBadges?: StudentBadgeBasicDto[] | null
-  /** @nullable */
+  /**
+   * Student display name, included only for privileged quiz-owner views.
+   * @nullable
+   */
   studentName?: string | null
   /**
+   * Student id, included only for privileged quiz-owner views.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

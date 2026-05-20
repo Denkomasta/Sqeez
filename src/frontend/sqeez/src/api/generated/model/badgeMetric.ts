@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Metric evaluated by badge rules after quiz attempt completion or grading.
+ */
 export type BadgeMetric =
   | 'ScorePercentage'
   | 'TotalScore'

@@ -5,21 +5,40 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * School class summary returned by class endpoints.
+ */
 export interface SchoolClassDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * School class identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id: number | string
+  /** Class display name. */
   name: string
+  /** Academic year label. */
   academicYear: string
+  /** Section label within the academic year. */
   section: string
   /**
+   * Assigned managing teacher id, or null when none is assigned.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   teacherId: number | string | null
-  /** @nullable */
+  /**
+   * Assigned managing teacher username, or null when none is assigned.
+   * @nullable
+   */
   teacherName: string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of students assigned to this class.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   studentCount: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of subjects assigned to this class.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   subjectCount: number | string
 }

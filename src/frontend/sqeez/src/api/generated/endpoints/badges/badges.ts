@@ -34,6 +34,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Creates a badge with optional icon upload and rule definitions. Admin-only.
+ * @summary POST /api/badges
+ */
 export const postApiBadges = (
   postApiBadgesBody: PostApiBadgesBody,
   options?: SecondParameter<typeof customInstance>,
@@ -108,6 +112,9 @@ export type PostApiBadgesMutationResult = NonNullable<
 export type PostApiBadgesMutationBody = PostApiBadgesBody
 export type PostApiBadgesMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/badges
+ */
 export const usePostApiBadges = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -130,6 +137,10 @@ export const usePostApiBadges = <
 > => {
   return useMutation(getPostApiBadgesMutationOptions(options), queryClient)
 }
+/**
+ * Gets a paged list of badge definitions.
+ * @summary GET /api/badges
+ */
 export const getApiBadges = (
   params?: GetApiBadgesParams,
   options?: SecondParameter<typeof customInstance>,
@@ -238,6 +249,9 @@ export function useGetApiBadges<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/badges
+ */
 
 export function useGetApiBadges<
   TData = Awaited<ReturnType<typeof getApiBadges>>,
@@ -264,6 +278,10 @@ export function useGetApiBadges<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates a badge, optional icon, and rule definitions. Admin-only.
+ * @summary PATCH /api/badges/{id}
+ */
 export const patchApiBadgesId = (
   id: number | string,
   patchApiBadgesIdBody: PatchApiBadgesIdBody,
@@ -339,6 +357,9 @@ export type PatchApiBadgesIdMutationResult = NonNullable<
 export type PatchApiBadgesIdMutationBody = PatchApiBadgesIdBody
 export type PatchApiBadgesIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/badges/{id}
+ */
 export const usePatchApiBadgesId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -361,6 +382,10 @@ export const usePatchApiBadgesId = <
 > => {
   return useMutation(getPatchApiBadgesIdMutationOptions(options), queryClient)
 }
+/**
+ * Deletes a badge and its icon when the badge is not currently awarded. Admin-only.
+ * @summary DELETE /api/badges/{id}
+ */
 export const deleteApiBadgesId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -416,6 +441,9 @@ export type DeleteApiBadgesIdMutationResult = NonNullable<
 
 export type DeleteApiBadgesIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/badges/{id}
+ */
 export const useDeleteApiBadgesId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -438,6 +466,10 @@ export const useDeleteApiBadgesId = <
 > => {
   return useMutation(getDeleteApiBadgesIdMutationOptions(options), queryClient)
 }
+/**
+ * Awards a badge to a student. Admin-only.
+ * @summary POST /api/badges/{badgeId}/award/{studentId}
+ */
 export const postApiBadgesBadgeIdAwardStudentId = (
   badgeId: number | string,
   studentId: number | string,
@@ -502,6 +534,9 @@ export type PostApiBadgesBadgeIdAwardStudentIdMutationResult = NonNullable<
 
 export type PostApiBadgesBadgeIdAwardStudentIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/badges/{badgeId}/award/{studentId}
+ */
 export const usePostApiBadgesBadgeIdAwardStudentId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -527,6 +562,10 @@ export const usePostApiBadgesBadgeIdAwardStudentId = <
     queryClient,
   )
 }
+/**
+ * Gets badges awarded to a student.
+ * @summary GET /api/badges/student/{studentId}
+ */
 export const getApiBadgesStudentStudentId = (
   studentId: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -660,6 +699,9 @@ export function useGetApiBadgesStudentStudentId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/badges/student/{studentId}
+ */
 
 export function useGetApiBadgesStudentStudentId<
   TData = Awaited<ReturnType<typeof getApiBadgesStudentStudentId>>,

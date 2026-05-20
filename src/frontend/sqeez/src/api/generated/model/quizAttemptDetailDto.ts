@@ -7,6 +7,9 @@
 import type { AttemptStatus } from './attemptStatus'
 import type { QuestionResponseDto } from './questionResponseDto'
 
+/**
+ * Full quiz attempt view including all submitted responses.
+ */
 export interface QuizAttemptDetailDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

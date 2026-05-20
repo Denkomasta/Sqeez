@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for creating a quiz with optional UTC publish and closing dates.
+ */
 export interface CreateQuizDto {
   /**
    * @minLength 0

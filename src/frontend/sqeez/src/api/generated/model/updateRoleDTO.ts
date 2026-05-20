@@ -6,6 +6,9 @@
  */
 import type { UserRole } from './userRole'
 
+/**
+ * Administrative request for changing a user's role and role-specific metadata.
+ */
 export interface UpdateRoleDTO {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string
@@ -25,6 +28,7 @@ export interface UpdateRoleDTO {
    */
   phoneNumber?: string | null
   /**
+   * Teacher/admin id that receives media owned by the user when changing the user to Student.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

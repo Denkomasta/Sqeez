@@ -5,11 +5,22 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Compact badge award view embedded in user and quiz attempt responses.
+ */
 export interface StudentBadgeBasicDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Awarded badge id.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   badgeId?: number | string
+  /** Badge display name. */
   name?: string
-  /** @nullable */
+  /**
+   * Public icon URL, or null when no icon is assigned.
+   * @nullable
+   */
   iconUrl?: string | null
+  /** UTC timestamp when the student earned the badge. */
   earnedAt?: string
 }
