@@ -41,7 +41,9 @@ This starts:
 
 ### 2. Configure Backend Environment
 
-Create `src/backend/Sqeez.Api/.env` from `src/backend/Sqeez.Api/.env.example`.
+Create `src/backend/Sqeez.Api/.env.local` from `src/backend/Sqeez.Api/.env.local.example`.
+
+The backend loads both `.env` and `.env.local` when they exist. Use `.env.local` for local development so that machine-specific values stay separate from production or shared environment files.
 
 For local development, the important values are:
 
@@ -118,7 +120,9 @@ Development API docs:
 
 ### 7. Configure Frontend Environment
 
-Create `src/frontend/sqeez/.env` from `src/frontend/sqeez/.env.example`.
+Create `src/frontend/sqeez/.env.local` from `src/frontend/sqeez/.env.local.example`.
+
+Vite automatically reads `.env.local` for local development. Keep this file for machine-specific values such as the local backend URL.
 
 Recommended local values:
 
