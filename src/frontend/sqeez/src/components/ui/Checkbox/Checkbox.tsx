@@ -4,6 +4,7 @@ import { Checkbox as CheckboxPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/** Checkbox primitive with the app focus, border, and checked-state styles. */
 function Checkbox({
   className,
   ...props

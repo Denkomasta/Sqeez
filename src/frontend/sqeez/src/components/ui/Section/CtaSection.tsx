@@ -6,6 +6,11 @@ interface CtaSectionProps {
   actionButton: ReactNode
 }
 
+/**
+ * Simple centered call-to-action section for public pages.
+ *
+ * @param props.actionButton - Caller-owned action so routing and styling stay flexible.
+ */
 export function CtaSection({ title, subtitle, actionButton }: CtaSectionProps) {
   return (
     <section className="py-20 sm:py-32">

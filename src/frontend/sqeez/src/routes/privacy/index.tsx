@@ -13,6 +13,7 @@ export const Route = createFileRoute('/privacy/')({
   component: PrivacyPolicy,
 })
 
+/** Public privacy policy page assembled from localized legal copy. */
 function PrivacyPolicy() {
   const { t } = useTranslation()
   const { config, isLoading: isSystemConfigLoading } = useSystemConfig()

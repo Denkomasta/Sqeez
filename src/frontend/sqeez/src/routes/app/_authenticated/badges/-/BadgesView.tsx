@@ -18,6 +18,11 @@ import { DebouncedInput } from '@/components/ui/Input/DebouncedInput'
 import { Pagination } from '@/components/ui/Pagination'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
 
+/**
+ * Badge collection view for the current user or a selected user.
+ *
+ * @param props.targetUserId - Optional profile owner id used by admin/user detail routes.
+ */
 export function BadgesView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)

@@ -25,6 +25,11 @@ import { calculateLevel, formatName } from '@/lib/userHelpers'
 import { useGetApiUsersId } from '@/api/generated/endpoints/user/user'
 import { getImageUrl } from '@/lib/imageHelpers'
 
+/**
+ * Class overview for the current user's class or an explicitly selected class.
+ *
+ * @param props.targetClassId - Optional class id used when admins view another class.
+ */
 export function ClassView({ targetClassId }: { targetClassId?: number }) {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)

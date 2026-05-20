@@ -34,6 +34,10 @@ export const Route = createFileRoute('/app/_authenticated/quizzes/$quizId/')({
   component: QuizDetailsPage,
 })
 
+/**
+ * Student quiz detail page.
+ * Determines whether the quiz can be started based on dates, attempts, and retries.
+ */
 function QuizDetailsPage() {
   const { t } = useTranslation()
   const { quizId } = Route.useParams()

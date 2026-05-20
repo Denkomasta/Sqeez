@@ -11,6 +11,7 @@ export const Route = createFileRoute('/login/')({
   component: Login,
 })
 
+/** Public login route with redirect support after successful authentication. */
 function Login() {
   return (
     <>

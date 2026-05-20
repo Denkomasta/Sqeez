@@ -5,6 +5,7 @@ export const Route = createFileRoute('/app/_authenticated/class/$classId')({
   component: OtherClassRoute,
 })
 
+/** Class route for viewing a class selected by URL id. */
 function OtherClassRoute() {
   const { classId } = Route.useParams()
 

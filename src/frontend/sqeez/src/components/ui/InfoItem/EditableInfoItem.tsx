@@ -14,6 +14,13 @@ interface EditableInfoItemProps {
   onEdit: (key: string, label: string, value: string) => void
 }
 
+/**
+ * Profile info row that can expose an edit action.
+ *
+ * @param props.fieldKey - Field identifier passed back to the edit modal.
+ * @param props.editValue - Raw value used for editing when display value is formatted.
+ * @param props.onEdit - Opens the caller-owned editing flow.
+ */
 export function EditableInfoItem({
   icon,
   label,

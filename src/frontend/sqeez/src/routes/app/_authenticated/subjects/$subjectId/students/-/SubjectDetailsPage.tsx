@@ -26,6 +26,10 @@ import { formatName } from '@/lib/userHelpers'
 import { StudentGradingModal } from './StudentGradingModal'
 import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 
+/**
+ * Student-facing subject detail page.
+ * Loads subject metadata and enrollment-specific student information for the route subject.
+ */
 export function SubjectDetailsPage({
   subjectId,
 }: {

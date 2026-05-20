@@ -38,6 +38,10 @@ export const Route = createFileRoute(
   component: QuizResultsSummaryPage,
 })
 
+/**
+ * Quiz results summary route.
+ * Shows the latest attempt metrics and links back to the quiz detail.
+ */
 function QuizResultsSummaryPage() {
   const { t } = useTranslation()
   const { quizId } = Route.useParams()

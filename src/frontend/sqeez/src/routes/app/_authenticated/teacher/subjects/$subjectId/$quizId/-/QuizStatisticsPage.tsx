@@ -28,6 +28,10 @@ import {
 import { useGetApiQuizAttemptsQuizQuizId } from '@/api/generated/endpoints/quiz-attempts/quiz-attempts'
 import { QuestionAnalysis } from './QuestionAnalysis'
 
+/**
+ * Teacher quiz statistics page.
+ * Combines summary, attempt table, and per-question analysis for one quiz.
+ */
 export function QuizStatisticsPage({
   subjectId,
   quizId,

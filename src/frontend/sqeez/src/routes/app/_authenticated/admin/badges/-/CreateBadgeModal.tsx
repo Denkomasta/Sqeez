@@ -27,6 +27,10 @@ interface CreateBadgeModalProps {
   onClose: () => void
 }
 
+/**
+ * Badge creation modal.
+ * Sends multipart form data because badge icons are uploaded together with form values.
+ */
 export function CreateBadgeModal({ isOpen, onClose }: CreateBadgeModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()

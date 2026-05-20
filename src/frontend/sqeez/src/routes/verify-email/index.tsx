@@ -27,6 +27,10 @@ export const Route = createFileRoute('/verify-email/')({
   component: VerifyEmailPage,
 })
 
+/**
+ * Email verification page.
+ * Reads verification token params and offers resend when verification fails.
+ */
 function VerifyEmailPage() {
   const { token, rememberMe } = Route.useSearch()
   const { t } = useTranslation()

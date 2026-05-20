@@ -7,6 +7,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+/** Student-facing subject classmates route. */
 function RouteComponent() {
   const { subjectId } = Route.useParams()
 

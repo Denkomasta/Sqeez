@@ -3,6 +3,7 @@ import { Avatar as AvatarPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/** Avatar primitive set used for user images, fallbacks, and grouped avatars. */
 function Avatar({
   className,
   size = 'default',

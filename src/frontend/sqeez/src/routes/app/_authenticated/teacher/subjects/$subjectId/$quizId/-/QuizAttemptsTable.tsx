@@ -18,6 +18,10 @@ interface QuizAttemptsTableProps {
   isLoading?: boolean
 }
 
+/**
+ * Teacher-facing quiz attempts table.
+ * Rows link into the attempt detail where pending free-text answers can be graded.
+ */
 export function QuizAttemptsTable({
   attempts,
   isLoading = false,

@@ -12,6 +12,11 @@ import {
 import { ScrollArea } from '@/components/ui/ScrollArea'
 import { DAISY_THEMES } from '@/constants/themes'
 
+/**
+ * Theme dropdown backed by the shared theme context.
+ *
+ * @param props.title - Accessible label and dropdown heading.
+ */
 export function ThemeSwitcher({ title = 'Themes' }: { title?: string }) {
   const { theme: currentTheme, setTheme } = useTheme()
 

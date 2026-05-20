@@ -16,6 +16,10 @@ interface SubjectStudentsTableProps {
   onEditMark?: (student: StudentDto) => void
 }
 
+/**
+ * Teacher subject-student table.
+ * Exposes grading and student profile navigation for each enrolled student.
+ */
 export function SubjectStudentsTable({
   students,
   isLoading,

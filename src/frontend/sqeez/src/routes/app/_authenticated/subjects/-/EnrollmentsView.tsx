@@ -16,6 +16,10 @@ import {
 import { PaginatedListView } from '@/components/layouting/PaginatedListView/PaginatedListView'
 import type { EnrollmentDto } from '@/api/generated/model'
 
+/**
+ * Current student's subject enrollment list.
+ * Owns enrollment search/pagination and opens the subject-code enrollment modal.
+ */
 export function EnrollmentsView() {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)

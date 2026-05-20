@@ -8,6 +8,10 @@ interface BadgeUnlockNotificationProps {
   achievementText?: string
 }
 
+/**
+ * Floating notification stack for badges returned after quiz actions.
+ * Badges appear with a short delay so the unlock feels tied to the completed action.
+ */
 export function BadgeUnlockNotification({
   badges,
   achievementText,

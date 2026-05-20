@@ -12,6 +12,10 @@ interface StudentBadgeProps {
   onDelete?: () => void
 }
 
+/**
+ * Badge tile used by student profiles and admin badge management.
+ * Admin controls are optional and do not render unless `isAdmin` is true.
+ */
 export function StudentBadge({
   name,
   iconUrl,

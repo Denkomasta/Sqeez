@@ -22,6 +22,10 @@ interface BadgeBasicInfoFieldsProps {
   isEditMode?: boolean
 }
 
+/**
+ * Shared badge form fields for create and edit modals.
+ * Local preview URLs must already be validated before rendering.
+ */
 export function BadgeBasicInfoFields({
   fileInputRef,
   onFileChange,

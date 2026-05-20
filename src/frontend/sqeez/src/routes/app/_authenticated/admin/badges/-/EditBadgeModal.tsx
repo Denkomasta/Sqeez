@@ -36,6 +36,10 @@ interface EditBadgeModalProps {
   badge: BadgeDto | null
 }
 
+/**
+ * Badge edit modal.
+ * Existing rules are normalized into form state and sent back as an ordered array.
+ */
 export function EditBadgeModal({
   isOpen,
   onClose,

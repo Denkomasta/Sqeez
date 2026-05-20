@@ -23,6 +23,10 @@ interface CreateSchoolClassModalProps {
   onClose: () => void
 }
 
+/**
+ * Modal for creating a school class and optionally assigning a teacher.
+ * Teacher options are fetched through the shared user selector query.
+ */
 export function CreateSchoolClassModal({
   isOpen,
   onClose,

@@ -16,6 +16,7 @@ export const Route = createFileRoute('/about/')({
   component: About,
 })
 
+/** Public about page describing the product focus and operating model. */
 function About() {
   const { t } = useTranslation()
 

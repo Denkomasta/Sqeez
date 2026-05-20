@@ -37,6 +37,10 @@ interface AdminUsersTableProps {
   pendingUserId?: string | number
 }
 
+/**
+ * Admin users table with role, archive/restore, and hard-delete actions.
+ * Hard delete actions are expected to be gated by caller-provided permissions and user state.
+ */
 export function AdminUsersTable({
   users,
   isLoading,

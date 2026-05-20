@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { queryClient } from '@/main'
 import { getGetApiAuthMeQueryOptions } from '@/api/generated/endpoints/auth/auth'
 
+/** Authenticated route shell; redirects anonymous users to login with a return URL. */
 export const Route = createFileRoute('/app/_authenticated')({
   beforeLoad: async ({ location }) => {
     try {

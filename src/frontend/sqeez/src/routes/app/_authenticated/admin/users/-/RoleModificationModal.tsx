@@ -27,6 +27,10 @@ interface RoleModificationModalProps {
   } | null
 }
 
+/**
+ * Modal for changing a user's role.
+ * Display labels are translated, while submitted values remain backend UserRole values.
+ */
 export function RoleModificationModal({
   isOpen,
   onClose,

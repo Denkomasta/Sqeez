@@ -9,6 +9,7 @@ interface TextAreaProps extends React.ComponentProps<'textarea'> {
   hideErrors?: boolean
 }
 
+/** Textarea primitive with shared label, help text, and validation layout. */
 function TextArea({
   className,
   label,

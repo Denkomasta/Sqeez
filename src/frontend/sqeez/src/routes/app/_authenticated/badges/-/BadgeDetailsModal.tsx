@@ -16,6 +16,10 @@ interface BadgeDetailsModalProps {
   earnedDate?: string
 }
 
+/**
+ * Read-only badge detail modal.
+ * Displays icon, XP reward, description, and earned timestamp when available.
+ */
 export function BadgeDetailsModal({
   isOpen,
   onClose,

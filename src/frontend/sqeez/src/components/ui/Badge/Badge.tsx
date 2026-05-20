@@ -5,6 +5,10 @@ import { Slot } from 'radix-ui'
 import { cn } from '@/lib/utils'
 import { badgeVariants } from './badgeVariant'
 
+/**
+ * Small status label primitive.
+ * Use `asChild` when the badge styles need to be applied to a link or custom element.
+ */
 function Badge({
   className,
   variant = 'default',

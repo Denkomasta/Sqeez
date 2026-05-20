@@ -13,6 +13,10 @@ export const Route = createFileRoute(
   component: QuizEditorPage,
 })
 
+/**
+ * Quiz builder route.
+ * Initializes the editor store with the active quiz id from the URL.
+ */
 export function QuizEditorPage() {
   const { actions } = useQuizEditorUIStore()
   const { quizId } = Route.useParams()

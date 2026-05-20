@@ -13,6 +13,10 @@ interface AdminSchoolClassTableProps {
   onDeleteClass: (schoolClass: SchoolClassDto) => void
 }
 
+/**
+ * Admin table for school classes.
+ * Exposes detail, teacher change, and delete actions through caller callbacks.
+ */
 export function AdminSchoolClassTable({
   classes,
   isLoading,

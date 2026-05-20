@@ -50,6 +50,10 @@ interface QuizListViewProps {
   pendingDeleteQuizId?: string | number
 }
 
+/**
+ * Shared quiz list used by general and subject-scoped quiz pages.
+ * Caller provides filters and actions so student and teacher contexts can reuse the layout.
+ */
 export function QuizListView({
   titleNode,
   backButtonNode,

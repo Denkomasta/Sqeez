@@ -8,6 +8,7 @@ export const Route = createFileRoute('/logout/')({
   component: LogoutPage,
 })
 
+/** Logout route that clears auth state and redirects back to the login page. */
 function LogoutPage() {
   const { t } = useTranslation()
   const { performLogout, isPending } = useLogout()

@@ -11,6 +11,7 @@ export const Route = createFileRoute('/register/')({
   component: Register,
 })
 
+/** Public registration route rendered only when registration is enabled by config. */
 function Register() {
   const { t } = useTranslation()
   const { config, isLoading } = useSystemConfig()

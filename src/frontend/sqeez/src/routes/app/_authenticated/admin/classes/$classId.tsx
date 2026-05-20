@@ -7,6 +7,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+/** Admin route for viewing one school class detail by URL id. */
 function RouteComponent() {
   const { classId } = Route.useParams()
 

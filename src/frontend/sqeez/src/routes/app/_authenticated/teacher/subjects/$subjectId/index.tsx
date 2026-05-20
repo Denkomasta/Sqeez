@@ -7,6 +7,7 @@ export const Route = createFileRoute(
   component: OtherClassRoute,
 })
 
+/** Teacher route for managing one subject by URL id. */
 function OtherClassRoute() {
   const { subjectId } = Route.useParams()
 

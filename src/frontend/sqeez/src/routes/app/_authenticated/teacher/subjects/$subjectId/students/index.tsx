@@ -7,6 +7,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+/** Teacher route for managing enrolled students in one subject. */
 function RouteComponent() {
   const { subjectId } = Route.useParams()
 

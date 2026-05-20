@@ -9,6 +9,7 @@ import {
 import { Badge } from '@/components/ui/Badge/Badge'
 import { Link } from '@tanstack/react-router'
 
+/** Shared subject card contract for student and teacher subject lists. */
 export interface SubjectCardProps {
   title: string
   code: string
@@ -22,6 +23,13 @@ export interface SubjectCardProps {
   actionsSlot?: ReactNode // E.g., Delete button OR Settings button
 }
 
+/**
+ * Subject summary card with optional metrics and action slots.
+ *
+ * @param props.url - Router target opened when the subject title is clicked.
+ * @param props.metricsSlot - Optional subject metadata such as enroll date or counts.
+ * @param props.actionsSlot - Optional actions kept separate from title navigation.
+ */
 export function SubjectCard({
   title,
   code,

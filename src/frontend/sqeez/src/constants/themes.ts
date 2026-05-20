@@ -1,5 +1,6 @@
 import type { Theme } from '@/types/theme'
 
+/** Themes that should be treated as dark when applying document-level styling. */
 export const DAISY_DARK_THEMES: Theme[] = [
   'dark',
   // 'synthwave',
@@ -13,6 +14,7 @@ export const DAISY_DARK_THEMES: Theme[] = [
   // 'coffee',
 ]
 
+/** Themes exposed by the current theme switcher. */
 export const DAISY_THEMES: Theme[] = [
   'light',
   'dark',

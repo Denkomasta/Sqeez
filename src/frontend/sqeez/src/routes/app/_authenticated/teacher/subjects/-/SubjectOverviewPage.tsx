@@ -18,6 +18,10 @@ import { PageLayout } from '@/components/layouting/PageLayout/PageLayout'
 import { useAuthStore } from '@/store/useAuthStore'
 import { formatDate } from '@/lib/dateHelpers'
 
+/**
+ * Teacher subject overview page.
+ * Summarizes subject metadata and links to students, quizzes, and statistics.
+ */
 export function SubjectOverviewPage({
   subjectId,
 }: {

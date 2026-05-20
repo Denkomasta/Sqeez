@@ -30,6 +30,7 @@ export const Route = createFileRoute('/help/')({
   component: Help,
 })
 
+/** Public help page with user guidance and configured support contact. */
 function Help() {
   const { t } = useTranslation()
   const { config, isLoading: isSystemConfigLoading } = useSystemConfig()

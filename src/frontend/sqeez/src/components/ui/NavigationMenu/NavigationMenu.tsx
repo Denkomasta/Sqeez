@@ -5,6 +5,7 @@ import { NavigationMenu as NavigationMenuPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/** Navigation menu primitive set used by responsive app navigation. */
 function NavigationMenu({
   className,
   children,

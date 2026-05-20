@@ -4,6 +4,7 @@ import { Select as SelectPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/** Select primitive set for app-styled dropdown selection. */
 function Select({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {

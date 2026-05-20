@@ -17,6 +17,10 @@ interface QuestionDifficultyEditorProps {
   calculatedPenalty: number
 }
 
+/**
+ * Quiz-builder control for question difficulty and penalty behavior.
+ * Mutations are disabled when the current quiz is locked.
+ */
 export function QuestionDifficultyEditor({
   quizId,
   questionId,

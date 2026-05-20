@@ -14,6 +14,10 @@ import { TeacherModificationModal } from './TeacherModificationModal'
 import { CreateSchoolClassModal } from './CreateSchoolClassModal'
 import { DeleteSchoolClassModal } from './DeleteSchoolClassModal'
 
+/**
+ * Admin school-class list page.
+ * Coordinates class search, pagination, creation, teacher reassignment, and deletion.
+ */
 export function AdminSchoolClassPage() {
   const { t } = useTranslation()
 

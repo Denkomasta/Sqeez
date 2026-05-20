@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 
+/** Navigation item rendered by DashboardNavCardGrid. */
 export type DashboardNavCardItem = {
   title: string
   description: string
@@ -51,6 +52,11 @@ function DashboardNavCard({ item }: { item: DashboardNavCardItem }) {
   )
 }
 
+/**
+ * Responsive grid of dashboard navigation cards.
+ *
+ * @param props.items - Cards to render as TanStack Router links.
+ */
 export function DashboardNavCardGrid({ items }: DashboardNavCardGridProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

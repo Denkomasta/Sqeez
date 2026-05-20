@@ -28,6 +28,10 @@ interface QuizOptionItemProps {
   isFreeTextMode?: boolean
 }
 
+/**
+ * Editable quiz-builder option row.
+ * Handles text, correctness, free-text answer value, media, and deletion for one option.
+ */
 export function QuizOptionItem({
   quizId,
   questionId,

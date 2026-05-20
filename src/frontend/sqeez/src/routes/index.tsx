@@ -23,6 +23,7 @@ export const Route = createFileRoute('/')({
   component: Landing,
 })
 
+/** Public landing page with localized hero, product features, and call to action. */
 function Landing() {
   const { t } = useTranslation()
 

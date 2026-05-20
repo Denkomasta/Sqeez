@@ -19,6 +19,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
+/** Shared TanStack Query client used by the router tree. */
 export const queryClient = new QueryClient()
 
 const rootElement = document.getElementById('root')!

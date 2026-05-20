@@ -8,6 +8,10 @@ import type { SubjectDto } from '@/api/generated/model'
 import { SubjectCard } from '@/components/ui/Card'
 import { PaginatedListView } from '@/components/layouting/PaginatedListView/PaginatedListView'
 
+/**
+ * Teacher subject list page.
+ * Shows subjects owned by the signed-in teacher and links into their management views.
+ */
 export function TeacherSubjectsView() {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)

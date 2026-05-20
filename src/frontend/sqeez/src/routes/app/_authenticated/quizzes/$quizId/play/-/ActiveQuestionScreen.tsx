@@ -24,6 +24,10 @@ interface ActiveQuestionScreenProps {
   ) => React.ReactNode
 }
 
+/**
+ * Active quiz-play screen for the current question.
+ * Owns local answer selection state until the student submits or time expires.
+ */
 export function ActiveQuestionScreen({
   question,
   isLoading,
