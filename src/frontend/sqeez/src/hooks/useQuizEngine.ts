@@ -21,6 +21,11 @@ import {
 } from '@/api/generated/endpoints/media-assets/media-assets'
 import { useQuizStore } from '@/store/useQuizStore'
 
+/**
+ * UI phases for the student quiz runner.
+ * The phase controls which screen is rendered; the backend still decides attempt validity,
+ * next question id, grading status, and final completion.
+ */
 export type QuizPhase =
   | 'start'
   | 'resuming'
@@ -29,14 +34,25 @@ export type QuizPhase =
   | 'recap'
   | 'completed'
 
+/** Boot-time failures that should stop the quiz runner before an attempt can start. */
 export type BootUpError = 'QUIZ_NOT_FOUND' | 'NOT_ENROLLED' | null
 
 /**
  * Orchestrates the student quiz flow from start/resume through completion.
  * The backend remains authoritative for enrollment, next-question progress, and grading.
+ * The store holds only local UI state: current phase, selected answers, timers, recap data,
+ * and progress counters returned by the API.
+ *
+ * Flow summary:
+ * - Load quiz and enrollment before allowing the start screen.
+ * - Resume attempts by asking the backend for the next question and answered count.
+ * - Preload current question media while the transition screen is visible.
+ * - Submit answers with local response time and then show recap data from the response.
+ * - Complete the attempt when the answer response says there is no next question.
  *
  * @param quizId - Route quiz id used by all quiz, attempt, and question requests.
  * @param initialAttemptId - Optional existing attempt id; when present the hook resumes that attempt instead of starting from scratch.
+ * @returns Render-ready quiz state plus event handlers used by the play route screens.
  */
 export function useQuizEngine(quizId: string, initialAttemptId?: number) {
   const { t } = useTranslation()

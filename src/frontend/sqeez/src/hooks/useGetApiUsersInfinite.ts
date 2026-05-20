@@ -25,6 +25,7 @@ type CustomQueryOptions = Omit<
 /**
  * Infinite-query wrapper for users.
  * It advances pages by item count, so callers must keep PageSize stable per query.
+ * This is used by selectors where loading every user upfront would make modals slow.
  *
  * @param params - Backend user filters and paging options; `PageSize` defaults to 20 when omitted.
  * @param options - React Query options merged into the infinite query.

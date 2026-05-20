@@ -3,6 +3,8 @@ import { useState, useLayoutEffect } from 'react'
 /**
  * Computes how many tabs can be shown before overflow controls are needed.
  * Runs in layout effect so the value is settled before visible paint changes.
+ *
+ * @returns Maximum number of visible tabs for the current viewport width.
  */
 export function useResponsiveMaxVisible() {
   const [maxVisible, setMaxVisible] = useState(3)
