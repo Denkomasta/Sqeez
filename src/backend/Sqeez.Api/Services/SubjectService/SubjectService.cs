@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -39,6 +39,7 @@ namespace Sqeez.Api.Services.SubjectService
             );
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<SubjectDto>>> GetAllSubjectsAsync(SubjectFilterDto filter)
         {
             _logger.LogInformation("Fetching subjects with filters.");
@@ -128,6 +129,7 @@ namespace Sqeez.Api.Services.SubjectService
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SubjectDto>> GetSubjectByIdAsync(long id)
         {
             var subject = await _context.Subjects
@@ -155,6 +157,7 @@ namespace Sqeez.Api.Services.SubjectService
         }
 
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SubjectDto>> CreateSubjectAsync(CreateSubjectDto dto)
         {
             string? teacherName = null;
@@ -209,6 +212,7 @@ namespace Sqeez.Api.Services.SubjectService
                 0));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<BulkOperationResult<SubjectDto>>> CreateSubjectsBulkAsync(IEnumerable<Subject> subjects)
         {
             var bulkResult = new BulkOperationResult<SubjectDto>();
@@ -246,6 +250,7 @@ namespace Sqeez.Api.Services.SubjectService
             return ServiceResult<BulkOperationResult<SubjectDto>>.Ok(bulkResult);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SubjectDto>> PatchSubjectAsync(long id, PatchSubjectDto dto)
         {
             _logger.LogInformation("Attempting to patch subject with ID: {Id}", id);
@@ -346,6 +351,7 @@ namespace Sqeez.Api.Services.SubjectService
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteSubjectAsync(long id)
         {
             _logger.LogInformation("Attempting to delete subject with ID: {Id}", id);

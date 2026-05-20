@@ -24,11 +24,26 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class QuizFilterDto : PagedFilterDto
     {
+        /// <summary>
+        /// Searches quiz title and description.
+        /// </summary>
         [StringLength(ValidationConstants.SearchTermMaxLength)]
-        public string? SearchTerm { get; set; }  // Search against Title or Description
+        public string? SearchTerm { get; set; }
+
+        /// <summary>
+        /// Filters quizzes by currently active schedule. Null leaves activity unfiltered.
+        /// </summary>
         public bool? IsActive { get; set; }
+
+        /// <summary>
+        /// Exact UTC publish date filter.
+        /// </summary>
         [UtcDateTime]
         public DateTime? PublishDate { get; set; }
+
+        /// <summary>
+        /// Exact UTC closing date filter.
+        /// </summary>
         [UtcDateTime]
         public DateTime? ClosingDate { get; set; }
         public long? SubjectId { get; set; }
@@ -113,7 +128,15 @@ namespace Sqeez.Api.DTOs
         public DateTime? PublishDate { get; init; }
         [UtcDateTime]
         public DateTime? ClosingDate { get; init; }
+
+        /// <summary>
+        /// When true, clears PublishDate. This is needed because omitted and null patch values are otherwise indistinguishable.
+        /// </summary>
         public bool ResetPublishDate { get; init; } = false;
+
+        /// <summary>
+        /// When true, clears ClosingDate. This is needed because omitted and null patch values are otherwise indistinguishable.
+        /// </summary>
         public bool ResetClosingDate { get; init; } = false;
     }
 
@@ -204,6 +227,10 @@ namespace Sqeez.Api.DTOs
 
         [Range(0, ValidationConstants.MaxQuestionTimeLimitSeconds)]
         public int? TimeLimit { get; init; }
+
+        /// <summary>
+        /// Optional media attachment. A value of 0 removes the current media attachment.
+        /// </summary>
         public long? MediaAssetId { get; init; }
         public bool? IsStrictMultipleChoice { get; init; }
     }
@@ -293,6 +320,10 @@ namespace Sqeez.Api.DTOs
         public string? Text { get; init; }
         public bool? IsFreeText { get; init; }
         public bool? IsCorrect { get; init; }
+
+        /// <summary>
+        /// Optional media attachment. A value of 0 removes the current media attachment.
+        /// </summary>
         public long? MediaAssetId { get; init; }
     }
 

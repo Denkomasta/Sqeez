@@ -32,11 +32,29 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class PagedResponse<T>
     {
+        /// <summary>
+        /// Items for the requested page.
+        /// </summary>
         public IEnumerable<T> Data { get; set; } = new List<T>();
+
+        /// <summary>
+        /// Total number of items matching the filter before paging is applied.
+        /// </summary>
         public int TotalCount { get; set; }
+
+        /// <summary>
+        /// One-based page number returned by the query.
+        /// </summary>
         public int PageNumber { get; set; }
+
+        /// <summary>
+        /// Maximum number of items requested for this page.
+        /// </summary>
         public int PageSize { get; set; }
 
+        /// <summary>
+        /// Total number of pages calculated from TotalCount and PageSize.
+        /// </summary>
         public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
     }
 
@@ -45,9 +63,15 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class PagedFilterDto
     {
+        /// <summary>
+        /// One-based page number.
+        /// </summary>
         [Range(1, int.MaxValue)]
         public int PageNumber { get; init; } = 1;
 
+        /// <summary>
+        /// Requested page size, capped by ValidationConstants.MaxPageSize.
+        /// </summary>
         [Range(1, ValidationConstants.MaxPageSize)]
         public int PageSize { get; init; } = 10;
     }

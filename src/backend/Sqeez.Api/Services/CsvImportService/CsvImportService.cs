@@ -1,4 +1,4 @@
-﻿using CsvHelper;
+using CsvHelper;
 using Sqeez.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Constants;
@@ -37,6 +37,7 @@ namespace Sqeez.Api.Services
             _userService = userService;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<ImportResultDto>> ImportMasterFileAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -173,6 +174,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<ImportResultDto>> ImportQuizFileAsync(long subjectId, IFormFile file, long currentUserId)
         {
             if (file == null || file.Length == 0)
@@ -388,6 +390,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<string>> ExportQuizFileAsync(long quizId, long currentUserId)
         {
             var quiz = await _context.Quizzes

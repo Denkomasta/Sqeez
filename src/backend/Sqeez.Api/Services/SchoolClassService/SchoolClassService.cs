@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -36,6 +36,7 @@ namespace Sqeez.Api.Services
             );
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<SchoolClassDto>>> GetAllClassesAsync(SchoolClassFilterDto filter)
         {
             _logger.LogInformation("Fetching school classes with filters.");
@@ -97,6 +98,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SchoolClassDetailDto>> GetClassByIdAsync(long id)
         {
             _logger.LogInformation("Fetching school class details for ID: {ClassId}", id);
@@ -159,6 +161,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SchoolClassDto>> CreateClassAsync(CreateSchoolClassDto dto)
         {
             _logger.LogInformation("Attempting to create a new school class.");
@@ -209,6 +212,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<BulkOperationResult<SchoolClassDto>>> EnsureClassesExistAsync(IEnumerable<string> classNames)
         {
             var bulkResult = new BulkOperationResult<SchoolClassDto>();
@@ -245,6 +249,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<BulkOperationResult<SchoolClassDto>>.Ok(bulkResult);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SchoolClassDto>> PatchClassAsync(long id, PatchSchoolClassDto dto)
         {
             _logger.LogInformation("Attempting to patch school class with ID: {Id}", id);
@@ -321,6 +326,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteClassAsync(long id)
         {
             _logger.LogInformation("Attempting to delete school class with ID: {Id}", id);
@@ -347,6 +353,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> AssignStudentsToClassAsync(long classId, AssignStudentsDto dto)
         {
             _logger.LogInformation("Assigning {Count} students to class {ClassId}", dto.StudentIds.Count, classId);
@@ -402,6 +409,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> RemoveStudentsFromClassAsync(long classId, RemoveStudentsDto dto)
         {
             _logger.LogInformation("Attempting to remove {Count} students from class {ClassId}", dto.StudentIds.Count, classId);

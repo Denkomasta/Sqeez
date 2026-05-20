@@ -7,6 +7,18 @@ namespace Sqeez.Api.DTOs
     /// <summary>
     /// Subject summary returned by subject endpoints.
     /// </summary>
+    /// <param name="Id">Subject identifier.</param>
+    /// <param name="Name">Human-readable subject name.</param>
+    /// <param name="Code">Unique subject code used for imports and search.</param>
+    /// <param name="Description">Optional subject description.</param>
+    /// <param name="StartDate">Subject start date stored as UTC.</param>
+    /// <param name="EndDate">Optional subject end date stored as UTC.</param>
+    /// <param name="TeacherId">Assigned teacher id, or null when the subject has no teacher.</param>
+    /// <param name="TeacherName">Assigned teacher username, or null when no teacher is assigned.</param>
+    /// <param name="SchoolClassId">Assigned school class id, or null when no class is assigned.</param>
+    /// <param name="SchoolClassName">Assigned school class name, or null when no class is assigned.</param>
+    /// <param name="EnrollmentCount">Number of enrollments attached to the subject.</param>
+    /// <param name="QuizCount">Number of quizzes attached to the subject.</param>
     public record SubjectDto(
         long Id,
         string Name,
@@ -18,8 +30,8 @@ namespace Sqeez.Api.DTOs
         string? TeacherName,
         long? SchoolClassId,
         string? SchoolClassName,
-        int EnrollmentCount,    // Enrollements are added in Enrollment service
-        int QuizCount           // Quizzes are added in Quiz service
+        int EnrollmentCount,
+        int QuizCount
         );
 
     /// <summary>
@@ -27,6 +39,9 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class SubjectFilterDto : PagedFilterDto
     {
+        /// <summary>
+        /// Searches subject name and description.
+        /// </summary>
         [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; set; }
 
@@ -35,9 +50,20 @@ namespace Sqeez.Api.DTOs
 
         public long? TeacherId { get; set; }
         public long? SchoolClassId { get; set; }
+
+        /// <summary>
+        /// Filters to subjects available to or already connected with a student, depending on service context.
+        /// </summary>
         public long? StudentId { get; set; }
 
+        /// <summary>
+        /// Filters subjects by current active state. Null leaves activity unfiltered.
+        /// </summary>
         public bool? IsActive { get; set; }
+
+        /// <summary>
+        /// Filters subjects whose start date is after the supplied UTC value.
+        /// </summary>
         [UtcDateTime]
         public DateTime? StartingAfter { get; set; }
 
@@ -74,7 +100,15 @@ namespace Sqeez.Api.DTOs
         public DateTime? StartDate { get; init; }
         [UtcDateTime]
         public DateTime? EndDate { get; init; }
+
+        /// <summary>
+        /// Optional teacher assignment.
+        /// </summary>
         public long? TeacherId { get; init; }
+
+        /// <summary>
+        /// Optional school class assignment.
+        /// </summary>
         public long? SchoolClassId { get; init; }
     }
 
@@ -108,8 +142,16 @@ namespace Sqeez.Api.DTOs
         public DateTime? StartDate { get; init; }
         [UtcDateTime]
         public DateTime? EndDate { get; init; }
-        public long? TeacherId { get; init; }     // Pass 0 to remove the teacher
-        public long? SchoolClassId { get; init; } // Pass 0 to remove the class
+
+        /// <summary>
+        /// Optional teacher assignment. A value of 0 removes the teacher.
+        /// </summary>
+        public long? TeacherId { get; init; }
+
+        /// <summary>
+        /// Optional school class assignment. A value of 0 removes the class.
+        /// </summary>
+        public long? SchoolClassId { get; init; }
     }
 
     /// <summary>

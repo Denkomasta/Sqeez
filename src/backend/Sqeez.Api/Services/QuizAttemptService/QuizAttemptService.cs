@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Constants;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
@@ -30,6 +30,7 @@ namespace Sqeez.Api.Services
                 .FirstOrDefaultAsync();
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizAttemptDto>> StartAttemptAsync(long studentId, StartQuizAttemptDto dto)
         {
             // Verify the student is actually enrolled in the subject this quiz belongs to
@@ -84,6 +85,7 @@ namespace Sqeez.Api.Services
                 attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark, nextQuestionId));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuestionAnsweredDto>> SubmitAnswerAsync(long attemptId, long studentId, SubmitQuestionResponseDto dto)
         {
             var attempt = await _context.QuizAttempts
@@ -194,6 +196,7 @@ namespace Sqeez.Api.Services
             ));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<NextQuestionProgressDto>> GetNextPendingQuestionIdAsync(long attemptId, long studentId)
         {
             var attempt = await _context.QuizAttempts
@@ -283,6 +286,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<List<StudentBadgeBasicDto>>.Ok(studentBadges);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizAttemptDto>> CompleteAttemptAsync(long attemptId, long studentId)
         {
             var attempt = await _context.QuizAttempts
@@ -340,6 +344,7 @@ namespace Sqeez.Api.Services
                 EarnedBadges: rewardResult.Data));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizAttemptDetailDto>> GetAttemptDetailsAsync(long attemptId, long currentUserId, string currentUserRole)
         {
             var attempt = await _context.QuizAttempts
@@ -372,6 +377,7 @@ namespace Sqeez.Api.Services
                 attempt.EndTime, attempt.Status, attempt.TotalScore, attempt.Mark, responseDtos));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<QuizAttemptDto>>> GetAttemptsForQuizAsync(long quizId, long userId, int pageNumber = 1, int pageSize = 20)
         {
             pageNumber = Math.Max(1, pageNumber);
@@ -426,6 +432,7 @@ namespace Sqeez.Api.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuestionResponseDto>> GradeFreeTextResponseAsync(long responseId, long teacherId, GradeQuestionResponseDto dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -484,6 +491,7 @@ namespace Sqeez.Api.Services
                 response.Options.Select(o => o.Id).ToList()));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteAttemptAsync(long attemptId, long teacherId)
         {
             var attempt = await _context.QuizAttempts
@@ -503,6 +511,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteAllAttemptsForQuizAsync(long quizId, long teacherId, bool isAdmin = false)
         {
             var quiz = await _context.Quizzes

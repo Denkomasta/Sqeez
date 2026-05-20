@@ -1,4 +1,4 @@
-﻿using MailKit.Net.Smtp;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -26,11 +26,13 @@ namespace Sqeez.Api.Services.EmailService
             _logger = logger;
         }
 
+        /// <inheritdoc />
         public async Task SendVerificationEmailAsync(string email, string verificationLink)
         {
             await SendVerificationEmailAsync(email, verificationLink, DefaultLanguage);
         }
 
+        /// <inheritdoc />
         public async Task SendVerificationEmailAsync(string email, string verificationLink, string? language)
         {
             var template = LoadTemplate("verification", language);
@@ -42,11 +44,13 @@ namespace Sqeez.Api.Services.EmailService
             await SendEmailAsync(email, RenderTemplate(template.Subject, values), RenderTemplate(template.HtmlBody, values));
         }
 
+        /// <inheritdoc />
         public async Task SendPasswordResetEmailAsync(string email, string resetLink)
         {
             await SendPasswordResetEmailAsync(email, resetLink, DefaultLanguage);
         }
 
+        /// <inheritdoc />
         public async Task SendPasswordResetEmailAsync(string email, string resetLink, string? language)
         {
             var template = LoadTemplate("password-reset", language);

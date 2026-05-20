@@ -98,6 +98,7 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<AuthResponseDto>.Ok(new AuthResponseDto(accessToken, refreshToken));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<AuthResponseDto>> LoginAsync(LoginDTO dto)
         {
             _logger.LogInformation("Attempting user login.");
@@ -121,6 +122,7 @@ namespace Sqeez.Api.Services.AuthService
             return await GenerateAuthResponseAndSessionAsync(user, dto.RememberMe);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> RegisterAsync(RegisterDTO dto)
         {
             _logger.LogInformation("Attempting user registration.");
@@ -195,6 +197,7 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<AuthResponseDto>> VerifyEmailAsync(string token, bool rememberMe)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.EmailVerificationToken == token);
@@ -215,6 +218,7 @@ namespace Sqeez.Api.Services.AuthService
             return await GenerateAuthResponseAndSessionAsync(user, rememberMe);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> ResendVerificationEmailAsync(ResendVerificationDto dto)
         {
             var email = dto.Email.Trim().ToLower();
@@ -265,11 +269,13 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> ForgotPasswordAsync(string email)
         {
             return await ForgotPasswordAsync(email, null);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> ForgotPasswordAsync(string email, string? language)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.Email == email);
@@ -307,6 +313,7 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> ResetPasswordAsync(ResetPasswordDto dto)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.PasswordResetToken == dto.Token);
@@ -328,6 +335,7 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<AuthResponseDto>> RefreshTokenAsync(RefreshTokenDto dto)
         {
             var session = await _context.UserSessions
@@ -348,6 +356,7 @@ namespace Sqeez.Api.Services.AuthService
             return await GenerateAuthResponseAndSessionAsync(user, true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> LogoutAsync(long userId, string? refreshToken = null)
         {
             _logger.LogInformation("Attempting to logout user: {id}", userId);
@@ -372,6 +381,7 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<UserDTO>> GetCurrentUserAsync(long userId, string? role)
         {
             var user = role switch
@@ -394,6 +404,7 @@ namespace Sqeez.Api.Services.AuthService
             return ServiceResult<UserDTO>.Ok(result);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> UpdateUserRoleAsync(long adminId, UpdateRoleDTO dto)
         {
             var performingAdmin = await _context.Admins.FindAsync(adminId);

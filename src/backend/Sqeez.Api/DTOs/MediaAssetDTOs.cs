@@ -21,11 +21,19 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class MediaAssetFilterDto : PagedFilterDto
     {
+        /// <summary>
+        /// Searches description and location URL.
+        /// </summary>
         [StringLength(ValidationConstants.SearchTermMaxLength)]
-        public string? SearchTerm { get; set; } // Search Description or LocationUrl
+        public string? SearchTerm { get; set; }
         public MediaType? MimeType { get; set; }
         public bool? IsPrivate { get; set; }
         public long? OwnerId { get; set; }
+
+        /// <summary>
+        /// When true, returns only assets that are not attached to any quiz question or quiz option.
+        /// Required for bulk unassigned-asset deletion.
+        /// </summary>
         public bool? UnassignedOnly { get; set; }
     }
 
@@ -100,10 +108,22 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class UploadMediaAssetDto
     {
+        /// <summary>
+        /// Uploaded file to validate and store.
+        /// </summary>
         [Required]
         public IFormFile File { get; set; } = null!;
+
+        /// <summary>
+        /// Teacher or admin user id that owns the uploaded media metadata.
+        /// </summary>
         public long OwnerId { get; set; }
+
+        /// <summary>
+        /// Marks the asset as private for download authorization checks.
+        /// </summary>
         public bool IsPrivate { get; set; } = false;
+
         [StringLength(ValidationConstants.DescriptionMaxLength)]
         public string? Description { get; set; }
     }

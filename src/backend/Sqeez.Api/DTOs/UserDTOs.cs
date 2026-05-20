@@ -13,15 +13,26 @@ namespace Sqeez.Api.DTOs
     [JsonDerivedType(typeof(AdminDto), typeDiscriminator: "admin")]
     public record StudentDto
     {
+        /// <summary>
+        /// User identifier shared by students, teachers, and admins.
+        /// </summary>
         public long Id { get; init; }
         public string FirstName { get; init; } = string.Empty;
         public string LastName { get; init; } = string.Empty;
         public string Username { get; init; } = string.Empty;
+
+        /// <summary>
+        /// Email address visible according to requester permissions; it can be pseudo-anonymized for restricted viewers.
+        /// </summary>
         public string Email { get; init; } = string.Empty;
         public int CurrentXP { get; init; }
         public UserRole Role { get; init; }
         public string? AvatarUrl { get; init; }
         public DateTime LastSeen { get; init; }
+
+        /// <summary>
+        /// Assigned school class id. Null means the user is not assigned to a class as a student.
+        /// </summary>
         public long? SchoolClassId { get; init; }
     }
 
@@ -67,6 +78,10 @@ namespace Sqeez.Api.DTOs
 
         [StringLength(ValidationConstants.PasswordMaxLength, MinimumLength = 8)]
         public string Password { get; init; } = string.Empty;
+
+        /// <summary>
+        /// Optional school class assignment for the created student-shaped account.
+        /// </summary>
         public long? SchoolClassId { get; init; }
     }
 
@@ -105,7 +120,14 @@ namespace Sqeez.Api.DTOs
         [RegularExpression(ValidationConstants.UsernameRegex)]
         public string? Username { get; init; }
 
+        /// <summary>
+        /// Optional class assignment. When supplied by an authorized admin, 0 removes the current class assignment.
+        /// </summary>
         public long? SchoolClassId { get; init; }
+
+        /// <summary>
+        /// Avatar URL metadata patch. File uploads should use the avatar upload endpoint instead.
+        /// </summary>
         [StringLength(ValidationConstants.UrlMaxLength)]
         public string? AvatarUrl { get; init; }
     }
@@ -118,6 +140,10 @@ namespace Sqeez.Api.DTOs
         [StringLength(ValidationConstants.DepartmentMaxLength)]
         [RegularExpression(ValidationConstants.DepartmentRegex)]
         public string? Department { get; init; }
+
+        /// <summary>
+        /// Optional class managed by the teacher. When supplied by an authorized admin, 0 removes the managed class.
+        /// </summary>
         public long? ManagedClassId { get; init; }
     }
 
@@ -147,15 +173,30 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class UserFilterDto : PagedFilterDto
     {
+        /// <summary>
+        /// Searches username, first name, last name, and email where email visibility allows it.
+        /// </summary>
         [StringLength(ValidationConstants.SearchTermMaxLength)]
         public string? SearchTerm { get; init; }
         public bool? IsOnline { get; init; }
         public long? SchoolClassId { get; init; }
         public long? SubjectId { get; init; }
+
+        /// <summary>
+        /// Filters archived accounts. Null leaves archived state unfiltered.
+        /// </summary>
         public bool? IsArchived { get; init; }
+
+        /// <summary>
+        /// Filters accounts by email verification state. Null leaves verification state unfiltered.
+        /// </summary>
         public bool? IsEmailVerified { get; init; }
 
         public UserRole? Role { get; init; }
+
+        /// <summary>
+        /// When true, limits role filtering to the exact discriminator instead of including derived user types.
+        /// </summary>
         public bool StrictRoleOnly { get; init; } = false;
 
         [StringLength(ValidationConstants.DepartmentMaxLength)]
@@ -164,6 +205,10 @@ namespace Sqeez.Api.DTOs
         public string? PhoneNumber { get; init; }
         public UserSortField? SortBy { get; init; }
         public bool IsDescending { get; init; } = false;
+
+        /// <summary>
+        /// Filters users by whether SchoolClassId is assigned.
+        /// </summary>
         public bool? HasAssignedClass { get; init; }
     }
 

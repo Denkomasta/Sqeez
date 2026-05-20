@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -19,6 +19,7 @@ namespace Sqeez.Api.Services
             _mediaAssetService = mas;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<QuizQuestionDto>>> GetAllQuizQuestionsAsync(QuizQuestionFilterDto filter, long currentUserId, bool isAdmin)
         {
             var query = _context.QuizQuestions.AsNoTracking();
@@ -78,6 +79,7 @@ namespace Sqeez.Api.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizQuestionDto>> GetQuizQuestionByIdAsync(long id, long currentUserId)
         {
             var question = await _context.QuizQuestions
@@ -110,6 +112,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<QuizQuestionDto>.Ok(dto);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizQuestionDto>> CreateQuizQuestionAsync(CreateQuizQuestionDto dto, long currentUserId)
         {
             var quiz = await _context.Quizzes
@@ -166,6 +169,7 @@ namespace Sqeez.Api.Services
                 question.PenaltyPoints));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizQuestionDto>> PatchQuizQuestionAsync(long id, PatchQuizQuestionDto dto, long currentUserId)
         {
             var question = await _context.QuizQuestions
@@ -247,6 +251,7 @@ namespace Sqeez.Api.Services
                 question.PenaltyPoints));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteQuizQuestionAsync(long id, long currentUserId, bool isAdmin)
         {
             var question = await _context.QuizQuestions
@@ -310,6 +315,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<DetailedQuizQuestionDto>> GetDetailedQuizQuestionByIdAsync(long id, long quizId, long currentUserId, string role)
         {
             var question = await _context.QuizQuestions

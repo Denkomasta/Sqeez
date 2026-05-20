@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -22,6 +22,7 @@ namespace Sqeez.Api.Services
             _fileStorageService = fileStorageService;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<BadgeDto>> CreateBadgeAsync(CreateBadgeDto dto)
         {
             string? iconUrl = null;
@@ -58,6 +59,7 @@ namespace Sqeez.Api.Services
                 badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, ruleDtos));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<BadgeDto>> UpdateBadgeAsync(long id, UpdateBadgeDto dto)
         {
             var badge = await _context.Badges
@@ -128,6 +130,7 @@ namespace Sqeez.Api.Services
                 badge.Id, badge.Name, badge.Description, badge.IconUrl, badge.XpBonus, ruleDtos));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteBadgeAsync(long id)
         {
             var badge = await _context.Badges.FindAsync(id);
@@ -157,6 +160,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<BadgeDto>>> GetAllBadgesAsync(BadgeFilterDto filter)
         {
             var query = _context.Badges.AsNoTracking();
@@ -208,6 +212,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<PagedResponse<BadgeDto>>.Ok(pagedResponse);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<IEnumerable<StudentBadgeDto>>> GetStudentBadgesAsync(long studentId)
         {
             var earnedBadges = await _context.StudentBadges
@@ -221,6 +226,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<IEnumerable<StudentBadgeDto>>.Ok(earnedBadges);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<StudentBadgeBasicDto>> AwardBadgeToStudentAsync(long studentId, long badgeId)
         {
             var student = await _context.Students.FindAsync(studentId);
@@ -258,6 +264,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<StudentBadgeBasicDto>.Ok(resultDto);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<List<StudentBadgeBasicDto>>> EvaluateAndAwardBadgesAsync(long studentId, BadgeEvaluationMetrics metrics)
         {
             var earnedBadgeIds = await _context.StudentBadges

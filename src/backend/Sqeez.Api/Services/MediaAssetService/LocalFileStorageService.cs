@@ -1,4 +1,4 @@
-﻿using FileTypeChecker;
+using FileTypeChecker;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
 using Sqeez.Api.Services.Interfaces;
@@ -22,6 +22,7 @@ namespace Sqeez.Api.Services
             _configService = configService;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<string>> UploadFileAsync(IFormFile file, string subDirectory = "media", bool isPublic = false)
         {
             if (file == null || file.Length == 0)
@@ -152,6 +153,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public Task<ServiceResult<string>> GetPhysicalFilePathAsync(string fileUrl)
         {
             if (string.IsNullOrWhiteSpace(fileUrl) || fileUrl.Contains(".."))
@@ -193,6 +195,7 @@ namespace Sqeez.Api.Services
             return Task.FromResult(ServiceResult<string>.Ok(fullPhysicalPath));
         }
 
+        /// <inheritdoc />
         public Task<ServiceResult<bool>> DeleteFileAsync(string fileUrl)
         {
             try

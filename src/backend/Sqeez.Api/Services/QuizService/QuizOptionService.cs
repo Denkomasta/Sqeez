@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Constants;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
@@ -19,6 +19,7 @@ namespace Sqeez.Api.Services
             _mediaAssetService = mas;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<QuizOptionDto>>> GetAllQuizOptionsAsync(QuizOptionFilterDto filter, long currentUserId, bool isAdmin)
         {
             var query = _context.QuizOptions.AsNoTracking();
@@ -81,6 +82,7 @@ namespace Sqeez.Api.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizOptionDto>> GetQuizOptionByIdAsync(long id, long currentUserId)
         {
             var option = await _context.QuizOptions
@@ -103,6 +105,7 @@ namespace Sqeez.Api.Services
                 option.QuizQuestionId, option.MediaAssetId, option.Responses.Count));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizOptionDto>> CreateQuizOptionAsync(CreateQuizOptionDto dto, long currentUserId)
         {
             var question = await _context.QuizQuestions
@@ -169,6 +172,7 @@ namespace Sqeez.Api.Services
                 0)); // 0 responses upon creation
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizOptionDto>> PatchQuizOptionAsync(long id, PatchQuizOptionDto dto, long currentUserId)
         {
             var option = await _context.QuizOptions
@@ -246,6 +250,7 @@ namespace Sqeez.Api.Services
                 option.Responses.Count));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteQuizOptionAsync(long id, long currentUserId, bool isAdmin)
         {
             var option = await _context.QuizOptions
