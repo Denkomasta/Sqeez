@@ -70,6 +70,10 @@ namespace Sqeez.Api.Controllers
         /// </summary>
         /// <typeparam name="T">The result payload type.</typeparam>
         /// <param name="result">The service result to map.</param>
+        /// <returns>
+        /// 200 with data for successful results, 404 when successful data is null, or an error response chosen from
+        /// the ServiceError value. Error responses use a small object with an error message.
+        /// </returns>
         protected ActionResult HandleServiceResult<T>(ServiceResult<T> result)
         {
             if (result.Success)

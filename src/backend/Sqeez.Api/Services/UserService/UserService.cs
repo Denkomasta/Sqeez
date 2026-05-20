@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
@@ -85,6 +85,7 @@ namespace Sqeez.Api.Services.UserService
             };
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter, long currentUserId, string? currentUserRole)
         {
             IQueryable<Student> query = _context.Students.AsNoTracking();
@@ -208,6 +209,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<PagedResponse<StudentDto>>.Ok(response);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id, long currentUserId, string? currentUserRole)
         {
             var user = await _context.Students.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
@@ -218,6 +220,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<StudentDto>.Ok(MapUserToDto(user, visibleEmailUserIds));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id, long currentUserId, string? currentUserRole)
         {
             var user = await _context.Students
@@ -422,6 +425,7 @@ namespace Sqeez.Api.Services.UserService
             return $"{maskedLocal}@{maskedDomain}{suffix}";
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<StudentDto>> CreateUserAsync(CreateStudentDto dto)
         {
             var email = dto.Email.Trim().ToLower();
@@ -479,6 +483,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<StudentDto>.Ok(MapUserToDto(newUser));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<BulkOperationResult<StudentDto>>> CreateStudentsBulkAsync(IEnumerable<Student> students)
         {
             var bulkResult = new BulkOperationResult<StudentDto>();
@@ -533,6 +538,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<BulkOperationResult<StudentDto>>.Ok(bulkResult);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> ArchiveUserAsync(long id, long currentUserId, string? currentUserRole)
         {
             var targetUser = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
@@ -572,6 +578,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> RestoreUserAsync(long id, long currentUserId, string? currentUserRole)
         {
             var targetUser = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
@@ -600,6 +607,7 @@ namespace Sqeez.Api.Services.UserService
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteUserAsync(
             long id,
             long currentUserId,
@@ -766,6 +774,7 @@ namespace Sqeez.Api.Services.UserService
                    user.Email.Equals(_superUserEmail, StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<StudentDto>> PatchUserAsync(long id, PatchStudentDto dto, long currentUserId, string? currentUserRole)
         {
             var user = await _context.Students.FirstOrDefaultAsync(u => u.Id == id);
@@ -918,6 +927,7 @@ namespace Sqeez.Api.Services.UserService
             return true;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<string>> UploadAvatarAsync(long currentUserId, IFormFile imageFile, long? targetUserId = null, string? currentUserRole = null)
         {
             var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();

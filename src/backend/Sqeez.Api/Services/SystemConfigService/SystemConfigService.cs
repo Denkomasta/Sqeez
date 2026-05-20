@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.System;
@@ -21,6 +21,7 @@ namespace Sqeez.Api.Services
             _cache = cache;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SystemConfigDto>> GetConfigAsync()
         {
             if (_cache.TryGetValue(ConfigCacheKey, out SystemConfigDto? cachedConfig))
@@ -52,6 +53,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<SystemConfigDto>.Ok(dto);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<SystemConfigDto>> UpdateConfigAsync(UpdateSystemConfigDto dto)
         {
             // Always fetch Id = 1

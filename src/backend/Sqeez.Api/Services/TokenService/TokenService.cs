@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Models.Users;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,6 +22,7 @@ namespace Sqeez.Api.Services.TokenService
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]!));
         }
 
+        /// <inheritdoc />
         public ServiceResult<string> CreateToken(Student user)
         {
             var claims = new List<Claim>
@@ -53,6 +54,7 @@ namespace Sqeez.Api.Services.TokenService
             }
         }
 
+        /// <inheritdoc />
         public string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];

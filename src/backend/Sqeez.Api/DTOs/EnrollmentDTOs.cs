@@ -6,6 +6,16 @@ namespace Sqeez.Api.DTOs
     /// <summary>
     /// Enrollment summary joining a student with a subject and optional mark.
     /// </summary>
+    /// <param name="Id">Enrollment identifier.</param>
+    /// <param name="Mark">Optional teacher-assigned mark.</param>
+    /// <param name="EnrolledAt">UTC timestamp when the enrollment was created.</param>
+    /// <param name="ArchivedAt">UTC timestamp when the enrollment was archived; null means active.</param>
+    /// <param name="StudentId">Enrolled student id.</param>
+    /// <param name="StudentUserName">Enrolled student's username.</param>
+    /// <param name="SubjectId">Subject id.</param>
+    /// <param name="SubjectName">Subject name.</param>
+    /// <param name="SubjectCode">Subject code.</param>
+    /// <param name="QuizAttemptsCount">Number of quiz attempts connected to this enrollment.</param>
     public record EnrollmentDto(
         long Id,
         int? Mark,
@@ -24,15 +34,28 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class EnrollmentFilterDto : PagedFilterDto
     {
+        /// <summary>
+        /// Filters enrollments by exact mark.
+        /// </summary>
         [Range(ValidationConstants.MinMark, ValidationConstants.MaxMark)]
         public int? Mark { get; set; }
+
+        /// <summary>
+        /// Filters enrollments by student id. Student callers are forced to their own id by the service.
+        /// </summary>
         public long? StudentId { get; set; }
+
+        /// <summary>
+        /// Filters enrollments by subject id. Teacher callers must use an owned subject unless viewing their own enrollment.
+        /// </summary>
         public long? SubjectId { get; set; }
+
+        /// <summary>
+        /// Filters active or archived enrollments. Null leaves archive state unfiltered.
+        /// </summary>
         public bool? IsActive { get; set; }
         public bool IsDescending { get; set; } = false;
     }
-
-    // Create handled by Task<ServiceResult<bool>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto) in EnrollmentService
 
     /// <summary>
     /// Request for updating or clearing an enrollment mark.
@@ -49,6 +72,10 @@ namespace Sqeez.Api.DTOs
 
         [Range(ValidationConstants.MinMark, ValidationConstants.MaxMark)]
         public int? Mark { get; init; }
+
+        /// <summary>
+        /// When true, clears the current mark. This distinguishes mark removal from an omitted Mark value.
+        /// </summary>
         public bool? RemoveMark { get; init; }
     }
 
@@ -70,7 +97,14 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class BulkEnrollmentResultDto
     {
+        /// <summary>
+        /// Student ids that were newly enrolled by the request.
+        /// </summary>
         public List<long> NewlyEnrolledIds { get; set; } = new();
+
+        /// <summary>
+        /// Student ids that already had an enrollment for the subject.
+        /// </summary>
         public List<long> AlreadyEnrolledIds { get; set; } = new();
     }
 }

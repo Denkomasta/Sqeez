@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -15,6 +15,7 @@ namespace Sqeez.Api.Services
     {
         public QuizService(SqeezDbContext context, ILogger<QuizService> logger) : base(context, logger) { }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<QuizDto>>> GetAllQuizzesAsync(QuizFilterDto filter)
         {
             var query = _context.Quizzes.AsNoTracking();
@@ -92,6 +93,7 @@ namespace Sqeez.Api.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizDto>> GetQuizByIdAsync(long id, GetQuizDto dto)
         {
             var quiz = await _context.Quizzes
@@ -117,6 +119,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<QuizDto>.Ok(quiz);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizDto>> CreateQuizAsync(CreateQuizDto dto, long currentUserId)
         {
             var subject = await _context.Subjects.FindAsync(dto.SubjectId);
@@ -160,6 +163,7 @@ namespace Sqeez.Api.Services
                 quiz.PublishDate, quiz.ClosingDate, quiz.SubjectId, 0, 0));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizDto>> PatchQuizAsync(long id, PatchQuizDto dto, long currentUserId)
         {
             var quiz = await _context.Quizzes
@@ -231,6 +235,7 @@ namespace Sqeez.Api.Services
                 quiz.PublishDate, quiz.ClosingDate, quiz.SubjectId, quiz.QuizQuestions.Count, quiz.QuizAttempts.Count));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteQuizAsync(long id, long currentUserId, bool isAdmin)
         {
             var quiz = await _context.Quizzes
@@ -270,6 +275,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteAllQuizzesFromSubjectAsync(long subjectId, bool isAdmin)
         {
             if (!isAdmin)

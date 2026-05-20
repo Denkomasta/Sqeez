@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -15,6 +15,7 @@ namespace Sqeez.Api.Services
         public EnrollmentService(SqeezDbContext context, ILogger<EnrollmentService> logger)
             : base(context, logger) { }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<EnrollmentDto>>> GetAllEnrollmentsAsync(
             EnrollmentFilterDto filter,
             long currentUserId,
@@ -98,6 +99,7 @@ namespace Sqeez.Api.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<EnrollmentDto>> GetEnrollmentByIdAsync(long id, long currentUserId, string? currentUserRole)
         {
             var e = await _context.Enrollments
@@ -123,6 +125,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<EnrollmentDto>.Ok(dto);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<EnrollmentDto>> PatchEnrollmentAsync(long id, PatchEnrollmentDto dto, long currentUserId)
         {
             var enrollment = await _context.Enrollments
@@ -171,6 +174,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteEnrollmentAsync(long id, long currentUserId, string? currentUserRole)
         {
             var enrollment = await _context.Enrollments.Include(e => e.QuizAttempts).FirstOrDefaultAsync(e => e.Id == id);
@@ -191,6 +195,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<BulkEnrollmentResultDto>> EnrollStudentsInSubjectAsync(long subjectId, AssignStudentsDto dto)
         {
             _logger.LogInformation("Bulk enrolling {Count} students into subject {SubjectId}", dto.StudentIds.Count, subjectId);
@@ -263,6 +268,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> UnenrollStudentsFromSubjectAsync(long subjectId, RemoveStudentsDto dto)
         {
             _logger.LogInformation("Bulk unenrolling {Count} students from subject {SubjectId}", dto.StudentIds.Count, subjectId);
@@ -286,6 +292,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<bool>.Ok(true);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteAllEnrollmentsFromSubjectAsync(long subjectId, string? currentUserRole)
         {
             if (currentUserRole != "Admin")

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -16,6 +16,7 @@ namespace Sqeez.Api.Services
         {
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<QuizSummaryStatDto>> GetQuizSummaryStatsAsync(long quizId, long teacherId)
         {
             var quiz = await _context.Quizzes
@@ -66,6 +67,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<QuizSummaryStatDto>.Ok(summary);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<IEnumerable<QuestionStatDto>>> GetQuestionStatsAsync(long quizId, long teacherId)
         {
             var quiz = await _context.Quizzes

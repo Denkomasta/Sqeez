@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Sqeez.Api.Data;
 using Sqeez.Api.DTOs;
@@ -20,6 +20,7 @@ namespace Sqeez.Api.Services
             _fileStorageService = fileStorageService;
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<PagedResponse<MediaAssetDto>>> GetAllMediaAssetsAsync(MediaAssetFilterDto filter)
         {
             var query = _context.MediaAssets
@@ -52,6 +53,7 @@ namespace Sqeez.Api.Services
             });
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<int>> DeleteUnassignedMediaAssetsAndFilesAsync(MediaAssetFilterDto filter)
         {
             if (filter.UnassignedOnly != true)
@@ -93,6 +95,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<MediaAssetDto>> GetMediaAssetByIdAsync(long id)
         {
             var asset = await _context.MediaAssets
@@ -114,6 +117,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<MediaAssetDto>.Ok(asset);
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<MediaDownloadDto>> GetDownloadMetadataAsync(long mediaId, long currentUserId, string currentUserRole)
         {
             var asset = await _context.MediaAssets.FirstOrDefaultAsync(m => m.Id == mediaId);
@@ -140,6 +144,7 @@ namespace Sqeez.Api.Services
             return ServiceResult<MediaDownloadDto>.Ok(new MediaDownloadDto(asset.LocationUrl, mimeTypeStr));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<MediaAssetDto>> CreateMediaAssetAsync(CreateMediaAssetDto dto)
         {
             var ownerExists = await _context.Teachers.AnyAsync(t => t.Id == dto.OwnerId);
@@ -167,6 +172,7 @@ namespace Sqeez.Api.Services
                 asset.Id, asset.LocationUrl, asset.MimeType, asset.IsPrivate, asset.Description, asset.OwnerId, ownerUsername));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<MediaAssetDto>> PatchMediaAssetAsync(long id, PatchMediaAssetDto dto)
         {
             var asset = await _context.MediaAssets
@@ -187,6 +193,7 @@ namespace Sqeez.Api.Services
                 asset.Id, asset.LocationUrl, asset.MimeType, asset.IsPrivate, asset.Description, asset.OwnerId, asset.Owner.Username));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<MediaAssetDto>> ReassignMediaAssetOwnerAsync(long id, long? ownerId)
         {
             if (!ownerId.HasValue)
@@ -227,6 +234,7 @@ namespace Sqeez.Api.Services
                 replacementOwner.Username));
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteMediaAssetAsync(long id)
         {
             var asset = await _context.MediaAssets.FindAsync(id);
@@ -255,6 +263,7 @@ namespace Sqeez.Api.Services
             }
         }
 
+        /// <inheritdoc />
         public async Task<ServiceResult<bool>> DeleteMediaAssetAndFileAsync(long id)
         {
             var asset = await _context.MediaAssets.FindAsync(id);
