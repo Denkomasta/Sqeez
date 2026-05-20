@@ -59,7 +59,7 @@ namespace Sqeez.Api.Tests.Services
             await context.SaveChangesAsync();
 
             var service = CreateService(context);
-            var result = await service.GetUserByIdAsync(admin.Id);
+            var result = await service.GetUserByIdAsync(admin.Id, 0, "Admin");
 
             Assert.Null(result.ErrorMessage);
             Assert.NotNull(result.Data);
@@ -75,7 +75,7 @@ namespace Sqeez.Api.Tests.Services
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
 
-            var result = await service.GetUserByIdAsync(999);
+            var result = await service.GetUserByIdAsync(999, 0, "Admin");
 
             Assert.NotNull(result.ErrorMessage);
             Assert.Equal(ServiceError.NotFound, result.ErrorCode);
@@ -550,7 +550,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { Role = UserRole.Teacher, StrictRoleOnly = false, PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.Contains(result.Data.Data, u => u.Username == "MathTeacher");
@@ -572,7 +572,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { Role = UserRole.Teacher, StrictRoleOnly = true, PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Equal(1, result.Data!.TotalCount);
             Assert.Equal("MathTeacher", result.Data.Data.First().Username);
@@ -591,10 +591,108 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { SearchTerm = "smith", PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Single(result.Data!.Data);
             Assert.Equal("JaneSmith", result.Data.Data.First().Username);
+        }
+
+        [Fact]
+        public async Task GetAllUsersAsync_AsStudent_HidesOtherStudentEmailsButShowsOwnAndAdminEmails()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentStudent = new Student { Username = "CurrentStudent", Email = "current@sqeez.org", Role = UserRole.Student };
+            var otherStudent = new Student { Username = "OtherStudent", Email = "other@sqeez.org", Role = UserRole.Student };
+            var admin = new Admin { Username = "Admin", Email = "admin@sqeez.org", Role = UserRole.Admin };
+            context.Students.AddRange(currentStudent, otherStudent, admin);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new UserFilterDto { PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllUsersAsync(filter, currentStudent.Id, "Student");
+
+            Assert.True(result.Success);
+            Assert.Equal("current@sqeez.org", result.Data!.Data.Single(user => user.Id == currentStudent.Id).Email);
+            Assert.Equal("o***@s***.org", result.Data.Data.Single(user => user.Id == otherStudent.Id).Email);
+            Assert.Equal("admin@sqeez.org", result.Data.Data.Single(user => user.Id == admin.Id).Email);
+        }
+
+        [Fact]
+        public async Task GetAllUsersAsync_AsStudent_DoesNotSearchHiddenEmails()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentStudent = new Student { Username = "CurrentStudent", Email = "current@sqeez.org", Role = UserRole.Student };
+            var otherStudent = new Student { Username = "VisibleUsername", Email = "hidden-match@sqeez.org", Role = UserRole.Student };
+            context.Students.AddRange(currentStudent, otherStudent);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+            var filter = new UserFilterDto { SearchTerm = "hidden-match", PageNumber = 1, PageSize = 10 };
+
+            var result = await service.GetAllUsersAsync(filter, currentStudent.Id, "Student");
+
+            Assert.True(result.Success);
+            Assert.Empty(result.Data!.Data);
+        }
+
+        [Fact]
+        public async Task GetUserByIdAsync_AsStudent_ShowsTeacherEmailWhenTeacherOwnsStudentsSubject()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = UserRole.Teacher };
+            var student = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+            context.Students.AddRange(teacher, student);
+            context.Subjects.Add(subject);
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetUserByIdAsync(teacher.Id, student.Id, "Student");
+
+            Assert.True(result.Success);
+            Assert.Equal("teacher@sqeez.org", result.Data!.Email);
+        }
+
+        [Fact]
+        public async Task GetUserByIdAsync_AsTeacher_ShowsStudentEmailWhenTeacherOwnsStudentsSubject()
+        {
+            var context = await GetInMemoryDbContext();
+            var teacher = new Teacher { Username = "Teacher", Email = "teacher@sqeez.org", Role = UserRole.Teacher };
+            var student = new Student { Username = "Student", Email = "student@sqeez.org", Role = UserRole.Student };
+            var subject = new Subject { Name = "Math", Code = "MATH", StartDate = DateTime.UtcNow, Teacher = teacher };
+            var enrollment = new Enrollment { Student = student, Subject = subject, EnrolledAt = DateTime.UtcNow };
+            context.Students.AddRange(teacher, student);
+            context.Subjects.Add(subject);
+            context.Enrollments.Add(enrollment);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetUserByIdAsync(student.Id, teacher.Id, "Teacher");
+
+            Assert.True(result.Success);
+            Assert.Equal("student@sqeez.org", result.Data!.Email);
+        }
+
+        [Fact]
+        public async Task GetDetailedUserByIdAsync_AsStudent_HidesOtherStudentEmail()
+        {
+            var context = await GetInMemoryDbContext();
+            var currentStudent = new Student { Username = "CurrentStudent", Email = "current@sqeez.org", Role = UserRole.Student };
+            var otherStudent = new Student { Username = "OtherStudent", Email = "other@sqeez.org", Role = UserRole.Student };
+            context.Students.AddRange(currentStudent, otherStudent);
+            await context.SaveChangesAsync();
+
+            var service = CreateService(context);
+
+            var result = await service.GetDetailedUserByIdAsync(otherStudent.Id, currentStudent.Id, "Student");
+
+            Assert.True(result.Success);
+            Assert.Equal("o***@s***.org", result.Data!.Email);
         }
 
         [Fact]
@@ -616,7 +714,7 @@ namespace Sqeez.Api.Tests.Services
             // Get page 2, size 2 (should return StudentC and StudentD)
             var filter = new UserFilterDto { PageNumber = 2, PageSize = 2 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Equal(5, result.Data!.TotalCount);
             Assert.Equal(2, result.Data.Data.Count());
@@ -636,7 +734,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { IsOnline = true, PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Single(result.Data!.Data);
             Assert.Equal("OnlineUser", result.Data.Data.First().Username);
@@ -656,13 +754,13 @@ namespace Sqeez.Api.Tests.Services
 
             // 1. Test IsArchived = true
             var archivedFilter = new UserFilterDto { IsArchived = true, PageNumber = 1, PageSize = 10 };
-            var archivedResult = await service.GetAllUsersAsync(archivedFilter);
+            var archivedResult = await service.GetAllUsersAsync(archivedFilter, 0, "Admin");
             Assert.Single(archivedResult.Data!.Data);
             Assert.Equal("ArchivedUser", archivedResult.Data.Data.First().Username);
 
             // 2. Test IsArchived = false
             var activeFilter = new UserFilterDto { IsArchived = false, PageNumber = 1, PageSize = 10 };
-            var activeResult = await service.GetAllUsersAsync(activeFilter);
+            var activeResult = await service.GetAllUsersAsync(activeFilter, 0, "Admin");
             Assert.Single(activeResult.Data!.Data);
             Assert.Equal("ActiveUser", activeResult.Data.Data.First().Username);
         }
@@ -680,12 +778,12 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
 
             var verifiedFilter = new UserFilterDto { IsEmailVerified = true, PageNumber = 1, PageSize = 10 };
-            var verifiedResult = await service.GetAllUsersAsync(verifiedFilter);
+            var verifiedResult = await service.GetAllUsersAsync(verifiedFilter, 0, "Admin");
             Assert.Single(verifiedResult.Data!.Data);
             Assert.Equal("VerifiedUser", verifiedResult.Data.Data.First().Username);
 
             var unverifiedFilter = new UserFilterDto { IsEmailVerified = false, PageNumber = 1, PageSize = 10 };
-            var unverifiedResult = await service.GetAllUsersAsync(unverifiedFilter);
+            var unverifiedResult = await service.GetAllUsersAsync(unverifiedFilter, 0, "Admin");
             Assert.Single(unverifiedResult.Data!.Data);
             Assert.Equal("UnverifiedUser", unverifiedResult.Data.Data.First().Username);
         }
@@ -705,7 +803,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { Department = "Math", PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.Contains(result.Data.Data, u => u.Username == "MathTeacher");
@@ -727,7 +825,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { SchoolClassId = 1, PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.Equal(2, result.Data!.TotalCount);
             Assert.DoesNotContain(result.Data.Data, u => u.Username == "Class2Student");
@@ -780,7 +878,7 @@ namespace Sqeez.Api.Tests.Services
 
             var service = CreateService(context);
 
-            var result = await service.GetDetailedUserByIdAsync(student.Id);
+            var result = await service.GetDetailedUserByIdAsync(student.Id, 0, "Admin");
 
             Assert.Null(result.ErrorMessage);
             Assert.NotNull(result.Data);
@@ -816,7 +914,7 @@ namespace Sqeez.Api.Tests.Services
 
             var service = CreateService(context);
 
-            var result = await service.GetDetailedUserByIdAsync(student.Id);
+            var result = await service.GetDetailedUserByIdAsync(student.Id, 0, "Admin");
 
             Assert.Null(result.ErrorMessage);
             Assert.NotNull(result.Data);
@@ -834,7 +932,7 @@ namespace Sqeez.Api.Tests.Services
             var context = await GetInMemoryDbContext();
             var service = CreateService(context);
 
-            var result = await service.GetDetailedUserByIdAsync(999);
+            var result = await service.GetDetailedUserByIdAsync(999, 0, "Admin");
 
             Assert.NotNull(result.ErrorMessage);
             Assert.Equal(ServiceError.NotFound, result.ErrorCode);
@@ -966,7 +1064,7 @@ namespace Sqeez.Api.Tests.Services
             var service = CreateService(context);
             var filter = new UserFilterDto { PhoneNumber = "001234567890", PageNumber = 1, PageSize = 10 };
 
-            var result = await service.GetAllUsersAsync(filter);
+            var result = await service.GetAllUsersAsync(filter, 0, "Admin");
 
             Assert.True(result.Success);
             Assert.Single(result.Data!.Data);
@@ -1101,3 +1199,4 @@ namespace Sqeez.Api.Tests.Services
         }
     }
 }
+

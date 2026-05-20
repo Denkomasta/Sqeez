@@ -10,25 +10,31 @@ namespace Sqeez.Api.Services.Interfaces
     public interface IUserService
     {
         /// <summary>
-        /// Gets users with paging, role, search, online, class, subject, archive, department, phone, and assignment filters.
+        /// Gets users with requester-aware email visibility.
         /// </summary>
         /// <param name="filter">Filtering, sorting, and paging values.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
         /// <returns>A paged list of polymorphic student, teacher, and admin DTOs.</returns>
-        Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter);
+        Task<ServiceResult<PagedResponse<StudentDto>>> GetAllUsersAsync(UserFilterDto filter, long currentUserId, string? currentUserRole);
 
         /// <summary>
-        /// Gets a user by id as the appropriate polymorphic DTO.
+        /// Gets a user by id with requester-aware email visibility.
         /// </summary>
         /// <param name="id">The user id.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
         /// <returns>The user DTO, or not found when the user does not exist.</returns>
-        Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id);
+        Task<ServiceResult<StudentDto>> GetUserByIdAsync(long id, long currentUserId, string? currentUserRole);
 
         /// <summary>
-        /// Gets a detailed user profile with class details, enrollments, and recent badges.
+        /// Gets a detailed user profile with requester-aware email visibility.
         /// </summary>
         /// <param name="id">The user id.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
         /// <returns>The detailed user DTO, or not found when the user does not exist.</returns>
-        Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id);
+        Task<ServiceResult<DetailedUserDto>> GetDetailedUserByIdAsync(long id, long currentUserId, string? currentUserRole);
 
         /// <summary>
         /// Creates a student, teacher, or admin based on the concrete create DTO type.
