@@ -30,6 +30,10 @@ const mediaTypeIcons: Record<MediaType, typeof File> = {
   Video: Video,
 }
 
+/**
+ * Admin media assets table.
+ * The id column is represented by a preview action to keep file metadata easier to scan.
+ */
 export function AdminMediaAssetsTable({
   mediaAssets,
   isLoading,

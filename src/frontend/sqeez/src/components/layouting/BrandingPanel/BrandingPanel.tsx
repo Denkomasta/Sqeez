@@ -61,6 +61,10 @@ function LearningStep({
   )
 }
 
+/**
+ * Visual brand panel used beside authentication forms.
+ * Values are static product signals, translated so the panel stays locale-safe.
+ */
 export function BrandingPanel() {
   const { t } = useTranslation()
   const badgeLabels = [

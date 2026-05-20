@@ -13,6 +13,7 @@ export const Route = createFileRoute('/terms/')({
   component: Terms,
 })
 
+/** Public terms page assembled from localized legal copy. */
 function Terms() {
   const { t } = useTranslation()
   const { config, isLoading: isSystemConfigLoading } = useSystemConfig()

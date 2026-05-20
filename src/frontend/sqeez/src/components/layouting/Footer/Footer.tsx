@@ -6,6 +6,12 @@ interface FooterProps {
   rightsText?: string
 }
 
+/**
+ * Footer for authenticated and public layouts.
+ *
+ * @param props.links - Optional router links shown above the rights text.
+ * @param props.rightsText - Localized copyright or ownership text.
+ */
 export function Footer({ links, rightsText }: FooterProps) {
   return (
     <footer className="w-full border-t bg-background">

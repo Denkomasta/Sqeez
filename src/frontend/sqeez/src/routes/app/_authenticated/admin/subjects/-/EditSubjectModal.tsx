@@ -28,6 +28,10 @@ interface EditSubjectModalProps {
   subject: SubjectDto | null
 }
 
+/**
+ * Admin subject edit modal.
+ * Existing subject values are copied into form state when the selected subject changes.
+ */
 export function EditSubjectModal({
   isOpen,
   onClose,

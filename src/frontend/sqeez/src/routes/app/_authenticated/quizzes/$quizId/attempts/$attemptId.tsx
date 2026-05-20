@@ -7,6 +7,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+/** Attempt detail route for one quiz attempt. */
 function RouteComponent() {
   const { quizId, attemptId } = Route.useParams()
 

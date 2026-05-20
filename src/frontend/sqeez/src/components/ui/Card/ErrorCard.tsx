@@ -14,6 +14,10 @@ interface ErrorCardProps {
   onAction?: () => void
 }
 
+/**
+ * Reusable centered error card for recoverable page-level failures.
+ * Falls back to browser history when no custom action is provided.
+ */
 export function ErrorCard({
   title,
   description,

@@ -15,6 +15,10 @@ interface QuestionTimeLimitEditorProps {
   currentTimeLimit: number
 }
 
+/**
+ * Quiz-builder control for per-question time limit.
+ * Persists changes through the question patch endpoint.
+ */
 export function QuestionTimeLimitEditor({
   quizId,
   questionId,

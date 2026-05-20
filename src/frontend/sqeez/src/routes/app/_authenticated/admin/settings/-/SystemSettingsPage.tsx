@@ -15,6 +15,10 @@ import {
 } from '@/api/generated/endpoints/system-config/system-config'
 import type { UpdateSystemConfigDto } from '@/api/generated/model'
 
+/**
+ * Admin system settings page.
+ * Uses form state to patch global configuration values exposed by the backend.
+ */
 export function SystemSettingsPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()

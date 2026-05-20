@@ -7,6 +7,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+/** Teacher route for quiz statistics inside a selected subject. */
 function RouteComponent() {
   const { subjectId, quizId } = Route.useParams()
 

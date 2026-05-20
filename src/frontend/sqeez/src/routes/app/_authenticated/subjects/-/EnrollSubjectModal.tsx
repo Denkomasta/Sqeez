@@ -16,6 +16,10 @@ interface EnrollSubjectModalProps {
   onSuccess: () => void
 }
 
+/**
+ * Student subject enrollment modal.
+ * Uses the subject code entered by the student and refreshes enrollments after success.
+ */
 export function EnrollSubjectModal({
   isOpen,
   onClose,

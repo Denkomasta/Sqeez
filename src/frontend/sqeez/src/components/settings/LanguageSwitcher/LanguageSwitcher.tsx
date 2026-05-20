@@ -15,6 +15,9 @@ interface LanguageItem {
   flag: string
 }
 
+/**
+ * Loads available locales from the public locale manifest and switches i18next language.
+ */
 export function LanguageSwitcher() {
   const { i18n } = useTranslation()
   const [languages, setLanguages] = useState<LanguageItem[]>([])

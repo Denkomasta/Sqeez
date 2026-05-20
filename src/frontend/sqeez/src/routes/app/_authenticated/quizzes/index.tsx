@@ -11,6 +11,10 @@ export const Route = createFileRoute('/app/_authenticated/quizzes/')({
   component: AllQuizzesPage,
 })
 
+/**
+ * Student global quiz list route.
+ * Owns search, active-only filtering, and pagination state.
+ */
 function AllQuizzesPage() {
   const { t } = useTranslation()
   const { user } = useAuthStore()

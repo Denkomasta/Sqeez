@@ -3,6 +3,7 @@ import { ScrollArea as ScrollAreaPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/** Scroll area primitive with styled viewport and scrollbar components. */
 function ScrollArea({
   className,
   children,

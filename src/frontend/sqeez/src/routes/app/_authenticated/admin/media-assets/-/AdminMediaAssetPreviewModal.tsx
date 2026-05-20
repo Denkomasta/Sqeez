@@ -10,6 +10,10 @@ interface AdminMediaAssetPreviewModalProps {
   onClose: () => void
 }
 
+/**
+ * Admin media preview modal.
+ * Reuses the quiz media viewer so asset rendering stays consistent across the app.
+ */
 export function AdminMediaAssetPreviewModal({
   mediaAsset,
   onClose,

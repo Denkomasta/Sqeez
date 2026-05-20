@@ -47,6 +47,10 @@ type EditFieldState = {
   value: string
 } | null
 
+/**
+ * Profile view for the current user or an admin-selected user.
+ * Edit controls are derived from the viewer role and the target user's role.
+ */
 export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   const { t } = useTranslation()
   const currentUser = useAuthStore((s) => s.user)

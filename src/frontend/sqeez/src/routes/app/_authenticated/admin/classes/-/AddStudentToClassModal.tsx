@@ -24,6 +24,10 @@ interface AddStudentToClassModalProps {
   schoolClass?: SchoolClassDetailDto
 }
 
+/**
+ * Modal for adding students to a class.
+ * Filters out students already assigned to the selected class before rendering options.
+ */
 export function AddStudentToClassModal({
   isOpen,
   onClose,

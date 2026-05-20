@@ -17,6 +17,10 @@ import { CreateSubjectModal } from './CreateSubjectModal'
 import { EditSubjectModal } from './EditSubjectModal'
 import { DeleteSubjectModal } from './DeleteSubjectModal'
 
+/**
+ * Admin subject list page.
+ * Coordinates search, pagination, create/edit modals, and the multi-step delete flow.
+ */
 export function AdminSubjectsPage() {
   const { t } = useTranslation()
 

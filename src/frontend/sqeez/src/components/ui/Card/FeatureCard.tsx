@@ -11,6 +11,10 @@ interface FeatureCardProps {
   className?: string
 }
 
+/**
+ * Public-page feature card with optional custom visual area.
+ * When no visual is supplied the card falls back to a compact centered layout.
+ */
 export function FeatureCard({
   icon,
   iconWrapperClassName,

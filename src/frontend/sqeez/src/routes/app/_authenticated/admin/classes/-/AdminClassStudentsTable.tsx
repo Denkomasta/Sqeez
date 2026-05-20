@@ -14,6 +14,10 @@ interface AdminClassStudentsTableProps {
   onRemoveStudent: (student: StudentDto) => void
 }
 
+/**
+ * Student membership table for an admin class detail page.
+ * Removal is delegated to the parent so it can own confirmation and refetching.
+ */
 export function AdminClassStudentsTable({
   students,
   isLoading,

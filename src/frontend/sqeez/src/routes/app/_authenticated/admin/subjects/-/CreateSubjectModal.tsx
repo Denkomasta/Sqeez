@@ -26,6 +26,10 @@ interface CreateSubjectModalProps {
   onClose: () => void
 }
 
+/**
+ * Admin subject creation modal.
+ * Teacher selection is optional and uses the shared infinite user query.
+ */
 export function CreateSubjectModal({
   isOpen,
   onClose,

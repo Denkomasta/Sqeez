@@ -16,6 +16,10 @@ interface QuestionMultipleChoiceEditorProps {
   currentIsStrict: boolean
 }
 
+/**
+ * Quiz-builder control for strict multiple-choice mode.
+ * The toggle is disabled for locked quizzes.
+ */
 export function QuestionMultipleChoiceEditor({
   quizId,
   questionId,

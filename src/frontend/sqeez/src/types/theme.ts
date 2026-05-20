@@ -1,3 +1,4 @@
+/** Theme identifiers supported by the current app theme switcher. */
 export type Theme = 'light' | 'dark'
 // | 'cupcake'
 // | 'bumblebee'

@@ -18,6 +18,10 @@ export const Route = createFileRoute(
   component: SubjectQuizzesPage,
 })
 
+/**
+ * Student subject-scoped quiz list route.
+ * Combines subject metadata with paginated active quiz filtering.
+ */
 function SubjectQuizzesPage() {
   const { t } = useTranslation()
   const { subjectId } = Route.useParams()

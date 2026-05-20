@@ -5,11 +5,17 @@ import { buttonVariants } from './buttonVariant'
 
 import { cn } from '@/lib/utils'
 
+/** Shared button props, including Slot-based composition through `asChild`. */
 export interface ButtonProps
   extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 
+/**
+ * App button primitive with variant and size tokens.
+ *
+ * @param props.asChild - Renders a Radix Slot so links can receive button styling.
+ */
 export function Button({
   className,
   variant = 'default',

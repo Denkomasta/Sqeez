@@ -3,6 +3,7 @@ import { Switch as SwitchPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
+/** Toggle switch primitive for boolean settings. */
 function Switch({
   className,
   size = 'default',

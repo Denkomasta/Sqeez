@@ -22,6 +22,10 @@ interface AdminSubjectsTableProps {
   onDeleteSubject?: (subject: SubjectDto) => void
 }
 
+/**
+ * Admin subjects table.
+ * Edit and delete behavior is delegated to the parent page because deletion can be multi-step.
+ */
 export function AdminSubjectsTable({
   subjects,
   isLoading,

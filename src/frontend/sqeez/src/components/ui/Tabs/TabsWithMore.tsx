@@ -25,6 +25,11 @@ interface TabsWithMoreProps {
   className?: string
 }
 
+/**
+ * Responsive tab list that moves overflow items into a dropdown.
+ *
+ * @param props.maxVisible - Number of tabs shown before overflow starts.
+ */
 export function TabsWithMore({
   tabs,
   maxVisible = 4,

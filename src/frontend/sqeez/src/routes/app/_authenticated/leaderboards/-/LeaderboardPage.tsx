@@ -16,6 +16,10 @@ import { ScrollableSelectList } from '@/components/ui/ScrollableSelectList/Scrol
 import { useGetApiSubjectsInfinite } from '@/hooks/useGetApiSubjectsInfinite'
 import { useGetApiClassesInfinite } from '@/hooks/useGetApiClassesInfinite'
 
+/**
+ * Leaderboard page for ranked students.
+ * Supports responsive row rendering so narrow screens do not overflow.
+ */
 export function LeaderboardPage() {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)

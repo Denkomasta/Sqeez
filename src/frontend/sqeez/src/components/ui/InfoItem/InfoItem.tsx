@@ -6,6 +6,11 @@ interface InfoItemProps {
   action?: React.ReactNode
 }
 
+/**
+ * Read-only profile/detail row with an optional action slot.
+ *
+ * @param props.isEmpty - Applies muted placeholder styling for missing optional values.
+ */
 export function InfoItem({
   icon,
   label,

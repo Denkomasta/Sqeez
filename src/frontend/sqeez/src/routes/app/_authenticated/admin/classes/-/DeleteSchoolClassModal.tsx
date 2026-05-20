@@ -14,6 +14,10 @@ interface DeleteSchoolClassModalProps {
   schoolClass: SchoolClassDto | null
 }
 
+/**
+ * Confirmation modal for deleting a school class.
+ * The caller is responsible for invalidating table data after success.
+ */
 export function DeleteSchoolClassModal({
   isOpen,
   onClose,

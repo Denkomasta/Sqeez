@@ -25,6 +25,10 @@ import { useGetApiClassesId } from '@/api/generated/endpoints/school-classes/sch
 import { formatName } from '@/lib/userHelpers'
 import { ConfirmModal } from '@/components/ui'
 
+/**
+ * Admin detail page for one school class.
+ * Loads class metadata and student membership, then coordinates add/remove modals.
+ */
 export function AdminClassDetailsPage({
   classId,
 }: {

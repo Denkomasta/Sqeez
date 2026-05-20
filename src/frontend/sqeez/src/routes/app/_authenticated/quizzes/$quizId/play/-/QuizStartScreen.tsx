@@ -15,6 +15,10 @@ interface QuizStartScreenProps {
   onCancel: () => void
 }
 
+/**
+ * Quiz start/resume screen.
+ * Shows availability metadata before the quiz engine starts an attempt.
+ */
 export function QuizStartScreen({
   quizId,
   quizTitle,

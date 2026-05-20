@@ -26,6 +26,10 @@ export const Route = createFileRoute(
   component: SubjectPage,
 })
 
+/**
+ * Student subject overview route.
+ * Loads subject details and the current user's enrollment before rendering.
+ */
 function SubjectPage() {
   const { t } = useTranslation()
   const { subjectId } = Route.useParams()

@@ -24,6 +24,10 @@ interface QuizRecapScreenProps {
   resetQuiz: () => void
 }
 
+/**
+ * Quiz completion recap.
+ * Shows final score, earned badges, and navigation to the detailed results page.
+ */
 export function QuizRecapScreen({
   quizId,
   quizTitle,

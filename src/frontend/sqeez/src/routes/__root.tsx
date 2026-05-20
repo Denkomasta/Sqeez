@@ -127,6 +127,7 @@ const RootLayout = () => {
   )
 }
 
+/** Root route that assembles global providers, app layout, and router error pages. */
 export const Route = createRootRoute({
   component: RootLayout,
   errorComponent: AppErrorPage,

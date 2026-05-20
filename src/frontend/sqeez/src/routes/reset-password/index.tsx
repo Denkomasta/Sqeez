@@ -22,6 +22,10 @@ export const Route = createFileRoute('/reset-password/')({
   component: ResetPasswordPage,
 })
 
+/**
+ * Password reset page.
+ * Requires token and email search params from the reset email.
+ */
 export function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen">

@@ -22,6 +22,10 @@ export const Route = createFileRoute(
   },
 })
 
+/**
+ * Quiz play route driven by useQuizEngine.
+ * Renders the correct screen for the current engine phase.
+ */
 function QuizTakePage() {
   const { t } = useTranslation()
   const { quizId } = Route.useParams()

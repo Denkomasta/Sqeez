@@ -27,6 +27,10 @@ const csvTemplateHeaders = [
   'Password',
 ]
 
+/**
+ * Admin import page for master CSV uploads.
+ * Keeps the import modal separate from the explanatory page content.
+ */
 export function AdminImportPage() {
   const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)

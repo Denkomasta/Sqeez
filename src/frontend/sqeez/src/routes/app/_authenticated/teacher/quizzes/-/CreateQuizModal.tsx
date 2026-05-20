@@ -14,6 +14,10 @@ interface CreateQuizModalProps {
   subjectId: string | number
 }
 
+/**
+ * Teacher modal for creating a quiz under a selected subject.
+ * Subject selection is limited to subjects owned by the teacher.
+ */
 export function CreateQuizModal({
   isOpen,
   onClose,

@@ -21,6 +21,10 @@ interface TeacherModificationModalProps {
   schoolClass: SchoolClassDto | null
 }
 
+/**
+ * Modal for assigning or clearing a class teacher.
+ * Teacher options are loaded lazily while the modal is open.
+ */
 export function TeacherModificationModal({
   isOpen,
   onClose,

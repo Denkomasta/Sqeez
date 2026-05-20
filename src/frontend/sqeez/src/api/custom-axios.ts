@@ -16,6 +16,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean
 }
 
+/** Problem Details shape returned by ASP.NET endpoints, including validation errors. */
 export interface AspNetProblemDetails {
   type?: string
   title?: string
@@ -32,6 +33,7 @@ const baseURL =
     ? import.meta.env.VITE_API_BASE_URL
     : 'http://localhost:5000'
 
+/** Shared API client used by generated Orval hooks. */
 export const AXIOS_INSTANCE = axios.create({
   baseURL,
   withCredentials: true,
@@ -150,6 +152,13 @@ AXIOS_INSTANCE.interceptors.response.use(
   },
 )
 
+/**
+ * Orval-compatible request wrapper around the shared Axios instance.
+ * It attaches a cancel method so TanStack Query can cancel in-flight requests.
+ *
+ * @param config - Generated endpoint request configuration.
+ * @param options - Optional per-call Axios overrides.
+ */
 export const customInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,

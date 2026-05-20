@@ -59,6 +59,10 @@ function ErrorPageContent({
   )
 }
 
+/**
+ * Route error boundary content.
+ * In development it exposes the thrown message; production keeps details hidden.
+ */
 export function AppErrorPage({ error, reset }: ErrorComponentProps) {
   const { t } = useTranslation()
   const detail =
@@ -79,6 +83,7 @@ export function AppErrorPage({ error, reset }: ErrorComponentProps) {
   )
 }
 
+/** Shared not-found page used by router-level 404 handling. */
 export function AppNotFoundPage() {
   const { t } = useTranslation()
 

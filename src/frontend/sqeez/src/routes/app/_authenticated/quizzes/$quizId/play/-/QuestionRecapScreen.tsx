@@ -17,6 +17,10 @@ interface QuestionRecapScreenProps {
   isLastQuestion: boolean
 }
 
+/**
+ * Per-question recap shown after submission.
+ * Displays scoring feedback and continues through the quiz engine callback.
+ */
 export function QuestionRecapScreen({
   question,
   selectedOptionIds,

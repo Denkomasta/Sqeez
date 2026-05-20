@@ -9,6 +9,10 @@ interface QuestionTransitionScreenProps {
   onComplete: () => void
 }
 
+/**
+ * Short transition screen between quiz questions.
+ * Keeps the user oriented while the next question is being fetched.
+ */
 export function QuestionTransitionScreen({
   questionNumber,
   totalQuestions,

@@ -14,6 +14,10 @@ import { Pagination } from '@/components/ui/Pagination'
 import { isQuizActive } from '@/lib/quizHelpers'
 import { useGetApiSubjectsId } from '@/api/generated/endpoints/subjects/subjects'
 
+/**
+ * Student attempt history page for one quiz.
+ * Attempt links are disabled while the quiz is still active.
+ */
 export function QuizAttemptsPage({ quizId }: { quizId: string }) {
   const { t } = useTranslation()
   const { user, isTeacher } = useAuthStore()

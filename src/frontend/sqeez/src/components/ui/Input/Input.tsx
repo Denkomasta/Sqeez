@@ -13,6 +13,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   helpText?: string
 }
 
+/**
+ * Text input primitive with app label, help text, icon, and error layout.
+ *
+ * @param props.rightElement - Element rendered inside the input on the right edge.
+ * @param props.hideErrors - Reserves no error row when the caller renders validation elsewhere.
+ */
 const Input = ({
   label,
   error,

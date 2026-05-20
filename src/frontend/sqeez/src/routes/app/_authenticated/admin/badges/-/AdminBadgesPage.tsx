@@ -20,6 +20,10 @@ import { ConfirmModal } from '@/components/ui'
 import { CreateBadgeModal } from './CreateBadgeModal'
 import { EditBadgeModal } from './EditBadgeModal'
 
+/**
+ * Admin badge management page.
+ * Handles searching, opening create/edit modals, and refreshing badge data after mutations.
+ */
 export function AdminBadgesPage() {
   const { t } = useTranslation()
 

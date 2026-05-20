@@ -28,6 +28,10 @@ export const Route = createFileRoute('/app/_authenticated/')({
   component: DashboardLaunchpad,
 })
 
+/**
+ * Role-aware authenticated dashboard.
+ * Student links are always shown; teacher and admin groups depend on the signed-in role.
+ */
 function DashboardLaunchpad() {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)

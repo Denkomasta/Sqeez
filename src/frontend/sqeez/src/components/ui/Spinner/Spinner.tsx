@@ -16,11 +16,13 @@ const spinnerVariants = cva('animate-spin text-muted-foreground', {
   },
 })
 
+/** Spinner props with the shared size variant contract. */
 export interface SpinnerProps
   extends
     React.SVGAttributes<SVGSVGElement>,
     VariantProps<typeof spinnerVariants> {}
 
+/** Loading spinner built from the Lucide loader icon. */
 export function Spinner({ className, size, ...props }: SpinnerProps) {
   return (
     <Loader2 className={cn(spinnerVariants({ size, className }))} {...props} />
