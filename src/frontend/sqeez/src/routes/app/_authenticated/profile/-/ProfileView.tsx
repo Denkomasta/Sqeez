@@ -62,6 +62,20 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     query: { enabled: !!idToFetch },
   })
 
+  const canEditProfile =
+    isOwnProfile ||
+    (currentUser?.role === 'Admin' &&
+      !!profileData?.role &&
+      profileData.role !== 'Admin')
+  const canShowDepartment =
+    profileData?.role !== 'Student' &&
+    (canEditProfile || profileData?.department)
+  const canEditDepartment = canEditProfile && profileData?.role !== 'Student'
+  const canShowPhoneNumber =
+    profileData?.role === 'Admin' &&
+    (canEditProfile || profileData?.phoneNumber)
+  const canEditPhoneNumber = canEditProfile && profileData?.role === 'Admin'
+
   const { config, isLoading: isSystemConfigLoading } = useSystemConfig()
 
   const updateProfile = usePatchApiUsersId()
@@ -130,7 +144,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
     label: string,
     currentValue: string,
   ) => {
-    if (!isOwnProfile) return
+    if (!canEditProfile) return
     setEditingField({ key, label, value: currentValue })
     setEditValue(currentValue)
     setIsModalOpen(true)
@@ -143,7 +157,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
   }
 
   const handleSave = async () => {
-    if (!editingField || !isOwnProfile || !currentUser || !profileData.role)
+    if (!editingField || !canEditProfile || !currentUser || !profileData.role)
       return
 
     const validationError = validateField(editingField.key, editValue)
@@ -176,15 +190,17 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
       }
 
       await updateProfile.mutateAsync({
-        id: currentUser.id,
+        id: idToFetch,
         data: payload,
       })
 
       toast.success(t('common.successfulChange'))
       handleCloseModal()
-      queryClient.invalidateQueries({
-        queryKey: getGetApiAuthMeQueryKey(),
-      })
+      if (isOwnProfile) {
+        queryClient.invalidateQueries({
+          queryKey: getGetApiAuthMeQueryKey(),
+        })
+      }
       refetch()
     } catch (error) {
       console.error(error)
@@ -289,7 +305,9 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
               <CardDescription className="text-base">
                 {isOwnProfile
                   ? t('profile.description')
-                  : t('profile.viewOnlyDescription')}
+                  : canEditProfile
+                    ? t('profile.adminEditDescription')
+                    : t('profile.viewOnlyDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -299,7 +317,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   label={t('common.username')}
                   value={profileData.username ?? 'john_doe'}
                   fieldKey="username"
-                  canEdit={isOwnProfile}
+                  canEdit={canEditProfile}
                   buttonText={t('common.edit')}
                   onEdit={handleEditClick}
                 />
@@ -322,21 +340,21 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                   onEdit={handleEditClick}
                 />
 
-                {(isOwnProfile || profileData.department) && (
+                {canShowDepartment && (
                   <EditableInfoItem
                     icon={<Briefcase className="size-4" />}
                     label={t('common.department')}
                     value={profileData.department || t('profile.notSet')}
                     editValue={profileData.department || ''}
                     fieldKey="department"
-                    canEdit={isOwnProfile}
+                    canEdit={canEditDepartment}
                     buttonText={t('common.edit')}
                     isEmpty={!profileData.department}
                     onEdit={handleEditClick}
                   />
                 )}
 
-                {(isOwnProfile || profileData.phoneNumber) && (
+                {canShowPhoneNumber && (
                   <EditableInfoItem
                     icon={<Phone className="size-4" />}
                     label={t('common.phoneNumber')}
@@ -351,7 +369,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
                         : ''
                     }
                     fieldKey="phoneNumber"
-                    canEdit={isOwnProfile}
+                    canEdit={canEditPhoneNumber}
                     buttonText={t('common.edit')}
                     isEmpty={!profileData.phoneNumber}
                     onEdit={handleEditClick}
@@ -407,7 +425,7 @@ export function ProfileView({ targetUserId }: { targetUserId?: number }) {
         </div>
       </div>
 
-      {isOwnProfile && (
+      {canEditProfile && (
         <BaseModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}

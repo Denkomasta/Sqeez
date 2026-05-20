@@ -849,6 +849,7 @@
   },
   "profile": {
     "accountDetails": "Detaily účtu",
+    "adminEditDescription": "Můžete upravit údaje profilu tohoto uživatele.",
     "avatarUpdated": "Profilový obrázek byl úspěšně nahrán!",
     "avatarUpdateFailed": "Při nahrávání obrázku došlo k chybě.",
     "badgesDescription": "Vaše naposledy získané úspěchy.",

@@ -849,6 +849,7 @@
   },
   "profile": {
     "accountDetails": "Account Details",
+    "adminEditDescription": "You can update this non-admin user's profile details.",
     "avatarUpdated": "Profile picture updated successfully!",
     "avatarUpdateFailed": "An error occurred while uploading your avatar.",
     "badgesDescription": "Your most recently earned achievements.",
