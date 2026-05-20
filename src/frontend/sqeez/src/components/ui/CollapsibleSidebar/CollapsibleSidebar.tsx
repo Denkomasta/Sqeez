@@ -20,6 +20,11 @@ interface CollapsibleSidebarProps {
 /**
  * Fixed-height sidebar that can collapse to an icon rail.
  * Children scroll inside the expanded content area instead of growing the page.
+ *
+ * @param props.defaultExpanded - Initial expanded state; later toggles stay local to the sidebar.
+ * @param props.expandedWidth - Tailwind width class used while expanded.
+ * @param props.collapsedWidth - Tailwind width class used while collapsed.
+ * @param props.contentClassName - Extra classes for the scrollable content area.
  */
 export function CollapsibleSidebar({
   title,

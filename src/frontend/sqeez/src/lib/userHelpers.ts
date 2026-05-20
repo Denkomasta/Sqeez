@@ -1,6 +1,8 @@
 /**
  * Converts total XP to a display level.
  * Invalid, missing, or negative XP is treated as the first level.
+ *
+ * @param xp - Total XP from the API; strings are parsed as numbers.
  */
 export const calculateLevel = (xp?: number | string) => {
   if (!xp) return 1
@@ -15,7 +17,12 @@ export const calculateLevel = (xp?: number | string) => {
   return Math.floor(MULTIPLIER * Math.pow(parsedXp, EXPONENT)) + 1
 }
 
-/** Joins optional first and last names, returning undefined when both are missing. */
+/**
+ * Joins optional first and last names, returning undefined when both are missing.
+ *
+ * @param firstName - User first name, when available.
+ * @param lastName - User last name, when available.
+ */
 export const formatName = (
   firstName: string | undefined,
   lastName: string | undefined,
@@ -25,7 +32,12 @@ export const formatName = (
   return name || undefined
 }
 
-/** Builds avatar initials with stable fallbacks for incomplete user data. */
+/**
+ * Builds avatar initials with stable fallbacks for incomplete user data.
+ *
+ * @param firstName - User first name, when available.
+ * @param lastName - User last name, when available.
+ */
 export const getNameInitials = (
   firstName: string | undefined,
   lastName: string | undefined,

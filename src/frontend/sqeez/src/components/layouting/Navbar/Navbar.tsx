@@ -37,6 +37,14 @@ interface NavbarProps {
   isRegisterEnabled?: boolean
 }
 
+/**
+ * Responsive application/public navbar.
+ * Desktop links are rendered as tabs; mobile links move into a sheet with a fixed header/footer and scrollable link area.
+ *
+ * @param props.navLinks - Navigation links shown in desktop tabs and mobile sheet.
+ * @param props.user - Authenticated user used for avatar/profile affordances.
+ * @param props.isRegisterEnabled - Controls whether public navigation exposes registration.
+ */
 export function Navbar({
   navLinks = [],
   title,

@@ -13,6 +13,13 @@ const parseDateInputValue = (dateString: string) => {
   return new Date(trimmedDateString)
 }
 
+/**
+ * Converts a local date or datetime input value to a UTC ISO string for API writes.
+ * Date-only values are treated as local midnight before conversion.
+ *
+ * @param dateString - Local date or datetime value from the UI.
+ * @returns UTC ISO string, or null when the input is empty or invalid.
+ */
 export const toUtcIsoString = (dateString?: string | null): string | null => {
   if (!dateString) return null
 
@@ -23,6 +30,13 @@ export const toUtcIsoString = (dateString?: string | null): string | null => {
   return date.toISOString()
 }
 
+/**
+ * Parses API date values as UTC when they do not already include a timezone.
+ * This prevents timezone-less .NET timestamps from being treated as browser-local time.
+ *
+ * @param dateString - API date value that may be timezone-less.
+ * @returns Parsed Date, or null when the input is empty or invalid.
+ */
 export const parseUtcDate = (dateString?: string | null): Date | null => {
   if (!dateString) return null
 
@@ -39,10 +53,22 @@ export const parseUtcDate = (dateString?: string | null): Date | null => {
   return date
 }
 
+/**
+ * Returns the UTC timestamp for an API date value, or NaN when it cannot be parsed.
+ *
+ * @param dateString - API date value that may be timezone-less.
+ */
 export const parseUtcTime = (dateString: string): number => {
   return parseUtcDate(dateString)?.getTime() ?? NaN
 }
 
+/**
+ * Formats an API UTC date for an `<input type="datetime-local">` value.
+ * The returned value intentionally has no timezone suffix because the input expects local time.
+ *
+ * @param dateString - API UTC date value.
+ * @returns Local `YYYY-MM-DDTHH:mm` input value, or an empty string when invalid.
+ */
 export const toLocalDateTimeInputValue = (
   dateString?: string | null,
 ): string => {
@@ -66,7 +92,8 @@ export const formatDate = (dateString?: string | null) => {
 /**
  * Formats an ISO date string into a localized medium date and short time format.
  * Defaults to the user's system locale.
- * * @param dateString - The date string to format.
+ *
+ * @param dateString - API date value that may be timezone-less.
  * @returns The formatted string, or null if the input is empty or invalid.
  */
 export const formatDateTime = (dateString?: string | null): string | null => {
@@ -82,6 +109,9 @@ export const formatDateTime = (dateString?: string | null): string | null => {
 
 /**
  * Formats an ISO date string into a localized medium date format (no time).
+ *
+ * @param dateString - API date value that may be timezone-less.
+ * @returns Localized date, or null when the input is empty or invalid.
  */
 export const formatDateOnly = (dateString?: string | null): string | null => {
   const date = parseUtcDate(dateString)
@@ -93,6 +123,13 @@ export const formatDateOnly = (dateString?: string | null): string | null => {
   })
 }
 
+/**
+ * Formats the elapsed time between two timestamps for quiz attempt summaries.
+ * Returns '-' when either timestamp is missing or the interval is negative.
+ *
+ * @param start - Attempt start timestamp.
+ * @param end - Attempt completion timestamp.
+ */
 export const formatDuration = (start: string | null, end: string | null) => {
   if (!start || !end) return '-'
 
@@ -124,6 +161,13 @@ export const formatTimer = (totalSeconds: number): string => {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+/**
+ * Maps the latest activity timestamp to the profile presence label.
+ * A user is considered online only for the first five minutes after `lastSeen`.
+ *
+ * @param lastSeen - Last activity timestamp from the API.
+ * @param t - i18next translator used for online/offline labels.
+ */
 export const getLastSeenStatus = (
   lastSeen: string | undefined,
   t: TFunction,

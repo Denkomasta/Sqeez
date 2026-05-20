@@ -12,6 +12,15 @@ interface SimpleAvatarProps {
   fallbackClassName?: string
 }
 
+/**
+ * Avatar with a consistent initials fallback.
+ * Prefer passing first/last name when available; username is used only when no name data exists.
+ *
+ * @param props.url - Already sanitized image URL to render.
+ * @param props.username - Username fallback used when no first name is available.
+ * @param props.firstName - Preferred source for initials when name data exists.
+ * @param props.lastName - Preferred source for initials when name data exists.
+ */
 export const SimpleAvatar = ({
   url,
   username,

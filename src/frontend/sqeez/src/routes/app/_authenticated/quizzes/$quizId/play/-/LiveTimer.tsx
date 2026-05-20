@@ -11,6 +11,9 @@ interface LiveTimerProps {
 /**
  * Shows elapsed time or a countdown for active quiz questions.
  * A positive time limit counts down and fires `onTimeUp` once.
+ *
+ * @param props.timeLimit - Seconds to count down from; zero means count elapsed time upward.
+ * @param props.onTimeUp - Optional callback fired once when a countdown reaches zero.
  */
 export function LiveTimer({ timeLimit, onTimeUp }: LiveTimerProps) {
   const isCountdown = timeLimit > 0

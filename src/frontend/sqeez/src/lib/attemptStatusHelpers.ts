@@ -28,6 +28,9 @@ export type AttemptStatusTranslationKey =
 /**
  * Returns the translation key for known attempt statuses.
  * Unknown backend values intentionally fall back to raw display elsewhere.
+ *
+ * @param status - Attempt status from the API or a legacy UI alias.
+ * @returns Translation key for known statuses, otherwise null.
  */
 export function getAttemptStatusTranslationKey(
   status?: AttemptStatusValue | null,
@@ -43,6 +46,9 @@ export function getAttemptStatusTranslationKey(
 /**
  * Formats an attempt status for UI badges and summaries.
  * Keeps unknown statuses visible instead of hiding a backend contract change.
+ *
+ * @param t - i18next translator used for known statuses and the unknown fallback.
+ * @param status - Attempt status from the API or a legacy UI alias.
  */
 export function getAttemptStatusLabel(
   t: TFunction,
@@ -57,7 +63,11 @@ export function getAttemptStatusLabel(
   return status ? String(status) : t('attempts.statusUnknown')
 }
 
-/** True only for attempts fully completed by the backend. */
+/**
+ * True only for attempts fully completed by the backend.
+ *
+ * @param status - Attempt status from the API or a legacy UI alias.
+ */
 export function isCompletedAttemptStatus(
   status?: AttemptStatusValue | null,
 ): boolean {
@@ -66,6 +76,8 @@ export function isCompletedAttemptStatus(
 
 /**
  * Covers both current and older UI names for attempts waiting for teacher review.
+ *
+ * @param status - Attempt status from the API or a legacy UI alias.
  */
 export function isPendingCorrectionAttemptStatus(
   status?: AttemptStatusValue | null,
@@ -77,7 +89,11 @@ export function isPendingCorrectionAttemptStatus(
   )
 }
 
-/** Covers attempts that can still be resumed or are not finished yet. */
+/**
+ * Covers attempts that can still be resumed or are not finished yet.
+ *
+ * @param status - Attempt status from the API or a legacy UI alias.
+ */
 export function isInProgressAttemptStatus(
   status?: AttemptStatusValue | null,
 ): boolean {

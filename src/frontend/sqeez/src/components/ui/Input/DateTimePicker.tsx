@@ -15,6 +15,11 @@ interface DateTimePickerProps extends Omit<
 /**
  * Local datetime input that emits UTC ISO strings to the API.
  * Empty values are emitted as null only after blur to avoid noisy patch calls.
+ *
+ * @param props.value - Current UTC ISO value from the API.
+ * @param props.onChange - Receives a UTC ISO string, or null when the field is cleared.
+ * @param props.min - Optional UTC ISO lower bound for the local datetime input.
+ * @param props.max - Optional UTC ISO upper bound for the local datetime input.
  */
 export function DateTimePicker({
   value,

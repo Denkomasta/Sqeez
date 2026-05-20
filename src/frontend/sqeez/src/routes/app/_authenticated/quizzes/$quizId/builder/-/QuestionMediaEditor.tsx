@@ -24,6 +24,10 @@ interface QuestionMediaEditorProps {
 /**
  * Uploads, previews, or clears media attached directly to a quiz question.
  * Mutations are disabled when the quiz editor store marks the quiz as locked.
+ *
+ * @param props.quizId - Quiz id required by the question patch endpoint.
+ * @param props.questionId - Question id whose media should be changed.
+ * @param props.currentMediaAssetId - Existing media id to preview or remove.
  */
 export function QuestionMediaEditor({
   quizId,

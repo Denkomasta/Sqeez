@@ -22,6 +22,9 @@ const quizCsvHeader =
 /**
  * Teacher CSV quiz import modal.
  * The selected file is posted to the subject import endpoint and reports row-level results.
+ *
+ * @param props.onImported - Callback used to refresh the quiz list after a successful import.
+ * @param props.subjectId - Subject that receives the imported quiz.
  */
 export function ImportQuizCsvModal({
   isOpen,

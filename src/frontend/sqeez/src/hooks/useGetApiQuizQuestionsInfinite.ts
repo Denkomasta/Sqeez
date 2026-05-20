@@ -33,6 +33,10 @@ export const getApiQuizQuestionsInfiniteQueryKey = (
 /**
  * Infinite-query wrapper for quiz editor questions.
  * Uses backend totalPages when available and falls back to page-size detection.
+ *
+ * @param quizId - Quiz whose questions should be paged.
+ * @param params - Backend question filters and paging options; `PageSize` defaults to 25 when omitted.
+ * @param options - React Query options merged into the generated infinite query.
  */
 export const useGetApiQuizQuestionsInfinite = (
   quizId: number | string,

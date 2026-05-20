@@ -19,6 +19,14 @@ interface BaseModalProps {
   className?: string
 }
 
+/**
+ * Shared modal shell used by feature-specific dialogs.
+ * `onClose` is called only when the dialog transitions to a closed state.
+ *
+ * @param props.isOpen - Controls the underlying dialog open state.
+ * @param props.onClose - Called when the user closes the dialog.
+ * @param props.footer - Optional modal footer; callers own button behavior.
+ */
 export function BaseModal({
   isOpen,
   onClose,

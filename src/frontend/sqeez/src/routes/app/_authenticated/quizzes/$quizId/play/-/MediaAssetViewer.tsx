@@ -12,6 +12,9 @@ interface MediaAssetViewerProps {
 /**
  * Fetches and displays a media asset by id.
  * Rendering is type-aware and falls back to a download link for documents/unknown files.
+ *
+ * @param props.assetId - Media asset id to fetch from the file endpoint.
+ * @param props.isOption - Uses compact sizing when the asset belongs to an option.
  */
 export function MediaAssetViewer({
   assetId,

@@ -28,6 +28,9 @@ type StepState = 'completed' | 'failed' | 'pending' | 'running'
 /**
  * Three-step destructive subject deletion flow.
  * Enrollments, quizzes, and the subject are confirmed and executed one step at a time.
+ *
+ * @param props.subject - Subject being deleted; counts decide which cleanup steps are shown.
+ * @param props.subjectsQueryKey - Exact subjects table query key invalidated after each step.
  */
 export function DeleteSubjectModal({
   isOpen,

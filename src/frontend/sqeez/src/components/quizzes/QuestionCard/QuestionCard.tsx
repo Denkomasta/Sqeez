@@ -18,6 +18,10 @@ interface QuestionCardProps {
 /**
  * Displays the active quiz question and delegates answer input to option items.
  * Media rendering is injected so callers control fetching and asset presentation.
+ *
+ * @param props.question - Detailed question returned by the student quiz endpoint.
+ * @param props.selectedOptionIds - Currently selected option ids; free-text answers still select the free-text option.
+ * @param props.renderMediaAsset - Optional renderer for question/option media assets.
  */
 export function QuestionCard({
   question,

@@ -31,6 +31,11 @@ interface PaginatedListViewProps<T> {
 /**
  * Shared shell for searchable, filterable, paginated card/list pages.
  * Search changes reset the page to 1 when pagination state is supplied.
+ *
+ * @param props.items - Current page of items to render.
+ * @param props.renderItem - Renderer for each item; receives the item and index within the current page.
+ * @param props.setSearchQuery - Enables the search input and receives debounced query changes.
+ * @param props.setPageNumber - Enables pagination and is reset to page 1 after search changes.
  */
 export function PaginatedListView<T>({
   titleNode,

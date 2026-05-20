@@ -24,6 +24,14 @@ interface AvatarUploadModalProps {
   description?: string
 }
 
+/**
+ * Upload dialog for profile avatars.
+ * When `targetUserId` is provided, the backend applies the upload to that user; otherwise it updates the current user.
+ *
+ * @param props.targetUserId - Optional user id for admin-driven avatar updates.
+ * @param props.maxFileSizeMB - Client-side upload size cap before the request is sent.
+ * @param props.onUpload - Called after a successful upload so the profile view can refresh cached data.
+ */
 export function AvatarUploadModal({
   isOpen,
   onClose,

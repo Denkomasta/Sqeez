@@ -17,6 +17,12 @@ interface DebouncedTextAreaProps {
 /**
  * Textarea that auto-saves after the user stops typing.
  * The caller must provide an async save handler; visual status reflects that promise.
+ *
+ * @param props.initialValue - Last saved value to show in the textarea.
+ * @param props.onSave - Async save handler called after the debounce delay.
+ * @param props.savingText - Optional localized status text shown while save is pending.
+ * @param props.savedText - Optional localized status text shown after a successful save.
+ * @param props.errorText - Optional localized status text shown when saving fails.
  */
 export function DebouncedTextArea({
   initialValue,

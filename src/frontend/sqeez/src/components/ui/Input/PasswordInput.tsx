@@ -12,6 +12,8 @@ type PasswordInputProps = Omit<
 /**
  * Password field with a localized visibility toggle.
  * The underlying Input owns layout and browser password styling overrides.
+ *
+ * @param props.disabled - Disables both typing and the visibility toggle.
  */
 export function PasswordInput({
   disabled,

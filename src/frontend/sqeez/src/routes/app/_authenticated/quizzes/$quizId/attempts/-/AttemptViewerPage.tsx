@@ -15,6 +15,9 @@ import { getAttemptStatusLabel } from '@/lib/attemptStatusHelpers'
 /**
  * Detailed attempt review page for students and teachers.
  * Teacher grading is enabled only when the current teacher owns the subject.
+ *
+ * @param props.attemptId - Attempt id loaded for review and grading.
+ * @param props.quizId - Quiz id used to load the quiz and owning subject.
  */
 export function AttemptViewerPage({
   attemptId,

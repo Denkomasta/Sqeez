@@ -46,6 +46,8 @@ const getCsvFileName = (title?: string | null) => {
 /**
  * Edits quiz-level settings and destructive quiz actions.
  * Date clearing uses reset flags because the patch contract distinguishes null from reset.
+ *
+ * @param props.quizId - Quiz whose settings, attempts, and CSV export are managed.
  */
 export function QuizSettingsEditor({ quizId }: QuizSettingsEditorProps) {
   const { t } = useTranslation()
