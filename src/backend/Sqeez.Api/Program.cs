@@ -48,7 +48,25 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddOperationTransformer((operation, context, cancellationToken) =>
+    {
+        if (string.IsNullOrEmpty(operation.Description) && !string.IsNullOrEmpty(operation.Summary))
+        {
+            operation.Description = operation.Summary;
+        }
+
+        var method = context.Description.HttpMethod;
+        var path = context.Description.RelativePath;
+        
+        // Ensure path starts with a slash
+        var displayPath = path != null && !path.StartsWith("/") ? $"/{path}" : path;
+        
+        operation.Summary = $"{method} {displayPath}";
+        return Task.CompletedTask;
+    });
+});
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
