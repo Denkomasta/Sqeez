@@ -272,7 +272,7 @@ namespace Sqeez.Api.Services.UserService
                     ArchivedAt = e.ArchivedAt
                 }).ToList(),
 
-                // Takes only the last 5 earned.
+                // Detailed profiles show only the most recent earned badges to keep payloads compact.
                 Badges = user.StudentBadges
                     .OrderByDescending(sb => sb.EarnedAt)
                     .Take(5)
@@ -301,6 +301,7 @@ namespace Sqeez.Api.Services.UserService
                 return targetUsers.Select(user => user.Id).ToHashSet();
             }
 
+            // Admin emails are intentionally public so ordinary users can find a support contact.
             foreach (var admin in targetUsers.Where(user => user.Role == UserRole.Admin))
             {
                 visibleIds.Add(admin.Id);
@@ -333,12 +334,14 @@ namespace Sqeez.Api.Services.UserService
             {
                 if (currentUser.SchoolClassId.HasValue)
                 {
+                    // Students can see the email of the teacher responsible for their class.
                     foreach (var teacher in targetUsers.OfType<Teacher>().Where(teacher => teacher.ManagedClassId == currentUser.SchoolClassId))
                     {
                         visibleIds.Add(teacher.Id);
                     }
                 }
 
+                // Students can see teacher emails for subjects where they have an enrollment.
                 var subjectTeacherIds = await _context.Enrollments
                     .AsNoTracking()
                     .Where(enrollment =>
@@ -370,12 +373,14 @@ namespace Sqeez.Api.Services.UserService
 
                 if (managedClassId.HasValue)
                 {
+                    // Teachers can see emails of students in their managed class.
                     foreach (var student in targetUsers.Where(user => user.Role != UserRole.Admin && user.SchoolClassId == managedClassId))
                     {
                         visibleIds.Add(student.Id);
                     }
                 }
 
+                // Teachers can see emails of students enrolled in their subjects.
                 var enrolledStudentIds = await _context.Enrollments
                     .AsNoTracking()
                     .Where(enrollment =>
@@ -632,6 +637,7 @@ namespace Sqeez.Api.Services.UserService
             if (targetUser == null)
                 return ServiceResult<bool>.Failure("User not found.", ServiceError.NotFound);
 
+            // Admin accounts must be explicitly demoted before deletion so elevated accounts are never removed by accident.
             if (targetUser.Role == UserRole.Admin)
             {
                 return ServiceResult<bool>.Failure(
@@ -646,6 +652,7 @@ namespace Sqeez.Api.Services.UserService
                     ServiceError.ValidationFailed);
             }
 
+            // Database FK restrictions require dependent student history to be removed before the user row.
             var fileUrlsToDelete = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if (!string.IsNullOrWhiteSpace(targetUser.AvatarUrl))
             {
@@ -682,6 +689,7 @@ namespace Sqeez.Api.Services.UserService
 
             if (targetUser.Role == UserRole.Teacher)
             {
+                // Subjects survive teacher deletion; they become unassigned and can be reassigned by an admin later.
                 var subjects = await _context.Subjects
                     .Where(subject => subject.TeacherId == id)
                     .ToListAsync();
@@ -696,6 +704,7 @@ namespace Sqeez.Api.Services.UserService
 
                 if (ownedMediaAssets.Any())
                 {
+                    // Quiz media can still be referenced by content, so ownership is transferred instead of deleting the assets.
                     var replacementOwnerValidation = await ValidateReplacementMediaOwnerAsync(id, replacementMediaOwnerId);
                     if (replacementOwnerValidation != null)
                     {
@@ -880,6 +889,7 @@ namespace Sqeez.Api.Services.UserService
             var currentUserIsSuperAdmin = IsSuperAdmin(currentUser);
             var targetUserIsSuperAdmin = IsSuperAdmin(targetUser);
 
+            // The configured superadmin account is protected from every patch except its own self-edit.
             if (targetUserIsSuperAdmin)
             {
                 return currentUserIsSuperAdmin && isSelf
@@ -891,6 +901,7 @@ namespace Sqeez.Api.Services.UserService
 
             if (targetUser.Role == UserRole.Admin)
             {
+                // Ordinary admins may update only their own basic profile fields; superadmin manages other admins.
                 if (currentUserIsSuperAdmin)
                 {
                     return null;
