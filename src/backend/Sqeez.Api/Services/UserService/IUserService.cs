@@ -100,12 +100,15 @@ namespace Sqeez.Api.Services.Interfaces
         /// <summary>
         /// Uploads and assigns a user's avatar image.
         /// </summary>
-        /// <param name="userId">The user id.</param>
+        /// <param name="currentUserId">The authenticated user's id.</param>
         /// <param name="imageFile">Avatar image file.</param>
+        /// <param name="targetUserId">Optional user id whose avatar should be changed. Null changes the authenticated user's avatar.</param>
+        /// <param name="currentUserRole">The authenticated user's role.</param>
         /// <returns>
         /// The new avatar URL. Returns validation failed for unsupported file extensions, not found for a missing user,
-        /// or propagates storage failures. Existing avatars are deleted before the replacement upload is attempted.
+        /// forbidden when access is denied, or propagates storage failures. Existing avatars are deleted before the
+        /// replacement upload is attempted.
         /// </returns>
-        Task<ServiceResult<string>> UploadAvatarAsync(long userId, IFormFile imageFile);
+        Task<ServiceResult<string>> UploadAvatarAsync(long currentUserId, IFormFile imageFile, long? targetUserId = null, string? currentUserRole = null);
     }
 }

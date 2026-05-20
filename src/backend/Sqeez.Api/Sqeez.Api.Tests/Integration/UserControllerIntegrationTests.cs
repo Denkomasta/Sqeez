@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Sqeez.Api.DTOs;
 using Sqeez.Api.Enums;
@@ -322,6 +323,36 @@ namespace Sqeez.Api.Tests.Integration
                     8,
                     It.Is<PatchStudentDto>(dto => dto.Username == "changed"),
                     1,
+                    "Admin"),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task UploadAvatar_WithTargetUserId_PassesRequesterContextToService()
+        {
+            _factory.UserServiceMock
+                .Setup(service => service.UploadAvatarAsync(
+                    1,
+                    It.IsAny<IFormFile>(),
+                    8,
+                    "Admin"))
+                .ReturnsAsync(ServiceResult<string>.Ok("/avatars/moderated.png"));
+
+            var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserIdHeader, "1");
+            client.DefaultRequestHeaders.Add(TestAuthenticationHandler.RoleHeader, "Admin");
+
+            using var content = new MultipartFormDataContent();
+            content.Add(new ByteArrayContent([1, 2, 3]), "file", "avatar.png");
+
+            var response = await client.PostAsync("/api/users/me/avatar?targetUserId=8", content);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            _factory.UserServiceMock.Verify(
+                service => service.UploadAvatarAsync(
+                    1,
+                    It.IsAny<IFormFile>(),
+                    8,
                     "Admin"),
                 Times.Once);
         }

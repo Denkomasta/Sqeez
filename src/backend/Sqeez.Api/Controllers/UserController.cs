@@ -135,11 +135,11 @@ namespace Sqeez.Api.Controllers
         }
 
         /// <summary>
-        /// Uploads and replaces the current user's avatar image.
+        /// Uploads and replaces a user's avatar image. Without targetUserId, the current user's avatar is changed.
         /// </summary>
         [Authorize]
         [HttpPost("me/avatar")]
-        public async Task<ActionResult<AvatarUploadResponseDto>> UploadAvatar(IFormFile file)
+        public async Task<ActionResult<AvatarUploadResponseDto>> UploadAvatar(IFormFile file, [FromQuery] long? targetUserId = null)
         {
             var userIdClaim = GetUserIdFromClaims();
             if (string.IsNullOrEmpty(userIdClaim))
@@ -149,7 +149,7 @@ namespace Sqeez.Api.Controllers
 
             long userId = long.Parse(userIdClaim);
 
-            var result = await _userService.UploadAvatarAsync(userId, file);
+            var result = await _userService.UploadAvatarAsync(userId, file, targetUserId, GetUserRoleFromClaims());
 
             if (!result.Success)
             {
