@@ -17,7 +17,7 @@ The current codebase contains a working ASP.NET Core backend, React frontend, Po
 - XP rewards based on improved quiz performance.
 - Rule-based badge awarding.
 - Local public and private file storage for avatars, badges, and quiz media.
-- CSV master import for classes, subjects, and students.
+- CSV import for classes, subjects, and students, plus quiz CSV import and export.
 - Frontend localization with English and Czech locale files.
 
 ## Tech Stack
@@ -63,8 +63,10 @@ The current codebase contains a working ASP.NET Core backend, React frontend, Po
 +-- src/
 |   +-- backend/
 |   |   +-- Sqeez.Api/                ASP.NET Core API, EF model, services, tests
+|   |   |   +-- Samples/              CSV import/export examples
 |   +-- frontend/
 |   |   +-- sqeez/                    React/Vite frontend
+|   +-- docker-compose.dev.yml        Local PostgreSQL and Mailpit services
 |   +-- docker-compose.yml            Production-oriented compose file
 +-- scripts/
 |   +-- setup-vps.sh                  Fresh VPS bootstrap helper
@@ -78,70 +80,27 @@ The current codebase contains a working ASP.NET Core backend, React frontend, Po
 
 - [Project description](PROJECT_DESCRIPTION.md) explains the implemented system, roles, architecture, core workflows, and limitations.
 - [Running guide](RUNNING.md) explains how to configure and run the project locally and with Docker.
+- [CSV samples](src/backend/Sqeez.Api/Samples/README.md) describe the supported import/export formats and example files.
 - `analysis/` contains earlier analysis artifacts. Some of those files are older than the implementation and should be treated as historical context.
 
-## Quick Start
+## Running, Testing, and Development
 
-For full setup details, see [RUNNING.md](RUNNING.md).
+Detailed instructions for local development, Docker services, environment variables, database migrations, seeding, test commands, production deployment, and API client generation are kept in [RUNNING.md](RUNNING.md).
 
-Backend:
+The usual local setup runs PostgreSQL and Mailpit from `src/docker-compose.dev.yml`, the backend from `src/backend/Sqeez.Api`, and the frontend from `src/frontend/sqeez`.
 
-```powershell
-cd src/backend/Sqeez.Api
-dotnet restore
-dotnet ef database update
-dotnet run --launch-profile https
-```
+## Test Accounts
 
-Frontend:
+The hosted demo/test instance can be populated with the following accounts for reviewers and testers. These accounts are not created automatically by the repository.
 
-```powershell
-cd src/frontend/sqeez
-yarn install
-yarn dev
-```
+All listed accounts use the password `Heslo1122*`.
 
-Default local URLs:
-
-- Frontend: `http://localhost:3000`
-- Backend HTTP: `http://localhost:5000`
-- Backend HTTPS: `https://localhost:5001`
-- OpenAPI document: `https://localhost:5001/openapi/v1.json`
-- Scalar API reference: `https://localhost:5001/scalar/v1`
-
-Use the HTTPS backend profile for normal browser authentication testing because auth cookies are configured as `Secure`.
-
-## Testing
-
-Backend:
-
-```powershell
-cd src/backend/Sqeez.Api
-dotnet test Sqeez.Api.Tests/Sqeez.Api.Tests.csproj
-```
-
-Frontend:
-
-```powershell
-cd src/frontend/sqeez
-yarn test --run
-```
-
-Frontend coverage:
-
-```powershell
-cd src/frontend/sqeez
-yarn test:coverage
-```
-
-## API Client Generation
-
-The frontend API client is generated from `src/frontend/sqeez/src/api/api.yaml` using Orval.
-
-```powershell
-cd src/frontend/sqeez
-yarn api:gen
-```
+| Role | Email | Intended use |
+| --- | --- | --- |
+| Admin | `admin.demo@sqeez.org` | User, class, subject, badge, import, and system settings administration. |
+| Teacher | `teacher.demo@sqeez.org` | Quiz management, attempt review, manual grading, and statistics. |
+| Student | `student.demo@sqeez.org` | Subject browsing, quiz attempts, profile, badges, and leaderboards. |
+| Student | `student2.demo@sqeez.org` | Secondary student account for comparing results and leaderboards. |
 
 ## License
 
