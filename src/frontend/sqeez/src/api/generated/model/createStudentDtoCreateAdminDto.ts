@@ -6,6 +6,9 @@
  */
 import type { CreateStudentDtoCreateAdminDtoRole } from './createStudentDtoCreateAdminDtoRole'
 
+/**
+ * Admin creation DTO with optional phone number.
+ */
 export interface CreateStudentDtoCreateAdminDto {
   role: CreateStudentDtoCreateAdminDtoRole
   /**
@@ -55,6 +58,7 @@ export interface CreateStudentDtoCreateAdminDto {
    */
   password?: string
   /**
+   * Optional school class assignment for the created student-shaped account.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Compact teacher profile used inside class detail responses.
+ */
 export interface TeacherBasicDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id?: number | string

@@ -6,6 +6,9 @@
  */
 import type { CreateStudentDtoCreateStudentDtoRole } from './createStudentDtoCreateStudentDtoRole'
 
+/**
+ * Polymorphic user creation DTO; the role discriminator selects student, teacher, or admin fields.
+ */
 export interface CreateStudentDtoCreateStudentDto {
   role: CreateStudentDtoCreateStudentDtoRole
   /**
@@ -36,6 +39,7 @@ export interface CreateStudentDtoCreateStudentDto {
    */
   password?: string
   /**
+   * Optional school class assignment for the created student-shaped account.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

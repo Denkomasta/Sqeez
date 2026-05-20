@@ -6,6 +6,9 @@
  */
 import type { PatchStudentDtoPatchAdminDtoRole } from './patchStudentDtoPatchAdminDtoRole'
 
+/**
+ * Admin patch DTO for phone-number updates.
+ */
 export interface PatchStudentDtoPatchAdminDto {
   role: PatchStudentDtoPatchAdminDtoRole
   /**
@@ -23,6 +26,7 @@ export interface PatchStudentDtoPatchAdminDto {
    */
   department?: string | null
   /**
+   * Optional class managed by the teacher. When supplied by an authorized admin, 0 removes the managed class.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
@@ -35,11 +39,13 @@ export interface PatchStudentDtoPatchAdminDto {
    */
   username?: string | null
   /**
+   * Optional class assignment. When supplied by an authorized admin, 0 removes the current class assignment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   schoolClassId?: number | string | null
   /**
+   * Avatar URL metadata patch. File uploads should use the avatar upload endpoint instead.
    * @minLength 0
    * @maxLength 2048
    * @nullable

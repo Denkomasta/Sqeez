@@ -7,13 +7,20 @@
 import type { StudentDtoStudentDtoType } from './studentDtoStudentDtoType'
 import type { UserRole } from './userRole'
 
+/**
+ * Base user DTO returned for student-shaped profiles and polymorphic user lists.
+ */
 export interface StudentDtoStudentDto {
   $type: StudentDtoStudentDtoType
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * User identifier shared by students, teachers, and admins.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id?: number | string
   firstName?: string
   lastName?: string
   username?: string
+  /** Email address visible according to requester permissions; it can be pseudo-anonymized for restricted viewers. */
   email?: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   currentXP?: number | string
@@ -22,6 +29,7 @@ export interface StudentDtoStudentDto {
   avatarUrl?: string | null
   lastSeen?: string
   /**
+   * Assigned school class id. Null means the user is not assigned to a class as a student.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

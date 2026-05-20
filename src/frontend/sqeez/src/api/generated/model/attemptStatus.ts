@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Lifecycle state of a quiz attempt.
+ */
 export type AttemptStatus =
   | 'Created'
   | 'Started'

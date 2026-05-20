@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request containing student ids to remove from a class or subject.
+ */
 export interface RemoveStudentsDto {
   /** @maxItems 1000 */
   studentIds?: (number | string)[]

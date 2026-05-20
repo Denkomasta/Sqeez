@@ -6,14 +6,29 @@
  */
 import type { BadgeRuleDto } from './badgeRuleDto'
 
+/**
+ * Badge definition returned by badge endpoints.
+ */
 export interface BadgeDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Badge identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id: number | string
+  /** Badge display name. */
   name: string
+  /** Badge description. */
   description: string
-  /** @nullable */
+  /**
+   * Public icon URL, or null when no icon is assigned.
+   * @nullable
+   */
   iconUrl: string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * XP added when the badge is awarded.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   xpBonus: number | string
+  /** Rules attached to this badge. */
   rules: BadgeRuleDto[]
 }

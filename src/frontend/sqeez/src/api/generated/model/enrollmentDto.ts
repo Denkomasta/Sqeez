@@ -5,24 +5,47 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Enrollment summary joining a student with a subject and optional mark.
+ */
 export interface EnrollmentDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Enrollment identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id: number | string
   /**
+   * Optional teacher-assigned mark.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   mark: number | string | null
+  /** UTC timestamp when the enrollment was created. */
   enrolledAt: string
-  /** @nullable */
+  /**
+   * UTC timestamp when the enrollment was archived; null means active.
+   * @nullable
+   */
   archivedAt: string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Enrolled student id.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   studentId: number | string
+  /** Enrolled student's username. */
   studentUserName: string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Subject id.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   subjectId: number | string
+  /** Subject name. */
   subjectName: string
+  /** Subject code. */
   subjectCode: string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of quiz attempts connected to this enrollment.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   quizAttemptsCount: number | string
 }

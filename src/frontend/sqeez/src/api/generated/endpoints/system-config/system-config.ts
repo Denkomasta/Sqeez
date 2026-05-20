@@ -27,6 +27,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Gets the current system configuration.
+ * @summary GET /api/system-config
+ */
 export const getApiSystemConfig = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
@@ -144,6 +148,9 @@ export function useGetApiSystemConfig<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/system-config
+ */
 
 export function useGetApiSystemConfig<
   TData = Awaited<ReturnType<typeof getApiSystemConfig>>,
@@ -173,6 +180,10 @@ export function useGetApiSystemConfig<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates mutable system configuration values. Admin-only.
+ * @summary PATCH /api/system-config
+ */
 export const patchApiSystemConfig = (
   updateSystemConfigDto: UpdateSystemConfigDto,
   options?: SecondParameter<typeof customInstance>,
@@ -234,6 +245,9 @@ export type PatchApiSystemConfigMutationResult = NonNullable<
 export type PatchApiSystemConfigMutationBody = UpdateSystemConfigDto
 export type PatchApiSystemConfigMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/system-config
+ */
 export const usePatchApiSystemConfig = <
   TError = ErrorType<unknown>,
   TContext = unknown,

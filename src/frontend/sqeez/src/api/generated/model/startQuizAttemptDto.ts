@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for starting a quiz attempt for a student's enrollment.
+ */
 export interface StartQuizAttemptDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   quizId: number | string

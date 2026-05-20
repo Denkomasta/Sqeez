@@ -6,18 +6,39 @@
  */
 import type { OptionStatDto } from './optionStatDto'
 
+/**
+ * Aggregated question statistics including response counts, timing, and option/free-text details.
+ */
 export interface QuestionStatDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Question identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id?: number | string
-  /** @nullable */
+  /**
+   * Question title or text.
+   * @nullable
+   */
   questionText?: string | null
+  /** Whether the question is answered with free text. */
   isFreeText?: boolean
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of responses submitted for this question.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   totalAnswers?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
+  /**
+   * Average score awarded for this question.
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+   */
   averageScore?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$ */
+  /**
+   * Average response time in seconds.
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+   */
   averageResponseTimeSeconds?: number | string
+  /** Option pick statistics for choice questions. */
   options?: OptionStatDto[]
+  /** Submitted answers for free-text questions. */
   submittedFreeTextAnswers?: string[]
 }

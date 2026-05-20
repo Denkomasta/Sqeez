@@ -5,21 +5,32 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for submitting a response to one quiz question.
+ */
 export interface SubmitQuestionResponseDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Question being answered. It must belong to the quiz attempt.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   quizQuestionId?: number | string
   /**
+   * Time spent on the question in milliseconds.
    * @minimum 0
    * @maximum 3600000
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   responseTimeMs?: number | string
   /**
+   * Free-text answer for free-text questions.
    * @minLength 0
    * @maxLength 4000
    * @nullable
    */
   freeTextAnswer?: string | null
-  /** @maxItems 1000 */
+  /**
+   * Selected option ids for single-choice or multiple-choice questions.
+   * @maxItems 1000
+   */
   selectedOptionIds?: (number | string)[]
 }

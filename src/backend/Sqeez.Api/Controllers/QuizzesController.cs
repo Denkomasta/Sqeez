@@ -11,9 +11,6 @@ namespace Sqeez.Api.Controllers
     /// </summary>
     [Authorize]
     [Route("api/quizzes")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class QuizzesController : ApiBaseController
     {
         private readonly IQuizService _quizService;

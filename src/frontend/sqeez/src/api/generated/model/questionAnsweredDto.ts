@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Answer-submission response with correctness hints and next-question navigation.
+ */
 export interface QuestionAnsweredDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

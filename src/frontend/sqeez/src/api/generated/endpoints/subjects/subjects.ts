@@ -46,6 +46,11 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * GET /api/subjects
+Gets a paged list of subjects.
+ * @summary GET /api/subjects
+ */
 export const getApiSubjects = (
   params?: GetApiSubjectsParams,
   options?: SecondParameter<typeof customInstance>,
@@ -154,6 +159,9 @@ export function useGetApiSubjects<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/subjects
+ */
 
 export function useGetApiSubjects<
   TData = Awaited<ReturnType<typeof getApiSubjects>>,
@@ -180,6 +188,11 @@ export function useGetApiSubjects<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * POST /api/subjects
+Creates a subject. Admin-only.
+ * @summary POST /api/subjects
+ */
 export const postApiSubjects = (
   createSubjectDto: CreateSubjectDto,
   options?: SecondParameter<typeof customInstance>,
@@ -241,6 +254,9 @@ export type PostApiSubjectsMutationResult = NonNullable<
 export type PostApiSubjectsMutationBody = CreateSubjectDto
 export type PostApiSubjectsMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/subjects
+ */
 export const usePostApiSubjects = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -263,6 +279,11 @@ export const usePostApiSubjects = <
 > => {
   return useMutation(getPostApiSubjectsMutationOptions(options), queryClient)
 }
+/**
+ * GET /api/subjects/5
+Gets one subject by id.
+ * @summary GET /api/subjects/{id}
+ */
 export const getApiSubjectsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -392,6 +413,9 @@ export function useGetApiSubjectsId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/subjects/{id}
+ */
 
 export function useGetApiSubjectsId<
   TData = Awaited<ReturnType<typeof getApiSubjectsId>>,
@@ -422,6 +446,11 @@ export function useGetApiSubjectsId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * PATCH /api/subjects/5
+Updates subject metadata and assignments. Admin-only.
+ * @summary PATCH /api/subjects/{id}
+ */
 export const patchApiSubjectsId = (
   id: number | string,
   patchSubjectDto: PatchSubjectDto,
@@ -484,6 +513,9 @@ export type PatchApiSubjectsIdMutationResult = NonNullable<
 export type PatchApiSubjectsIdMutationBody = PatchSubjectDto
 export type PatchApiSubjectsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/subjects/{id}
+ */
 export const usePatchApiSubjectsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -506,6 +538,11 @@ export const usePatchApiSubjectsId = <
 > => {
   return useMutation(getPatchApiSubjectsIdMutationOptions(options), queryClient)
 }
+/**
+ * DELETE /api/subjects/5
+Deletes an empty subject or archives it when enrollments or quizzes are present.
+ * @summary DELETE /api/subjects/{id}
+ */
 export const deleteApiSubjectsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -561,6 +598,9 @@ export type DeleteApiSubjectsIdMutationResult = NonNullable<
 
 export type DeleteApiSubjectsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/subjects/{id}
+ */
 export const useDeleteApiSubjectsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -586,6 +626,11 @@ export const useDeleteApiSubjectsId = <
     queryClient,
   )
 }
+/**
+ * GET /api/subjects/5/enrollments
+Lists enrollments for the subject with student and teacher visibility restrictions.
+ * @summary GET /api/subjects/{subjectId}/enrollments
+ */
 export const getApiSubjectsSubjectIdEnrollments = (
   subjectId: number | string,
   params?: GetApiSubjectsSubjectIdEnrollmentsParams,
@@ -739,6 +784,9 @@ export function useGetApiSubjectsSubjectIdEnrollments<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/subjects/{subjectId}/enrollments
+ */
 
 export function useGetApiSubjectsSubjectIdEnrollments<
   TData = Awaited<ReturnType<typeof getApiSubjectsSubjectIdEnrollments>>,
@@ -774,6 +822,11 @@ export function useGetApiSubjectsSubjectIdEnrollments<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * POST /api/subjects/5/enrollments
+Enrolls students in the subject. Admins can enroll anyone; students can enroll only themselves.
+ * @summary POST /api/subjects/{subjectId}/enrollments
+ */
 export const postApiSubjectsSubjectIdEnrollments = (
   subjectId: number | string,
   assignStudentsDto: AssignStudentsDto,
@@ -837,6 +890,9 @@ export type PostApiSubjectsSubjectIdEnrollmentsMutationBody = AssignStudentsDto
 export type PostApiSubjectsSubjectIdEnrollmentsMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary POST /api/subjects/{subjectId}/enrollments
+ */
 export const usePostApiSubjectsSubjectIdEnrollments = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -862,6 +918,11 @@ export const usePostApiSubjectsSubjectIdEnrollments = <
     queryClient,
   )
 }
+/**
+ * DELETE /api/subjects/5/enrollments
+Removes students from the subject. Admins can remove anyone; teachers can remove from their own subjects.
+ * @summary DELETE /api/subjects/{subjectId}/enrollments
+ */
 export const deleteApiSubjectsSubjectIdEnrollments = (
   subjectId: number | string,
   nullRemoveStudentsDto: null | RemoveStudentsDto,
@@ -945,6 +1006,9 @@ export type DeleteApiSubjectsSubjectIdEnrollmentsMutationBody =
 export type DeleteApiSubjectsSubjectIdEnrollmentsMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/subjects/{subjectId}/enrollments
+ */
 export const useDeleteApiSubjectsSubjectIdEnrollments = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -978,6 +1042,11 @@ export const useDeleteApiSubjectsSubjectIdEnrollments = <
     queryClient,
   )
 }
+/**
+ * GET /api/subjects/5/quizzes
+Lists quizzes attached to the subject.
+ * @summary GET /api/subjects/{subjectId}/quizzes
+ */
 export const getApiSubjectsSubjectIdQuizzes = (
   subjectId: number | string,
   params?: GetApiSubjectsSubjectIdQuizzesParams,
@@ -1126,6 +1195,9 @@ export function useGetApiSubjectsSubjectIdQuizzes<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/subjects/{subjectId}/quizzes
+ */
 
 export function useGetApiSubjectsSubjectIdQuizzes<
   TData = Awaited<ReturnType<typeof getApiSubjectsSubjectIdQuizzes>>,
@@ -1161,6 +1233,11 @@ export function useGetApiSubjectsSubjectIdQuizzes<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * DELETE /api/subjects/5/quizzes?deleteAll=true
+Removes all quizzes and quiz content for the subject after enrollment history has been removed. Admin-only.
+ * @summary DELETE /api/subjects/{subjectId}/quizzes
+ */
 export const deleteApiSubjectsSubjectIdQuizzes = (
   subjectId: number | string,
   params?: DeleteApiSubjectsSubjectIdQuizzesParams,
@@ -1231,6 +1308,9 @@ export type DeleteApiSubjectsSubjectIdQuizzesMutationResult = NonNullable<
 
 export type DeleteApiSubjectsSubjectIdQuizzesMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/subjects/{subjectId}/quizzes
+ */
 export const useDeleteApiSubjectsSubjectIdQuizzes = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -1262,6 +1342,11 @@ export const useDeleteApiSubjectsSubjectIdQuizzes = <
     queryClient,
   )
 }
+/**
+ * POST /api/subjects/5/quizzes
+Creates a new quiz attached to this subject.
+ * @summary POST /api/subjects/{subjectId}/quizzes
+ */
 export const postApiSubjectsSubjectIdQuizzes = (
   subjectId: number | string,
   createQuizDto: CreateQuizDto,
@@ -1324,6 +1409,9 @@ export type PostApiSubjectsSubjectIdQuizzesMutationResult = NonNullable<
 export type PostApiSubjectsSubjectIdQuizzesMutationBody = CreateQuizDto
 export type PostApiSubjectsSubjectIdQuizzesMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/subjects/{subjectId}/quizzes
+ */
 export const usePostApiSubjectsSubjectIdQuizzes = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -1349,6 +1437,11 @@ export const usePostApiSubjectsSubjectIdQuizzes = <
     queryClient,
   )
 }
+/**
+ * POST /api/subjects/5/quizzes/import
+Imports quizzes, questions, and options from a CSV file into the subject. Subject teacher only.
+ * @summary POST /api/subjects/{subjectId}/quizzes/import
+ */
 export const postApiSubjectsSubjectIdQuizzesImport = (
   subjectId: number | string,
   postApiSubjectsSubjectIdQuizzesImportBody: PostApiSubjectsSubjectIdQuizzesImportBody,
@@ -1430,6 +1523,9 @@ export type PostApiSubjectsSubjectIdQuizzesImportMutationBody =
 export type PostApiSubjectsSubjectIdQuizzesImportMutationError =
   ErrorType<unknown>
 
+/**
+ * @summary POST /api/subjects/{subjectId}/quizzes/import
+ */
 export const usePostApiSubjectsSubjectIdQuizzesImport = <
   TError = ErrorType<unknown>,
   TContext = unknown,

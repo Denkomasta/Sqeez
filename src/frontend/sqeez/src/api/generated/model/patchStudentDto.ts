@@ -8,6 +8,9 @@ import type { PatchStudentDtoPatchAdminDto } from './patchStudentDtoPatchAdminDt
 import type { PatchStudentDtoPatchStudentDto } from './patchStudentDtoPatchStudentDto'
 import type { PatchStudentDtoPatchTeacherDto } from './patchStudentDtoPatchTeacherDto'
 
+/**
+ * Polymorphic user patch DTO; the role discriminator selects which role-specific fields may be supplied.
+ */
 export type PatchStudentDto =
   | PatchStudentDtoPatchStudentDto
   | PatchStudentDtoPatchTeacherDto

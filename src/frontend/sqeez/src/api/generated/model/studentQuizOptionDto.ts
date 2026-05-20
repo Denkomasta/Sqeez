@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Student-safe quiz option DTO that hides correctness.
+ */
 export interface StudentQuizOptionDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

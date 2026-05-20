@@ -5,12 +5,19 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Quiz attempt navigation state used to recover the next question and render progress.
+ */
 export interface NextQuestionProgressDto {
   /**
+   * Next unanswered question id, or null when all questions are answered.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   nextQuestionId: number | string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of distinct questions already answered in the attempt.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   answeredQuestionsCount: number | string
 }

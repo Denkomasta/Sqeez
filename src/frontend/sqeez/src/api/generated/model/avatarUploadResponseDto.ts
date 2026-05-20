@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Response returned after a successful avatar upload.
+ */
 export interface AvatarUploadResponseDto {
   message: string
   avatarUrl: string

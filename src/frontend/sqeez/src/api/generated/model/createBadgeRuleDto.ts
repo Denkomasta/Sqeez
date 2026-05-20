@@ -7,10 +7,16 @@
 import type { BadgeMetric } from './badgeMetric'
 import type { BadgeOperator } from './badgeOperator'
 
+/**
+ * Request for creating one badge rule.
+ */
 export interface CreateBadgeRuleDto {
+  /** Metric inspected during badge evaluation. */
   metric?: BadgeMetric
+  /** Comparison operator used against TargetValue. */
   operator?: BadgeOperator
   /**
+   * Value that the selected metric is compared with.
    * @minimum 0
    * @maximum 1000000
    * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$

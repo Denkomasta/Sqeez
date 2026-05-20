@@ -9,9 +9,6 @@ namespace Sqeez.Api.Controllers
     /// Provides quiz-level and question-level statistics for teachers and admins.
     /// </summary>
     [Route("api/quizzes/{quizId}/statistics")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class QuizStatisticsController : ApiBaseController
     {
         private readonly IQuizStatisticsService _statisticsService;

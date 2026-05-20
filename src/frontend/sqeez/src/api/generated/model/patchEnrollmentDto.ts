@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for updating or clearing an enrollment mark.
+ */
 export interface PatchEnrollmentDto {
   /**
    * @minimum 1
@@ -13,6 +16,9 @@ export interface PatchEnrollmentDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   mark?: number | string | null
-  /** @nullable */
+  /**
+   * When true, clears the current mark. This distinguishes mark removal from an omitted Mark value.
+   * @nullable
+   */
   removeMark?: boolean | null
 }

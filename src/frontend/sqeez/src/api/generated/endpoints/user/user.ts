@@ -38,6 +38,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Gets a paged list of users using the supplied filters. Any authenticated user may search users.
+ * @summary GET /api/users
+ */
 export const getApiUsers = (
   params?: GetApiUsersParams,
   options?: SecondParameter<typeof customInstance>,
@@ -146,6 +150,9 @@ export function useGetApiUsers<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/users
+ */
 
 export function useGetApiUsers<
   TData = Awaited<ReturnType<typeof getApiUsers>>,
@@ -172,6 +179,10 @@ export function useGetApiUsers<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Creates a student, teacher, or admin account. Admin-only.
+ * @summary POST /api/users
+ */
 export const postApiUsers = (
   createStudentDto: CreateStudentDto,
   options?: SecondParameter<typeof customInstance>,
@@ -233,6 +244,9 @@ export type PostApiUsersMutationResult = NonNullable<
 export type PostApiUsersMutationBody = CreateStudentDto
 export type PostApiUsersMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/users
+ */
 export const usePostApiUsers = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -255,6 +269,10 @@ export const usePostApiUsers = <
 > => {
   return useMutation(getPostApiUsersMutationOptions(options), queryClient)
 }
+/**
+ * Gets a lightweight user profile. Any authenticated user may read the profile.
+ * @summary GET /api/users/{id}
+ */
 export const getApiUsersId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -368,6 +386,9 @@ export function useGetApiUsersId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/users/{id}
+ */
 
 export function useGetApiUsersId<
   TData = Awaited<ReturnType<typeof getApiUsersId>>,
@@ -394,6 +415,10 @@ export function useGetApiUsersId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates a user profile. Users can update their own basic fields; admins can update assignments and role data.
+ * @summary PATCH /api/users/{id}
+ */
 export const patchApiUsersId = (
   id: number | string,
   patchStudentDto: PatchStudentDto,
@@ -456,6 +481,9 @@ export type PatchApiUsersIdMutationResult = NonNullable<
 export type PatchApiUsersIdMutationBody = PatchStudentDto
 export type PatchApiUsersIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/users/{id}
+ */
 export const usePatchApiUsersId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -478,6 +506,10 @@ export const usePatchApiUsersId = <
 > => {
   return useMutation(getPatchApiUsersIdMutationOptions(options), queryClient)
 }
+/**
+ * Archives a user. Users can archive themselves; admins can archive non-admin users; the superadmin can archive admins too.
+ * @summary DELETE /api/users/{id}
+ */
 export const deleteApiUsersId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -533,6 +565,9 @@ export type DeleteApiUsersIdMutationResult = NonNullable<
 
 export type DeleteApiUsersIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/users/{id}
+ */
 export const useDeleteApiUsersId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -555,6 +590,10 @@ export const useDeleteApiUsersId = <
 > => {
   return useMutation(getDeleteApiUsersIdMutationOptions(options), queryClient)
 }
+/**
+ * Gets a detailed user profile with class, enrollment, and badge data. Any authenticated user may read it.
+ * @summary GET /api/users/{id}/details
+ */
 export const getApiUsersIdDetails = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -684,6 +723,9 @@ export function useGetApiUsersIdDetails<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/users/{id}/details
+ */
 
 export function useGetApiUsersIdDetails<
   TData = Awaited<ReturnType<typeof getApiUsersIdDetails>>,
@@ -714,6 +756,10 @@ export function useGetApiUsersIdDetails<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Restores an archived user. Admins can restore non-admin users; the superadmin can restore admins too.
+ * @summary PATCH /api/users/{id}/restore
+ */
 export const patchApiUsersIdRestore = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -769,6 +815,9 @@ export type PatchApiUsersIdRestoreMutationResult = NonNullable<
 
 export type PatchApiUsersIdRestoreMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/users/{id}/restore
+ */
 export const usePatchApiUsersIdRestore = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -794,6 +843,11 @@ export const usePatchApiUsersIdRestore = <
     queryClient,
   )
 }
+/**
+ * Permanently deletes an archived student or teacher. Admin targets must be changed to teacher first.
+If the deleted user owns media assets, provide a replacement teacher/admin owner id.
+ * @summary DELETE /api/users/{id}/hard
+ */
 export const deleteApiUsersIdHard = (
   id: number | string,
   params?: DeleteApiUsersIdHardParams,
@@ -850,6 +904,9 @@ export type DeleteApiUsersIdHardMutationResult = NonNullable<
 
 export type DeleteApiUsersIdHardMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/users/{id}/hard
+ */
 export const useDeleteApiUsersIdHard = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -875,6 +932,10 @@ export const useDeleteApiUsersIdHard = <
     queryClient,
   )
 }
+/**
+ * Uploads and replaces a user's avatar image. Without targetUserId, the current user's avatar is changed.
+ * @summary POST /api/users/me/avatar
+ */
 export const postApiUsersMeAvatar = (
   postApiUsersMeAvatarBody: PostApiUsersMeAvatarBody,
   params?: PostApiUsersMeAvatarParams,
@@ -942,6 +1003,9 @@ export type PostApiUsersMeAvatarMutationResult = NonNullable<
 export type PostApiUsersMeAvatarMutationBody = PostApiUsersMeAvatarBody
 export type PostApiUsersMeAvatarMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/users/me/avatar
+ */
 export const usePostApiUsersMeAvatar = <
   TError = ErrorType<unknown>,
   TContext = unknown,

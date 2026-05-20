@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Comparison operator used by badge rule evaluation.
+ */
 export type BadgeOperator =
   | 'Equals'
   | 'GreaterThan'

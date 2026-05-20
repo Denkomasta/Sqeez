@@ -5,4 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * High-level media category used for upload validation, storage, and response metadata.
+ */
 export type MediaType = 'Image' | 'Video' | 'Audio' | 'Document'

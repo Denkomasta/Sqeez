@@ -7,12 +7,17 @@
 
 export type GetApiBadgesParams = {
   /**
+   * Searches badge name and description.
    * @minLength 0
    * @maxLength 100
    */
   SearchTerm?: string
+  /**
+   * Filters badges by whether StudentId has earned them.
+   */
   isEarned?: boolean
   /**
+   * Student id used together with isEarned.
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   StudentId?: number | string

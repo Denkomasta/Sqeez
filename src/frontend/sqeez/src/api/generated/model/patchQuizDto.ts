@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for partially updating quiz metadata and schedule values.
+ */
 export interface PatchQuizDto {
   /**
    * @minLength 0
@@ -34,6 +37,8 @@ export interface PatchQuizDto {
   publishDate?: string | null
   /** @nullable */
   closingDate?: string | null
+  /** When true, clears PublishDate. This is needed because omitted and null patch values are otherwise indistinguishable. */
   resetPublishDate?: boolean
+  /** When true, clears ClosingDate. This is needed because omitted and null patch values are otherwise indistinguishable. */
   resetClosingDate?: boolean
 }

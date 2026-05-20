@@ -7,6 +7,9 @@
 import type { StudentDtoAdminDtoType } from './studentDtoAdminDtoType'
 import type { UserRole } from './userRole'
 
+/**
+ * Admin profile DTO with administrative contact details.
+ */
 export interface StudentDtoAdminDto {
   $type: StudentDtoAdminDtoType
   phoneNumber?: string
@@ -17,11 +20,15 @@ export interface StudentDtoAdminDto {
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   managedClassId?: number | string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * User identifier shared by students, teachers, and admins.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id?: number | string
   firstName?: string
   lastName?: string
   username?: string
+  /** Email address visible according to requester permissions; it can be pseudo-anonymized for restricted viewers. */
   email?: string
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   currentXP?: number | string
@@ -30,6 +37,7 @@ export interface StudentDtoAdminDto {
   avatarUrl?: string | null
   lastSeen?: string
   /**
+   * Assigned school class id. Null means the user is not assigned to a class as a student.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

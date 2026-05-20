@@ -36,6 +36,10 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * Gets a paged list of school classes.
+ * @summary GET /api/classes
+ */
 export const getApiClasses = (
   params?: GetApiClassesParams,
   options?: SecondParameter<typeof customInstance>,
@@ -144,6 +148,9 @@ export function useGetApiClasses<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/classes
+ */
 
 export function useGetApiClasses<
   TData = Awaited<ReturnType<typeof getApiClasses>>,
@@ -170,6 +177,10 @@ export function useGetApiClasses<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Creates a school class. Admin-only.
+ * @summary POST /api/classes
+ */
 export const postApiClasses = (
   createSchoolClassDto: CreateSchoolClassDto,
   options?: SecondParameter<typeof customInstance>,
@@ -231,6 +242,9 @@ export type PostApiClassesMutationResult = NonNullable<
 export type PostApiClassesMutationBody = CreateSchoolClassDto
 export type PostApiClassesMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/classes
+ */
 export const usePostApiClasses = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -253,6 +267,10 @@ export const usePostApiClasses = <
 > => {
   return useMutation(getPostApiClassesMutationOptions(options), queryClient)
 }
+/**
+ * Gets class details including assigned teacher and students.
+ * @summary GET /api/classes/{id}
+ */
 export const getApiClassesId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -382,6 +400,9 @@ export function useGetApiClassesId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/classes/{id}
+ */
 
 export function useGetApiClassesId<
   TData = Awaited<ReturnType<typeof getApiClassesId>>,
@@ -412,6 +433,10 @@ export function useGetApiClassesId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * Updates class metadata and managed teacher assignment. Admin-only.
+ * @summary PATCH /api/classes/{id}
+ */
 export const patchApiClassesId = (
   id: number | string,
   patchSchoolClassDto: PatchSchoolClassDto,
@@ -474,6 +499,9 @@ export type PatchApiClassesIdMutationResult = NonNullable<
 export type PatchApiClassesIdMutationBody = PatchSchoolClassDto
 export type PatchApiClassesIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/classes/{id}
+ */
 export const usePatchApiClassesId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -496,6 +524,10 @@ export const usePatchApiClassesId = <
 > => {
   return useMutation(getPatchApiClassesIdMutationOptions(options), queryClient)
 }
+/**
+ * Deletes a school class when it can be safely removed. Admin-only.
+ * @summary DELETE /api/classes/{id}
+ */
 export const deleteApiClassesId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -551,6 +583,9 @@ export type DeleteApiClassesIdMutationResult = NonNullable<
 
 export type DeleteApiClassesIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/classes/{id}
+ */
 export const useDeleteApiClassesId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -573,6 +608,10 @@ export const useDeleteApiClassesId = <
 > => {
   return useMutation(getDeleteApiClassesIdMutationOptions(options), queryClient)
 }
+/**
+ * Assigns students to a class while preventing teacher/student assignment conflicts. Admin-only.
+ * @summary POST /api/classes/{id}/students
+ */
 export const postApiClassesIdStudents = (
   id: number | string,
   assignStudentsDto: AssignStudentsDto,
@@ -635,6 +674,9 @@ export type PostApiClassesIdStudentsMutationResult = NonNullable<
 export type PostApiClassesIdStudentsMutationBody = AssignStudentsDto
 export type PostApiClassesIdStudentsMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/classes/{id}/students
+ */
 export const usePostApiClassesIdStudents = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -660,6 +702,10 @@ export const usePostApiClassesIdStudents = <
     queryClient,
   )
 }
+/**
+ * Removes students from a class. Admin-only.
+ * @summary POST /api/classes/{id}/students/remove
+ */
 export const postApiClassesIdStudentsRemove = (
   id: number | string,
   removeStudentsDto: RemoveStudentsDto,
@@ -722,6 +768,9 @@ export type PostApiClassesIdStudentsRemoveMutationResult = NonNullable<
 export type PostApiClassesIdStudentsRemoveMutationBody = RemoveStudentsDto
 export type PostApiClassesIdStudentsRemoveMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/classes/{id}/students/remove
+ */
 export const usePostApiClassesIdStudentsRemove = <
   TError = ErrorType<unknown>,
   TContext = unknown,

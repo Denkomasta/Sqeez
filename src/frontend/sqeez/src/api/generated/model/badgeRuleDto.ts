@@ -7,11 +7,22 @@
 import type { BadgeMetric } from './badgeMetric'
 import type { BadgeOperator } from './badgeOperator'
 
+/**
+ * Persisted rule that determines when a badge can be awarded.
+ */
 export interface BadgeRuleDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Rule identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id: number | string
+  /** Metric inspected during badge evaluation. */
   metric: BadgeMetric
+  /** Comparison operator used against TargetValue. */
   operator: BadgeOperator
-  /** @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$ */
+  /**
+   * Value that the selected metric is compared with.
+   * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+   */
   targetValue: number | string
 }

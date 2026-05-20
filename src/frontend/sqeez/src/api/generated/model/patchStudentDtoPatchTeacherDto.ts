@@ -6,6 +6,9 @@
  */
 import type { PatchStudentDtoPatchTeacherDtoRole } from './patchStudentDtoPatchTeacherDtoRole'
 
+/**
+ * Teacher patch DTO for department and managed class assignment updates.
+ */
 export interface PatchStudentDtoPatchTeacherDto {
   role: PatchStudentDtoPatchTeacherDtoRole
   /**
@@ -16,6 +19,7 @@ export interface PatchStudentDtoPatchTeacherDto {
    */
   department?: string | null
   /**
+   * Optional class managed by the teacher. When supplied by an authorized admin, 0 removes the managed class.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
@@ -28,11 +32,13 @@ export interface PatchStudentDtoPatchTeacherDto {
    */
   username?: string | null
   /**
+   * Optional class assignment. When supplied by an authorized admin, 0 removes the current class assignment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   schoolClassId?: number | string | null
   /**
+   * Avatar URL metadata patch. File uploads should use the avatar upload endpoint instead.
    * @minLength 0
    * @maxLength 2048
    * @nullable

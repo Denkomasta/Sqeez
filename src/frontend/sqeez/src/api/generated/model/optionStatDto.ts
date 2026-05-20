@@ -5,12 +5,25 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Aggregated option selection statistics for a question.
+ */
 export interface OptionStatDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Option identifier.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   id?: number | string
-  /** @nullable */
+  /**
+   * Option text, if the option has text content.
+   * @nullable
+   */
   text?: string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Number of responses that selected this option.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   pickCount?: number | string
+  /** Whether this option is marked as correct. */
   isCorrect?: boolean
 }

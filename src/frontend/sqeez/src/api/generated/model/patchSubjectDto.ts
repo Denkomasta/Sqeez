@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for partially updating a subject and its optional assignments.
+ */
 export interface PatchSubjectDto {
   /**
    * @minLength 0
@@ -29,11 +32,13 @@ export interface PatchSubjectDto {
   /** @nullable */
   endDate?: string | null
   /**
+   * Optional teacher assignment. A value of 0 removes the teacher.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   teacherId?: number | string | null
   /**
+   * Optional school class assignment. A value of 0 removes the class.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

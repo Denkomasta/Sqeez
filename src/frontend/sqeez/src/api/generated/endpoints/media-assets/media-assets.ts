@@ -37,6 +37,11 @@ import type { ErrorType } from '../../../custom-axios'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+/**
+ * GET /api/media-assets
+Gets a paged list of media asset metadata.
+ * @summary GET /api/media-assets
+ */
 export const getApiMediaAssets = (
   params?: GetApiMediaAssetsParams,
   options?: SecondParameter<typeof customInstance>,
@@ -164,6 +169,9 @@ export function useGetApiMediaAssets<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/media-assets
+ */
 
 export function useGetApiMediaAssets<
   TData = Awaited<ReturnType<typeof getApiMediaAssets>>,
@@ -194,6 +202,11 @@ export function useGetApiMediaAssets<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * POST /api/media-assets
+Saves metadata for a new media asset without uploading a file. The owner id is taken from the authenticated user.
+ * @summary POST /api/media-assets
+ */
 export const postApiMediaAssets = (
   createMediaAssetDto: CreateMediaAssetDto,
   options?: SecondParameter<typeof customInstance>,
@@ -255,6 +268,9 @@ export type PostApiMediaAssetsMutationResult = NonNullable<
 export type PostApiMediaAssetsMutationBody = CreateMediaAssetDto
 export type PostApiMediaAssetsMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/media-assets
+ */
 export const usePostApiMediaAssets = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -277,6 +293,11 @@ export const usePostApiMediaAssets = <
 > => {
   return useMutation(getPostApiMediaAssetsMutationOptions(options), queryClient)
 }
+/**
+ * DELETE /api/media-assets?unassignedOnly=true
+Deletes unassigned media assets. Admins can delete all matching unassigned assets; teachers are limited to their own.
+ * @summary DELETE /api/media-assets
+ */
 export const deleteApiMediaAssets = (
   params?: DeleteApiMediaAssetsParams,
   options?: SecondParameter<typeof customInstance>,
@@ -332,6 +353,9 @@ export type DeleteApiMediaAssetsMutationResult = NonNullable<
 
 export type DeleteApiMediaAssetsMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/media-assets
+ */
 export const useDeleteApiMediaAssets = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -357,6 +381,11 @@ export const useDeleteApiMediaAssets = <
     queryClient,
   )
 }
+/**
+ * GET /api/media-assets/{id}
+Gets media asset metadata by id.
+ * @summary GET /api/media-assets/{id}
+ */
 export const getApiMediaAssetsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -486,6 +515,9 @@ export function useGetApiMediaAssetsId<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/media-assets/{id}
+ */
 
 export function useGetApiMediaAssetsId<
   TData = Awaited<ReturnType<typeof getApiMediaAssetsId>>,
@@ -516,6 +548,11 @@ export function useGetApiMediaAssetsId<
   return { ...query, queryKey: queryOptions.queryKey }
 }
 
+/**
+ * PATCH /api/media-assets/{id}
+Updates media asset metadata. Admins can patch any asset; teachers can patch only their own assets.
+ * @summary PATCH /api/media-assets/{id}
+ */
 export const patchApiMediaAssetsId = (
   id: number | string,
   patchMediaAssetDto: PatchMediaAssetDto,
@@ -578,6 +615,9 @@ export type PatchApiMediaAssetsIdMutationResult = NonNullable<
 export type PatchApiMediaAssetsIdMutationBody = PatchMediaAssetDto
 export type PatchApiMediaAssetsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/media-assets/{id}
+ */
 export const usePatchApiMediaAssetsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -603,6 +643,11 @@ export const usePatchApiMediaAssetsId = <
     queryClient,
   )
 }
+/**
+ * DELETE /api/media-assets/{id}
+Deletes the database metadata and physical file. Admins can delete any asset; teachers can delete only their own assets.
+ * @summary DELETE /api/media-assets/{id}
+ */
 export const deleteApiMediaAssetsId = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -658,6 +703,9 @@ export type DeleteApiMediaAssetsIdMutationResult = NonNullable<
 
 export type DeleteApiMediaAssetsIdMutationError = ErrorType<unknown>
 
+/**
+ * @summary DELETE /api/media-assets/{id}
+ */
 export const useDeleteApiMediaAssetsId = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -683,6 +731,11 @@ export const useDeleteApiMediaAssetsId = <
     queryClient,
   )
 }
+/**
+ * PATCH /api/media-assets/{id}/owner
+Transfers media asset ownership to another active teacher or admin. Admin-only.
+ * @summary PATCH /api/media-assets/{id}/owner
+ */
 export const patchApiMediaAssetsIdOwner = (
   id: number | string,
   reassignMediaAssetOwnerDto: ReassignMediaAssetOwnerDto,
@@ -745,6 +798,9 @@ export type PatchApiMediaAssetsIdOwnerMutationResult = NonNullable<
 export type PatchApiMediaAssetsIdOwnerMutationBody = ReassignMediaAssetOwnerDto
 export type PatchApiMediaAssetsIdOwnerMutationError = ErrorType<unknown>
 
+/**
+ * @summary PATCH /api/media-assets/{id}/owner
+ */
 export const usePatchApiMediaAssetsIdOwner = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -770,6 +826,11 @@ export const usePatchApiMediaAssetsIdOwner = <
     queryClient,
   )
 }
+/**
+ * POST /api/media-assets/upload
+Accepts a physical file, saves it securely, and creates the database record.
+ * @summary POST /api/media-assets/upload
+ */
 export const postApiMediaAssetsUpload = (
   postApiMediaAssetsUploadBody: PostApiMediaAssetsUploadBody,
   options?: SecondParameter<typeof customInstance>,
@@ -842,6 +903,9 @@ export type PostApiMediaAssetsUploadMutationResult = NonNullable<
 export type PostApiMediaAssetsUploadMutationBody = PostApiMediaAssetsUploadBody
 export type PostApiMediaAssetsUploadMutationError = ErrorType<unknown>
 
+/**
+ * @summary POST /api/media-assets/upload
+ */
 export const usePostApiMediaAssetsUpload = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -867,6 +931,11 @@ export const usePostApiMediaAssetsUpload = <
     queryClient,
   )
 }
+/**
+ * GET /api/media-assets/{id}/file
+Streams a stored file after checking the asset's privacy and requester access.
+ * @summary GET /api/media-assets/{id}/file
+ */
 export const getApiMediaAssetsIdFile = (
   id: number | string,
   options?: SecondParameter<typeof customInstance>,
@@ -1002,6 +1071,9 @@ export function useGetApiMediaAssetsIdFile<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
+/**
+ * @summary GET /api/media-assets/{id}/file
+ */
 
 export function useGetApiMediaAssetsIdFile<
   TData = Awaited<ReturnType<typeof getApiMediaAssetsIdFile>>,

@@ -8,6 +8,9 @@ import type { CreateStudentDtoCreateAdminDto } from './createStudentDtoCreateAdm
 import type { CreateStudentDtoCreateStudentDto } from './createStudentDtoCreateStudentDto'
 import type { CreateStudentDtoCreateTeacherDto } from './createStudentDtoCreateTeacherDto'
 
+/**
+ * Polymorphic user creation DTO; the role discriminator selects student, teacher, or admin fields.
+ */
 export type CreateStudentDto =
   | CreateStudentDtoCreateStudentDto
   | CreateStudentDtoCreateTeacherDto

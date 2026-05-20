@@ -5,14 +5,29 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Badge award view returned for a specific student.
+ */
 export interface StudentBadgeDto {
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Awarded badge id.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   badgeId: number | string
+  /** Badge display name. */
   name: string
+  /** Badge description. */
   description: string
-  /** @nullable */
+  /**
+   * Public icon URL, or null when no icon is assigned.
+   * @nullable
+   */
   iconUrl: string | null
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * XP added when the badge was awarded.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   xpBonus: number | string
+  /** UTC timestamp when the student earned the badge. */
   earnedAt: string
 }

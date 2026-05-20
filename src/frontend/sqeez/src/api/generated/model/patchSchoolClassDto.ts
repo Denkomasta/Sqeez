@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for partially updating a school class and managed teacher.
+ */
 export interface PatchSchoolClassDto {
   /**
    * @minLength 0
@@ -25,6 +28,7 @@ export interface PatchSchoolClassDto {
    */
   section?: string | null
   /**
+   * Optional managing teacher assignment. A value of 0 removes the teacher.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

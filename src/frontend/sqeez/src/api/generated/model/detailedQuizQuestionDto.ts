@@ -6,6 +6,9 @@
  */
 import type { StudentQuizOptionDto } from './studentQuizOptionDto'
 
+/**
+ * Question detail used for quiz taking and management views.
+ */
 export interface DetailedQuizQuestionDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

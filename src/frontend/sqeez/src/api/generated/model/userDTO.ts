@@ -6,6 +6,9 @@
  */
 import type { UserRole } from './userRole'
 
+/**
+ * Lightweight authenticated user profile returned by auth endpoints.
+ */
 export interface UserDTO {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

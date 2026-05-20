@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for creating a subject with optional UTC dates and assignments.
+ */
 export interface CreateSubjectDto {
   /**
    * @minLength 0
@@ -27,11 +30,13 @@ export interface CreateSubjectDto {
   /** @nullable */
   endDate?: string | null
   /**
+   * Optional teacher assignment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
   teacherId?: number | string | null
   /**
+   * Optional school class assignment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

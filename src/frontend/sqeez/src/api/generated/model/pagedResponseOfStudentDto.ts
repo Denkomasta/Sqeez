@@ -6,14 +6,30 @@
  */
 import type { StudentDto } from './studentDto'
 
+/**
+ * Standard paged response shape used by list endpoints.
+ */
 export interface PagedResponseOfStudentDto {
+  /** Items for the requested page. */
   data?: StudentDto[]
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Total number of items matching the filter before paging is applied.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   totalCount?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * One-based page number returned by the query.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   pageNumber?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Maximum number of items requested for this page.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   pageSize?: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Total number of pages calculated from TotalCount and PageSize.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   totalPages?: number | string
 }

@@ -5,18 +5,37 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Current application configuration exposed to the frontend and administrators.
+ */
 export interface SystemConfigDto {
+  /** School name displayed in the application. */
   schoolName: string
+  /** Public logo URL. */
   logoUrl: string
+  /** Support contact email. */
   supportEmail: string
+  /** Default language code used for localized email templates. */
   defaultLanguage: string
+  /** Current academic year label. */
   currentAcademicYear: string
+  /** Whether unauthenticated users can register themselves. */
   allowPublicRegistration: boolean
+  /** Whether users must verify email before login. */
   requireEmailVerification: boolean
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Upload size limit for avatars and badge icons.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   maxAvatarAndBadgeUploadSizeMB: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Upload size limit for quiz media.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   maxQuizMediaUploadSizeMB: number | string
-  /** @pattern ^-?(?:0|[1-9]\d*)$ */
+  /**
+   * Maximum active refresh-token sessions per user.
+   * @pattern ^-?(?:0|[1-9]\d*)$
+   */
   maxActiveSessionsPerUser: number | string
 }

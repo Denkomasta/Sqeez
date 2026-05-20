@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Public registration request for a new unverified account.
+ */
 export interface RegisterDTO {
   /**
    * @minLength 0

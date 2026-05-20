@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Stored answer response returned in attempt details.
+ */
 export interface QuestionResponseDto {
   /** @pattern ^-?(?:0|[1-9]\d*)$ */
   id: number | string

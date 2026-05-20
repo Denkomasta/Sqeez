@@ -5,6 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
+/**
+ * Request for creating a school class with an optional managed teacher.
+ */
 export interface CreateSchoolClassDto {
   /**
    * @minLength 0
@@ -22,6 +25,7 @@ export interface CreateSchoolClassDto {
    */
   section?: string
   /**
+   * Optional managing teacher assignment.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */

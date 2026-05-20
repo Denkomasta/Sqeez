@@ -6,6 +6,9 @@
  */
 import type { CreateStudentDtoCreateTeacherDtoRole } from './createStudentDtoCreateTeacherDtoRole'
 
+/**
+ * Teacher creation DTO with optional department and managed class assignment.
+ */
 export interface CreateStudentDtoCreateTeacherDto {
   role: CreateStudentDtoCreateTeacherDtoRole
   /**
@@ -48,6 +51,7 @@ export interface CreateStudentDtoCreateTeacherDto {
    */
   password?: string
   /**
+   * Optional school class assignment for the created student-shaped account.
    * @nullable
    * @pattern ^-?(?:0|[1-9]\d*)$
    */
