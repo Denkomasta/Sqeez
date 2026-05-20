@@ -18,6 +18,7 @@ interface AvatarUploadModalProps {
   isOpen: boolean
   onClose: () => void
   onUpload: () => void
+  targetUserId?: number | string
   maxFileSizeMB?: number
   title?: string
   description?: string
@@ -27,6 +28,7 @@ export function AvatarUploadModal({
   isOpen,
   onClose,
   onUpload,
+  targetUserId,
   maxFileSizeMB = 1,
   title,
   description,
@@ -74,6 +76,7 @@ export function AvatarUploadModal({
         data: {
           file: selectedFile,
         },
+        params: targetUserId ? { targetUserId } : undefined,
       })
 
       toast.success(t('profile.avatarUpdated'))

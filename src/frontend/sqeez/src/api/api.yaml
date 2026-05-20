@@ -3226,6 +3226,15 @@ paths:
     post:
       tags:
         - User
+      parameters:
+        - name: targetUserId
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int64
       requestBody:
         content:
           multipart/form-data:
