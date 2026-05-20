@@ -6,6 +6,14 @@ namespace Sqeez.Api.DTOs
     /// <summary>
     /// School class summary returned by class endpoints.
     /// </summary>
+    /// <param name="Id">School class identifier.</param>
+    /// <param name="Name">Class display name.</param>
+    /// <param name="AcademicYear">Academic year label.</param>
+    /// <param name="Section">Section label within the academic year.</param>
+    /// <param name="TeacherId">Assigned managing teacher id, or null when none is assigned.</param>
+    /// <param name="TeacherName">Assigned managing teacher username, or null when none is assigned.</param>
+    /// <param name="StudentCount">Number of students assigned to this class.</param>
+    /// <param name="SubjectCount">Number of subjects assigned to this class.</param>
     public record SchoolClassDto(
         long Id,
         string Name,
@@ -21,11 +29,21 @@ namespace Sqeez.Api.DTOs
     /// </summary>
     public class SchoolClassFilterDto : PagedFilterDto
     {
+        /// <summary>
+        /// Searches class name and section.
+        /// </summary>
         [StringLength(ValidationConstants.SearchTermMaxLength)]
-        public string? SearchTerm { get; set; }  // Search against Name or Section
+        public string? SearchTerm { get; set; }
 
+        /// <summary>
+        /// Filters classes by academic year label.
+        /// </summary>
         [StringLength(ValidationConstants.AcademicYearMaxLength)]
         public string? AcademicYear { get; set; }
+
+        /// <summary>
+        /// Filters classes by managing teacher id.
+        /// </summary>
         public long? TeacherId { get; set; }
     }
 
@@ -52,6 +70,10 @@ namespace Sqeez.Api.DTOs
 
         [StringLength(ValidationConstants.SectionMaxLength)]
         public string Section { get; init; } = string.Empty;
+
+        /// <summary>
+        /// Optional managing teacher assignment.
+        /// </summary>
         public long? TeacherId { get; init; }
     }
 
@@ -78,6 +100,10 @@ namespace Sqeez.Api.DTOs
 
         [StringLength(ValidationConstants.SectionMaxLength)]
         public string? Section { get; init; }
+
+        /// <summary>
+        /// Optional managing teacher assignment. A value of 0 removes the teacher.
+        /// </summary>
         public long? TeacherId { get; init; }
     }
 

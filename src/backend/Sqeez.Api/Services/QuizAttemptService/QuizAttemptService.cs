@@ -33,7 +33,6 @@ namespace Sqeez.Api.Services
         /// <inheritdoc />
         public async Task<ServiceResult<QuizAttemptDto>> StartAttemptAsync(long studentId, StartQuizAttemptDto dto)
         {
-            // Verify the student is actually enrolled in the subject this quiz belongs to
             var enrollment = await _context.Enrollments
                 .Include(e => e.Subject)
                 .FirstOrDefaultAsync(e => e.Id == dto.EnrollmentId && e.StudentId == studentId);
@@ -41,21 +40,17 @@ namespace Sqeez.Api.Services
             if (enrollment == null)
                 return ServiceResult<QuizAttemptDto>.Failure("You are not enrolled in this subject.", ServiceError.Forbidden);
 
-            // Verify the quiz exists and belongs to this subject
             var quiz = await _context.Quizzes.FindAsync(dto.QuizId);
             if (quiz == null || quiz.SubjectId != enrollment.SubjectId)
                 return ServiceResult<QuizAttemptDto>.Failure("Quiz not found.", ServiceError.NotFound);
 
             var now = DateTime.UtcNow;
-            // If there's no publish date, it's a draft. If the date is in the future, it's scheduled.
             if (!quiz.PublishDate.HasValue || now < quiz.PublishDate.Value)
                 return ServiceResult<QuizAttemptDto>.Failure("This quiz is not published yet.", ServiceError.ValidationFailed);
 
-            // If there is a closing date and we are past it, lock it down.
             if (quiz.ClosingDate.HasValue && now > quiz.ClosingDate.Value)
                 return ServiceResult<QuizAttemptDto>.Failure("This quiz has already closed.", ServiceError.ValidationFailed);
 
-            // Max Retries Business Rule
             if (quiz.MaxRetries > 0)
             {
                 var previousAttempts = await _context.QuizAttempts
@@ -65,7 +60,6 @@ namespace Sqeez.Api.Services
                     return ServiceResult<QuizAttemptDto>.Failure($"You have reached the maximum of {quiz.MaxRetries} retries for this quiz.", ServiceError.Conflict);
             }
 
-            // Create the new Attempt
             var attempt = new QuizAttempt
             {
                 QuizId = dto.QuizId,
@@ -78,7 +72,7 @@ namespace Sqeez.Api.Services
             _context.QuizAttempts.Add(attempt);
             await _context.SaveChangesAsync();
 
-            long? nextQuestionId = await GetNextQuestionId(attempt.QuizId, 0);  // first question, biggest nonexisting id.
+            long? nextQuestionId = await GetNextQuestionId(attempt.QuizId, 0);
 
             return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
                 attempt.Id, attempt.QuizId, attempt.EnrollmentId, attempt.StartTime,
@@ -235,6 +229,7 @@ namespace Sqeez.Api.Services
                 .Select(a => (int?)a.TotalScore)
                 .MaxAsync() ?? 0;
 
+            // XP rewards are based on improvement over the student's previous best score for this quiz.
             int xpToAward = Math.Max(0, attempt.TotalScore - previousHighScore);
 
             if (xpToAward > 0)
@@ -259,6 +254,7 @@ namespace Sqeez.Api.Services
                                  a.Enrollment.StudentId == studentId &&
                                  a.Status == AttemptStatus.Completed);
 
+            // Badge rules consume a normalized metric snapshot so rules stay independent from attempt internals.
             int perfectAnswersCount = attempt.Responses.Count(r => r.Score > 0);
 
             var metrics = new BadgeEvaluationMetrics(
@@ -315,7 +311,7 @@ namespace Sqeez.Api.Services
 
             if (requiresManualGrading)
             {
-                // Commit the transaction since we successfully set it to PendingCorrection
+                // Pending-correction attempts are intentionally committed before manual grading continues later.
                 await transaction.CommitAsync();
 
                 return ServiceResult<QuizAttemptDto>.Ok(new QuizAttemptDto(
@@ -328,7 +324,7 @@ namespace Sqeez.Api.Services
 
             if (!rewardResult.Success)
             {
-                // If badge evaluation or XP fails, roll the whole thing back
+                // Reward processing is part of completion; rollback keeps score, XP, and badges consistent.
                 await transaction.RollbackAsync();
 
                 return ServiceResult<QuizAttemptDto>.Failure(
@@ -459,17 +455,15 @@ namespace Sqeez.Api.Services
             var attempt = response.QuizAttempt;
             attempt.TotalScore = attempt.Responses.Sum(r => r.Score ?? 0);
 
-            // Check if there are any remaining ungraded questions
             bool isFullyGraded = !attempt.Responses.Any(r => r.Score == null);
 
             if (isFullyGraded && attempt.Status == AttemptStatus.PendingCorrection)
             {
                 attempt.Status = AttemptStatus.Completed;
 
-                // Save the completed status FIRST before evaluating rewards
+                // Reward evaluation counts completed attempts, so the completed status must be saved first.
                 await _context.SaveChangesAsync();
 
-                // Call our extracted reward logic
                 var rewardResult = await ProcessCompletedAttemptRewardsAsync(attempt, attempt.Enrollment.StudentId);
 
                 if (!rewardResult.Success)

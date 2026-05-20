@@ -123,6 +123,7 @@ namespace Sqeez.Api.Services.EmailService
             {
                 yield return normalizedLanguage;
 
+                // Prefer a specific locale first, then its neutral language, then English.
                 var neutralLanguage = normalizedLanguage.Split('-', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
                 if (!string.IsNullOrWhiteSpace(neutralLanguage) && neutralLanguage != normalizedLanguage)
                 {
