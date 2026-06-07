@@ -87,7 +87,11 @@ namespace Sqeez.Api.Services
                     var recognizedExt = "." + fileType.Extension.ToLowerInvariant();
 
                     if (recognizedExt == ".jpeg") recognizedExt = ".jpg";
-                    var expectedExt = extension == ".jpeg" ? ".jpg" : extension;
+                    if (recognizedExt == ".m4v") recognizedExt = ".mp4";
+
+                    var expectedExt = extension;
+                    if (expectedExt == ".jpeg") expectedExt = ".jpg";
+                    if (expectedExt == ".m4v") expectedExt = ".mp4";
 
                     if (recognizedExt == expectedExt)
                     {
