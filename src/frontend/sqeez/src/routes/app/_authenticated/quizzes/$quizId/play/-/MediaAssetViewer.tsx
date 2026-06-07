@@ -88,7 +88,7 @@ export function MediaAssetViewer({
   if (mimeType?.startsWith('audio/')) {
     return (
       <div
-        className={`flex w-full items-center justify-center p-4 ${isOption ? 'rounded-md' : 'rounded-xl'}`}
+        className={`flex w-full min-w-60 items-center justify-center p-0 sm:min-w-80 sm:p-4 md:min-w-96 ${isOption ? 'rounded-md' : 'rounded-xl'}`}
       >
         <audio controls src={mediaUrl} className="w-full max-w-md" />
       </div>

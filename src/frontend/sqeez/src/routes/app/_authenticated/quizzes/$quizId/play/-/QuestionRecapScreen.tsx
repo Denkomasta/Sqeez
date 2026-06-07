@@ -36,9 +36,10 @@ export function QuestionRecapScreen({
   const isFreeText = question.options.some((o) => o.isFreeText)
 
   const isFullyCorrect =
-    !isFreeText &&
-    selectedOptionIds.length === correctOptionIds.length &&
-    selectedOptionIds.every((id) => correctOptionIds.includes(id))
+    !isFreeText && question.isStrictMultipleChoice
+      ? selectedOptionIds.length === correctOptionIds.length &&
+        selectedOptionIds.every((id) => correctOptionIds.includes(id))
+      : selectedOptionIds.every((id) => correctOptionIds.includes(id))
 
   let bannerStyle = ''
   let BannerIcon = null
